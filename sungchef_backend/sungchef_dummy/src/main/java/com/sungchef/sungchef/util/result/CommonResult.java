@@ -7,9 +7,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CommonResult implements Serializable {
+public class CommonResult {
 	private int code;
-
 	private String message;
 }
 

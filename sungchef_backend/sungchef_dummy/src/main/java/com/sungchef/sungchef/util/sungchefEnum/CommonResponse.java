@@ -5,12 +5,12 @@ import lombok.Getter;
 @Getter
 public enum CommonResponse {
 
-	SUCCESS(200, "성공"),
-	FAILED(400, "실패");
-	private final int code;
-	private final String message;
+	SUCCESS(200),
+	FAILED(400),
+	UNAUTHORIZED(401);
 
-	CommonResponse(int _code, String _message) {
-		code = _code; message = _message;
+	private final int code;
+	CommonResponse(int _code) {
+		code = _code;
 	}
 }
