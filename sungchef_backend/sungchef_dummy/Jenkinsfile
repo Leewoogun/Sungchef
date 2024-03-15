@@ -1,0 +1,34 @@
+pipeline{
+    agent any
+
+    stages{
+        stage('Build'){
+            steps{
+                dir('sungchef_backend'){
+                    dir('sungchef_dummy'){
+                        script{
+                            sh 'chmod +x gradlew'
+
+                            sh './gradlew clean build'
+                            sh 'chmod +x ./docker_install.sh'
+                            sh './docker_install.sh'
+                        }
+                    }
+                }
+            }
+        }
+        stage('Deploy'){
+            steps{
+                dir('sungchef_backend'){
+                    dir('sungchef_dummy'){
+                        script{
+                            sh 'docker build -t backend-jenkins .'
+                            sh 'docker rm -f backend-jenkins'
+                            sh 'docker run -d --name backend-jenkins -p 8081:8081 backend-jenkins'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
