@@ -16,7 +16,7 @@ public class FridgeIngredientListRes {
 		for (int i = 0; i < IngredientType.values().length; i++) {
 			fridgeList.add(IngredientInfo.builder()
 					.ingredientType(IngredientType.values()[i])
-					.ingredientInfoList(new ArrayList<>())
+					.ingredientList(new ArrayList<>())
 					.build());
 		}
 	}

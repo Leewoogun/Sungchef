@@ -10,7 +10,6 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
 public class ConvertProductListRes {
 	List<ConvertProductInfo> convertProductList;
 	public ConvertProductListRes() {
