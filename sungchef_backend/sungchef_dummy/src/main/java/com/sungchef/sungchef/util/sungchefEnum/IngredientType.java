@@ -7,17 +7,19 @@ import java.io.Serializable;
 @Getter
 public enum IngredientType{
 
-	FRUIT("과일"),
-	VEGETABLE("채소"),
-	RICE_GRAIN("쌀/채소"),
-	MEAT_EGG("정육/계란"),
-	FISH("수산"),
-	MILK("유제품"),
-	SAUCE("소스/양념/조미료"),
-	ETC("기타");
-	private final String name;
+	FRUIT(0),
+	VEGETABLE(1),
+	RICE_GRAIN(2),
+	MEAT_EGG(3),
+	FISH(4),
+	MILK(5),
+	SAUCE(6),
+	ETC(7),
+	NON_CONVERTED(8);
 
-	IngredientType(String _name) {
-		name = _name;
+	int code;
+
+	IngredientType(int _code) {
+		code = _code;
 	}
 }
