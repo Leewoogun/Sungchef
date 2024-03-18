@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.sungchef.sungchef.userservice.dto.request.BookmarkReq;
 import com.sungchef.sungchef.userservice.dto.request.ContactReq;
@@ -110,7 +106,7 @@ public class UserController {
 	}
 
 	@GetMapping("/exist/{nickname}")
-	public ResponseEntity<?> nicknameExist(@PathVariable final String nickname) {
+	public ResponseEntity<?> nicknameExist(@PathVariable(value = "nickname") final String nickname) {
 		// TODO
 		try {
 			return responseService.OK();
@@ -148,7 +144,7 @@ public class UserController {
 	}
 
 	@GetMapping("/recipe/{page}")
-	public ResponseEntity<?> getUserRecipe(@PathVariable final String page) {
+	public ResponseEntity<?> getUserRecipe(@PathVariable(value = "page") final String page) {
 		// TODO
 
 		List<UserMakeRecipe> makeRecipeList = new ArrayList<>();
@@ -176,7 +172,7 @@ public class UserController {
 	}
 
 	@GetMapping("/bookmark/{page}")
-	public ResponseEntity<?> userRecipe(@PathVariable final String page) {
+	public ResponseEntity<?> userRecipe(@PathVariable(value = "page") final String page) {
 
 		List<UserBookmarkRecipe> bookmarkRecipeList = new ArrayList<>();
 		for (int i = 0; i < 9; i++) {
@@ -220,7 +216,7 @@ public class UserController {
 		}
 	}
 
-	@GetMapping("")
+	@PutMapping("")
 	public ResponseEntity<?> updateUser(final UserInfoReq req) {
 		// TODO
 		try {

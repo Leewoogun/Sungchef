@@ -153,8 +153,8 @@ public class IngredientController {
 		}
 	}
 
-	@GetMapping("/{recipeId}}")
-	public ResponseEntity<?> getUsedIngredientsInRecipe(@PathVariable final String recipeId) {
+	@GetMapping("/{recipeId}")
+	public ResponseEntity<?> getUsedIngredientsInRecipe(@PathVariable(value = "recipeId") final String recipeId) {
 		// TODO
 		return responseService.OK();
 	}

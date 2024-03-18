@@ -159,7 +159,7 @@ public class FridgeController {
 	}
 
 	@GetMapping("/need/{recipeId}")
-	public ResponseEntity<?> getIngredientIdToCook(@PathVariable final String recipeId) {
+	public ResponseEntity<?> getIngredientIdToCook(@PathVariable(value = "recipeId") final String recipeId) {
 		try {
 			return responseService.NO_CONTENT();
 		} catch (RecipeNotFoundException e) {
