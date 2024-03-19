@@ -7,10 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sungchef.sungchef.userservice.dto.request.FoodId;
+import com.sungchef.sungchef.userservice.dto.request.SubmitSurveyReq;
 import com.sungchef.sungchef.userservice.dto.response.FoodInfo;
 import com.sungchef.sungchef.userservice.dto.response.SurveyRes;
 import com.sungchef.sungchef.userservice.dto.response.UserBookmarkRecipeRes;
@@ -45,27 +47,28 @@ public class SurveyController {
 
 		try {
 			return ResponseEntity.ok().body(
-				SurveyRes.builder()
-					.foodInfoList(surveyList)
-					.build()
+				responseService.getSuccessSingleResult(
+					SurveyRes.builder()
+						.foodInfoList(surveyList)
+						.build()
+					, "설문 목록 조회 성공"
+				)
 			);
 		} catch (Exception e) {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
 
-	@PostMapping("/submit")
-	public ResponseEntity<?> submitSurvey() {
-		// TODO
-		List<FoodId> foodIdList = new ArrayList<>();
-		for (int i = 0; i < 9; i++) {
-			foodIdList.add(FoodId.builder()
-					.foodId(i)
-					.build());
-		}
 
+	// 설문 제출쪽 수정 오류 필요
+	@PostMapping("/submit")
+	public ResponseEntity<?> submitSurvey(@RequestBody final SubmitSurveyReq req) {
+		// TODO
 		try {
-			return responseService.OK();
+
+			// TODO 수정 필요
+			// 원래 반환 형식은 code, message
+			return ResponseEntity.ok(responseService.getSuccessSingleResult(req, "설문 제출 성공"));
 		} catch (SurveyCountException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
@@ -78,8 +81,17 @@ public class SurveyController {
 	 * @return
 	 */
 	@PutMapping("/submit")
-	public ResponseEntity<?> updateSurvey() {
+	public ResponseEntity<?> updateSurvey(@RequestBody final SubmitSurveyReq req) {
 		// TODO
-		return getSurvey();
+		try {
+
+			// TODO 수정 필요
+			// 원래 반환 형식은 code, message
+			return ResponseEntity.ok(responseService.getSuccessSingleResult(req, "설문 제출 성공"));
+		} catch (SurveyCountException e) {
+			return responseService.BAD_REQUEST();
+		} catch (Exception e) {
+			return responseService.INTERNAL_SERVER_ERROR();
+		}
 	}
 }

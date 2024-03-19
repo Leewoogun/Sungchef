@@ -37,8 +37,9 @@ public class UserController {
 	private final ResponseService responseService;
 
 	@PostMapping("/signup")
-	public ResponseEntity<?> signUp(@Valid final SignUpReq req) {
+	public ResponseEntity<?> signUp(@RequestBody @Valid final SignUpReq req) {
 		// TODO
+		log.debug(req.toString());
 		try {
 			return ResponseEntity.ok().body(
 				responseService.getSuccessSingleResult(
@@ -56,13 +57,15 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> login(LoginReq req) {
+	public ResponseEntity<?> login(@RequestBody LoginReq req) {
 		// TODO
 		try {
 			return ResponseEntity.ok()
 				.body(
 					responseService.getSuccessSingleResult(UserTokenRes
 							.builder()
+							.accessToken("adkssudgktpdy")
+							.refreshToken("qksrkqtmqslek")
 							.build()
 						, "로그인 성공"));
 		} catch (UserNotFoundException e) {
@@ -78,7 +81,7 @@ public class UserController {
 	public ResponseEntity<?> autologin() {
 		// TODO
 		try {
-			return responseService.OK();
+			return ResponseEntity.ok(responseService.getSuccessMessageResult("자동 로그인 성공"));
 		} catch (UserNeedSurveyException e) {
 			return responseService.FORBIDDEN();
 		} catch (Exception e) {
@@ -87,13 +90,15 @@ public class UserController {
 	}
 
 	@PostMapping("/reissue")
-	public ResponseEntity<?> reissue(final ReissueReq req) {
+	public ResponseEntity<?> reissue(@RequestBody final ReissueReq req) {
 		// TODO
 		try {
 			return ResponseEntity.ok()
 				.body(
 					responseService.getSuccessSingleResult(UserTokenRes
 							.builder()
+							.accessToken("adkssudgktpdy")
+							.refreshToken("qksrkqtmqslek")
 							.build()
 						, "토큰 재발급 성공"));
 		} catch (UserNotFoundException e) {
@@ -109,7 +114,7 @@ public class UserController {
 	public ResponseEntity<?> nicknameExist(@PathVariable(value = "nickname") final String nickname) {
 		// TODO
 		try {
-			return responseService.OK();
+			return ResponseEntity.ok(responseService.getSuccessMessageResult("사용 가능한 닉네임"));
 		} catch (UserNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		} catch (UserNeedSurveyException e) {
@@ -130,7 +135,7 @@ public class UserController {
 		try {
 			return ResponseEntity.ok().body(
 				UserSimpleInfoRes.builder()
-					.userImage("성훈")
+					.userNickname("성훈")
 					.userImage("https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
 					.makeRecipeCount(10)
 					.bookmarkRecipeCount(20)
@@ -144,7 +149,7 @@ public class UserController {
 	}
 
 	@GetMapping("/recipe/{page}")
-	public ResponseEntity<?> getUserRecipe(@PathVariable(value = "page") final String page) {
+	public ResponseEntity<?> getUserRecipe(@PathVariable("page") final String page) {
 		// TODO
 
 		List<UserMakeRecipe> makeRecipeList = new ArrayList<>();
@@ -172,7 +177,7 @@ public class UserController {
 	}
 
 	@GetMapping("/bookmark/{page}")
-	public ResponseEntity<?> userRecipe(@PathVariable(value = "page") final String page) {
+	public ResponseEntity<?> userRecipe(@PathVariable("page") final String page) {
 
 		List<UserBookmarkRecipe> bookmarkRecipeList = new ArrayList<>();
 		for (int i = 0; i < 9; i++) {
@@ -200,7 +205,6 @@ public class UserController {
 	public ResponseEntity<?> userInfo() {
 		// TODO
 		try {
-
 			return ResponseEntity.ok().body(
 				UserInfoRes.builder()
 					.userBirthdate("1998-01-22")
@@ -217,10 +221,10 @@ public class UserController {
 	}
 
 	@PutMapping("")
-	public ResponseEntity<?> updateUser(final UserInfoReq req) {
+	public ResponseEntity<?> updateUser(@RequestBody final UserInfoReq req) {
 		// TODO
 		try {
-			return responseService.OK();
+			return ResponseEntity.ok().body(req);
 		} catch (NicknameExistException e) {
 			return responseService.CONFLICT();
 		} catch (UserNotFoundException e) {
@@ -231,10 +235,10 @@ public class UserController {
 	}
 
 	@PostMapping("/contact")
-	public ResponseEntity<?> contact(final ContactReq req) {
+	public ResponseEntity<?> contact(@RequestBody final ContactReq req) {
 		// TODO
 		try {
-			return responseService.OK();
+			return ResponseEntity.ok(responseService.getSuccessMessageResult("문의 완료"));
 		} catch (UserNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
@@ -242,10 +246,10 @@ public class UserController {
 		}
 	}
 	@PostMapping("/bookmark")
-	public ResponseEntity<?> bookmark(BookmarkReq req) {
+	public ResponseEntity<?> bookmark(@RequestBody BookmarkReq req) {
 		// TODO
 		try {
-			return responseService.OK();
+			return ResponseEntity.ok(responseService.getSuccessMessageResult("유저 즐겨찾기 조회 완료"));
 		} catch (UserNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {

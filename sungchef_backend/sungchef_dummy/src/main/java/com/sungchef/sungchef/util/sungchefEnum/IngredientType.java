@@ -14,9 +14,7 @@ public enum IngredientType{
 	FISH(4),
 	MILK(5),
 	SAUCE(6),
-	ETC(7),
-	NON_CONVERTED(8);
-
+	ETC(7);
 	int code;
 
 	IngredientType(int _code) {

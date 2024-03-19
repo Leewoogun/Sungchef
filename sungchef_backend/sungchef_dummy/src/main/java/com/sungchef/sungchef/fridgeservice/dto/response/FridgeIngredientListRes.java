@@ -2,22 +2,19 @@ package com.sungchef.sungchef.fridgeservice.dto.response;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.sungchef.sungchef.util.commondto.IngredientInfo;
 import com.sungchef.sungchef.util.sungchefEnum.IngredientType;
 
 import lombok.Data;
 
 @Data
 public class FridgeIngredientListRes {
-	List<IngredientInfo> fridgeList;
+	List<IngredientInfo> ingredientInfoList;
 	public FridgeIngredientListRes() {
-		fridgeList = new ArrayList<>();
+		ingredientInfoList = new ArrayList<>();
 		for (int i = 0; i < IngredientType.values().length; i++) {
-			fridgeList.add(IngredientInfo.builder()
-					.ingredientType(IngredientType.values()[i])
-					.ingredientList(new ArrayList<>())
-					.build());
+			ingredientInfoList.add(
+				new IngredientInfo(IngredientType.values()[i])
+			);
 		}
 	}
 }

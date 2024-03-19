@@ -1,4 +1,4 @@
-package com.sungchef.sungchef.util.commondto;
+package com.sungchef.sungchef.ingredientservice.dto.response;
 
 import lombok.Builder;
 import lombok.Data;

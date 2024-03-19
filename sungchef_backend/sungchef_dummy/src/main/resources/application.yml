@@ -4,6 +4,6 @@ server:
 spring:
   application:
     name: dummy
-#logging:
-#  level:
-#    root: debug
+logging:
+  level:
+    root: debug

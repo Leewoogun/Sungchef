@@ -1,8 +1,6 @@
 package com.sungchef.sungchef.ingredientservice.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,13 +8,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sungchef.sungchef.fridgeservice.dto.response.FridgeIngredientListRes;
 import com.sungchef.sungchef.ingredientservice.dto.response.ConvertProduct;
 import com.sungchef.sungchef.ingredientservice.dto.response.ConvertProductInfo;
 import com.sungchef.sungchef.ingredientservice.dto.response.ConvertProductListRes;
-import com.sungchef.sungchef.util.commondto.Ingredient;
-import com.sungchef.sungchef.util.commondto.IngredientInfo;
+import com.sungchef.sungchef.ingredientservice.dto.response.RecipeIngredient;
+import com.sungchef.sungchef.ingredientservice.dto.response.RecipeIngredientInfo;
+import com.sungchef.sungchef.ingredientservice.dto.response.RecipeIngredientListRes;
 import com.sungchef.sungchef.util.exception.ConvertOCRException;
+import com.sungchef.sungchef.util.exception.HaveAllIngredientInRecipeException;
+import com.sungchef.sungchef.util.exception.RecipeNotFoundException;
 import com.sungchef.sungchef.util.responsehelper.ResponseService;
 
 import lombok.RequiredArgsConstructor;
@@ -126,8 +126,7 @@ public class IngredientController {
 							.build()
 					);
 				}
-
-				case NON_CONVERTED -> {
+				case NOT_CONVERTED -> {
 					log.debug("기타 : {}", info.getIngredientType().name());
 					convertProductList.add(
 						ConvertProduct.builder()
@@ -140,7 +139,6 @@ public class IngredientController {
 				default -> {
 					return responseService.INTERNAL_SERVER_ERROR();
 				}
-
 			}
 		}
 
@@ -154,8 +152,106 @@ public class IngredientController {
 	}
 
 	@GetMapping("/{recipeId}")
-	public ResponseEntity<?> getUsedIngredientsInRecipe(@PathVariable(value = "recipeId") final String recipeId) {
-		// TODO
-		return responseService.OK();
+	public ResponseEntity<?> getUsedIngredientsInRecipe(@PathVariable("recipeId") final String recipeId) {
+
+		RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes();
+
+		List<RecipeIngredientInfo> recipeIngredientInfoList = recipeIngredientListRes.getRecipeIngredientInfoList();
+
+		for (RecipeIngredientInfo info : recipeIngredientInfoList) {
+
+			List<RecipeIngredient> recipeIngredientList = info.getRecipeIngredientList();
+
+			switch (info.getRecipeIngredientType()) {
+
+				case FRUIT -> {
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
+							.recipeIngredientId(10)
+							.recipeIngredientName("사과")
+							.recipeIngredientVolume("1쪽")
+							.build()
+					);
+				}
+				case VEGETABLE -> {
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
+							.recipeIngredientId(11)
+							.recipeIngredientName("대파")
+							.recipeIngredientVolume("1망")
+							.build()
+					);
+				}
+				case RICE_GRAIN -> {
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
+							.recipeIngredientId(13)
+							.recipeIngredientName("햅쌀")
+							.recipeIngredientVolume("1큰술")
+							.build()
+					);
+				}
+				case MEAT_EGG -> {
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
+							.recipeIngredientId(14)
+							.recipeIngredientName("달걀")
+							.recipeIngredientVolume("흰자")
+							.build()
+					);
+				}
+				case FISH -> {
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
+							.recipeIngredientId(15)
+							.recipeIngredientName("고등어")
+							.recipeIngredientVolume("1마리")
+							.build()
+					);
+				}
+				case MILK -> {
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
+							.recipeIngredientId(16)
+							.recipeIngredientName("체다치즈")
+							.recipeIngredientVolume("1장")
+							.build()
+					);
+				}
+				case SAUCE -> {
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
+							.recipeIngredientId(17)
+							.recipeIngredientName("고추장")
+							.recipeIngredientVolume("1큰술")
+							.build()
+					);
+				}
+				case ETC -> {
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
+							.recipeIngredientId(18)
+							.recipeIngredientName("제육볶음")
+							.recipeIngredientVolume("1팩")
+							.build()
+					);
+				}
+				default -> {
+					return responseService.INTERNAL_SERVER_ERROR();
+				}
+
+			}
+		}
+
+		try {
+			return ResponseEntity.ok().body(responseService.getSuccessSingleResult(recipeIngredientListRes, "레시피 재료 조회 성공"));
+		} catch (HaveAllIngredientInRecipeException e) {
+			// exception은 아닌거같아서 추후 수정 필요
+			return responseService.NO_CONTENT();
+		} catch (RecipeNotFoundException e) {
+			return responseService.BAD_REQUEST();
+		}  catch (Exception e) {
+			return responseService.INTERNAL_SERVER_ERROR();
+		}
 	}
 }

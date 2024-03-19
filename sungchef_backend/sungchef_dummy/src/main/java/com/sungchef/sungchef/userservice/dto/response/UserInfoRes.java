@@ -1,10 +1,11 @@
 package com.sungchef.sungchef.userservice.dto.response;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.Setter;
 
 @Builder
-@Setter
+@Data
 public class UserInfoRes {
 	String userNickName;
 	char userGender;
