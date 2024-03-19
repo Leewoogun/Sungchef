@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: dummy
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
 logging:
   level:
     root: debug

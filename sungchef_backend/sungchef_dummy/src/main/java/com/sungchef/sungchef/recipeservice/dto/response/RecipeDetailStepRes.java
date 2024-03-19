@@ -8,7 +8,8 @@ import lombok.Data;
 public class RecipeDetailStepRes {
 	int recipeId;
 	List<RecipeDetail> recipeDetailList;
-	public RecipeDetailStepRes(int recipeId) {
+	public RecipeDetailStepRes(int _recipeId) {
+		recipeId = _recipeId;
 		recipeDetailList = new ArrayList<>();
 	}
 

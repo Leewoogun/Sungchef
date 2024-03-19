@@ -121,4 +121,62 @@ public class RecommendController {
 		}
 	}
 
+	@GetMapping("/test")
+	public ResponseEntity<?> recommendFood() {
+
+		RecommendRes recommendRes = new RecommendRes();
+
+		List<RecommendFood> recommendFoodList = recommendRes.getRecommendFoodList();
+
+		for (RecommendFood recommendFood : recommendFoodList) {
+
+			List<Food> foodList = recommendFood.getFoodList();
+
+			switch (recommendFood.getRecommendFoodType()) {
+				case AGE -> {
+					foodList.add(
+							Food.builder()
+									.foodImage("https://static.wtable.co.kr/image-resize/production/service/recipe/291/4x3/a2421dff-e56c-40bd-8b40-06a91fc000a9.jpg")
+									.foodName("김치찌개")
+									.build()
+					);
+				}
+				case GENDER -> {
+					foodList.add(
+							Food.builder()
+									.foodImage("https://static.wtable.co.kr/image-resize/production/service/recipe/291/4x3/a2421dff-e56c-40bd-8b40-06a91fc000a9.jpg")
+									.foodName("부대찌개")
+									.build()
+					);
+				}
+				case WEATHER -> {
+					foodList.add(
+							Food.builder()
+									.foodImage("https://static.wtable.co.kr/image-resize/production/service/recipe/291/4x3/a2421dff-e56c-40bd-8b40-06a91fc000a9.jpg")
+									.foodName("김치전")
+									.build()
+					);
+				}
+
+				case SIMILAR_USER -> {
+					foodList.add(
+							Food.builder()
+									.foodImage("https://static.wtable.co.kr/image-resize/production/service/recipe/291/4x3/a2421dff-e56c-40bd-8b40-06a91fc000a9.jpg")
+									.foodName("오이김치")
+									.build()
+					);
+				}
+
+				default -> {
+					return responseService.INTERNAL_SERVER_ERROR();
+				}
+			}
+		}
+		try {
+			return ResponseEntity.ok(responseService.getSuccessSingleResult(recommendRes, "추천 목록 조회 성공"));
+		} catch (Exception e) {
+			return responseService.INTERNAL_SERVER_ERROR();
+		}
+	}
+
 }

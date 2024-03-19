@@ -4,9 +4,10 @@ import java.util.List;
 
 import com.sungchef.sungchef.fridgeservice.dto.response.IngredientId;
 
+import lombok.Data;
 import lombok.Getter;
 
-@Getter
+@Data
 public class FridgeIngredientListReq {
 	List<IngredientId> ingredientIdList;
 }

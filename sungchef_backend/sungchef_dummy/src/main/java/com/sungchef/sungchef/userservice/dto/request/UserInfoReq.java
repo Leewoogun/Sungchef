@@ -4,12 +4,14 @@ import com.sungchef.sungchef.util.sungchefEnum.UserGenderType;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Builder
 @Data
 public class UserInfoReq {
-	String userNickName;
-	UserGenderType userGender;
-	String userImage;
-	String userBirthdate;
+	// TODO userImage multipartfile로 변경
+	public String userNickName;
+	public UserGenderType userGender;
+	public String userImage;
+	public String userBirthdate;
 }

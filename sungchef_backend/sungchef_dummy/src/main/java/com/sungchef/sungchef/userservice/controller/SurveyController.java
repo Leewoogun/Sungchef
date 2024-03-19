@@ -1,7 +1,6 @@
 package com.sungchef.sungchef.userservice.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,10 +64,10 @@ public class SurveyController {
 	public ResponseEntity<?> submitSurvey(@RequestBody final SubmitSurveyReq req) {
 		// TODO
 		try {
-
-			// TODO 수정 필요
-			// 원래 반환 형식은 code, message
-			return ResponseEntity.ok(responseService.getSuccessSingleResult(req, "설문 제출 성공"));
+			log.debug("/submit -> foodIdList : {}", Arrays.toString(req.getFoodIdList().toArray()));
+			return ResponseEntity.ok(
+					responseService.getSuccessMessageResult("설문 제출 성공")
+			);
 		} catch (SurveyCountException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
@@ -78,16 +77,15 @@ public class SurveyController {
 
 	/**
 	 * DB에서 유저 데이터 삭제하는 작업 필요
-	 * @return
 	 */
 	@PutMapping("/submit")
 	public ResponseEntity<?> updateSurvey(@RequestBody final SubmitSurveyReq req) {
 		// TODO
 		try {
-
-			// TODO 수정 필요
-			// 원래 반환 형식은 code, message
-			return ResponseEntity.ok(responseService.getSuccessSingleResult(req, "설문 제출 성공"));
+			log.debug("/submit -> foodIdList : {}", Arrays.toString(req.getFoodIdList().toArray()));
+			return ResponseEntity.ok(
+					responseService.getSuccessMessageResult("설문 제출 성공")
+			);
 		} catch (SurveyCountException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {

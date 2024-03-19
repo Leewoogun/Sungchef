@@ -45,7 +45,13 @@ public class SearchController {
 			.build();
 
 		try {
-			return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "재료 이름 조회 성공"));
+			log.debug("/search/ingredient/{ingredientName} : {}", ingredientName);
+			return ResponseEntity.ok(
+					responseService.getSuccessSingleResult(
+							res
+							, "재료 이름 조회 성공"
+					)
+			);
 		} catch (IngredientNotFoundException e) {
 			return responseService.NO_CONTENT();
 		} catch (Exception e) {
@@ -70,7 +76,12 @@ public class SearchController {
 			.foodList(searchFoodList)
 			.build();
 		try {
-			return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "음식 이름 조회 성공"));
+			log.debug("/search/food/{foodName} : {}", foodName);
+			return ResponseEntity.ok(
+					responseService.getSuccessSingleResult(
+							res
+							, "음식 이름 조회 성공")
+			);
 		} catch (FoodNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {

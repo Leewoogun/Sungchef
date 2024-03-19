@@ -1,5 +1,6 @@
 package com.sungchef.sungchef.userservice.dto.response;
 
+import com.sungchef.sungchef.util.sungchefEnum.UserGenderType;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
@@ -8,7 +9,7 @@ import lombok.Setter;
 @Data
 public class UserInfoRes {
 	String userNickName;
-	char userGender;
+	UserGenderType userGender;
 	String userImage;
 	String userBirthdate;
 }
