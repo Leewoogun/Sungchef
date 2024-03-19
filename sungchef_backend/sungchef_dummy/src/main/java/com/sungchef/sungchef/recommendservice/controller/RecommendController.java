@@ -121,7 +121,7 @@ public class RecommendController {
 		}
 	}
 
-	@GetMapping("/test")
+	@GetMapping("/emptyfridge")
 	public ResponseEntity<?> recommendFood() {
 
 		RecommendRes recommendRes = new RecommendRes();
