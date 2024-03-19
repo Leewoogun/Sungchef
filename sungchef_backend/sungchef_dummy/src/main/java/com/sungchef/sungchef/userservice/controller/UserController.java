@@ -134,12 +134,15 @@ public class UserController {
 		//TODO
 		try {
 			return ResponseEntity.ok().body(
-				UserSimpleInfoRes.builder()
-					.userNickname("성훈")
-					.userImage("https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
-					.makeRecipeCount(10)
-					.bookmarkRecipeCount(20)
-					.build()
+				responseService.getSuccessSingleResult(
+					UserSimpleInfoRes.builder()
+						.userNickname("성훈")
+						.userImage("https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
+						.makeRecipeCount(10)
+						.bookmarkRecipeCount(20)
+						.build()
+					, "유저 요약 정보 호출 성공"
+				)
 			);
 		} catch (UserNotFoundException e) {
 			return responseService.BAD_REQUEST();
@@ -162,10 +165,14 @@ public class UserController {
 		}
 		try {
 			return ResponseEntity.ok().body(
-				UserMakeRecipeRes.builder()
-					.makeRecipeCount(9)
-					.makeRecipeList(makeRecipeList)
-					.build()
+				responseService.getSuccessSingleResult(
+					UserMakeRecipeRes.builder()
+						.makeRecipeCount(9)
+						.makeRecipeList(makeRecipeList)
+						.build()
+					, "유저가 만든 음식 정보 호출 성공"
+				)
+
 			);
 		}catch (UserRecipeNotExistException e) {
 			return responseService.NO_CONTENT();
@@ -188,10 +195,14 @@ public class UserController {
 		}
 		try {
 			return ResponseEntity.ok().body(
-				UserBookmarkRecipeRes.builder()
-					.bookmarkRecipeCount(9)
-					.bookmarkRecipeList(bookmarkRecipeList)
-					.build()
+				responseService.getSuccessSingleResult(
+					UserBookmarkRecipeRes.builder()
+						.bookmarkRecipeCount(9)
+						.bookmarkRecipeList(bookmarkRecipeList)
+						.build()
+					, "유저가 즐겨찾기한 음식 정보 호출 성공"
+				)
+
 			);
 		}catch (UserRecipeNotExistException e) {
 			return responseService.NO_CONTENT();
@@ -249,7 +260,7 @@ public class UserController {
 	public ResponseEntity<?> bookmark(@RequestBody BookmarkReq req) {
 		// TODO
 		try {
-			return ResponseEntity.ok(responseService.getSuccessMessageResult("유저 즐겨찾기 조회 완료"));
+			return ResponseEntity.ok(responseService.getSuccessMessageResult("북마크 성공"));
 		} catch (UserNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
