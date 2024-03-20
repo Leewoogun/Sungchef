@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.sungchef.sungchef.util.sungchefEnum.CommonResponseCode;
 import com.sungchef.sungchef.util.result.CommonResult;
 import com.sungchef.sungchef.util.result.ListResult;
 import com.sungchef.sungchef.util.result.SingleResult;
+import com.sungchef.sungchef.util.sungchefEnum.CommonResponseCode;
 
 @Service
 public class ResponseService {
@@ -21,6 +21,7 @@ public class ResponseService {
 		result.setMessage(message);
 		return result;
 	}
+
 	// 단일건 결과를 처리하는 메소드
 	public <T> SingleResult<T> getSuccessSingleResult(T data, String msg) {
 		SingleResult<T> result = new SingleResult<>();
@@ -45,6 +46,7 @@ public class ResponseService {
 		setSuccessResult(result);
 		return result;
 	}
+
 	// 다중건 결과를 처리하는 메소드 + msg 세팅
 	public <T> ListResult<T> getSuccessListResult(List<T> list, String msg) {
 		ListResult<T> result = new ListResult<>();
@@ -60,6 +62,7 @@ public class ResponseService {
 		setSuccessResult(result);
 		return result;
 	}
+
 	// 성공 결과만 처리하는 메소드
 	public CommonResult getSuccessResult(String msg) {
 		CommonResult result = new CommonResult();
@@ -70,7 +73,7 @@ public class ResponseService {
 
 	/**
 	 * 결과 모델에 api 요청 성공 데이터를 세팅해주는 메소드
- 	 */
+	 */
 	private void setSuccessResult(CommonResult result) {
 		result.setCode(CommonResponseCode.SUCCESS.getCode());
 		result.setMessage(result.getMessage());

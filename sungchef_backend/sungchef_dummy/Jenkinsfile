@@ -22,9 +22,9 @@ pipeline{
                 dir('sungchef_backend'){
                     dir('sungchef_dummy'){
                         script{
-                            sh 'docker build -t backend-jenkins .'
-                            sh 'docker rm -f backend-jenkins'
-                            sh 'docker run -d --name backend-jenkins -p 8081:8081 backend-jenkins'
+                            sh 'docker build -t dummy_backend .'
+                            sh 'docker rm -f dummy_backend'
+                            sh 'docker run -d --name backend-jenkins -p 8081:8081 dummy_backend'
                         }
                     }
                 }

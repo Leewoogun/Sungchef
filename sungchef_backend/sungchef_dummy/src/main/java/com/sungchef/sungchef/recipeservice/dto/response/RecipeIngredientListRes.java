@@ -12,6 +12,7 @@ public class RecipeIngredientListRes {
 
 	int recipeId;
 	List<RecipeIngredientInfo> recipeIngredientInfoList;
+
 	public RecipeIngredientListRes() {
 		recipeIngredientInfoList = new ArrayList<>();
 		for (int i = 0; i < IngredientType.values().length; i++) {

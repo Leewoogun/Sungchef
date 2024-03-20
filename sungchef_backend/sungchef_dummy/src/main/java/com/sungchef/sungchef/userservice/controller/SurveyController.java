@@ -1,6 +1,8 @@
 package com.sungchef.sungchef.userservice.controller;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,15 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sungchef.sungchef.userservice.dto.request.FoodId;
 import com.sungchef.sungchef.userservice.dto.request.SubmitSurveyReq;
 import com.sungchef.sungchef.userservice.dto.response.FoodInfo;
 import com.sungchef.sungchef.userservice.dto.response.SurveyRes;
-import com.sungchef.sungchef.userservice.dto.response.UserBookmarkRecipeRes;
-import com.sungchef.sungchef.userservice.dto.response.UserMakeRecipe;
 import com.sungchef.sungchef.util.exception.SurveyCountException;
-import com.sungchef.sungchef.util.exception.UserNotFoundException;
-import com.sungchef.sungchef.util.exception.UserRecipeNotExistException;
 import com.sungchef.sungchef.util.responsehelper.ResponseService;
 
 import lombok.RequiredArgsConstructor;
@@ -38,10 +35,11 @@ public class SurveyController {
 		List<FoodInfo> surveyList = new ArrayList<>();
 		for (int i = 0; i < 9; i++) {
 			surveyList.add(FoodInfo.builder()
-					.foodImage("https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
-					.foodId(i)
-					.foodName("고양이" + i)
-					.build());
+				.foodImage(
+					"https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
+				.foodId(i)
+				.foodName("고양이" + i)
+				.build());
 		}
 
 		try {
@@ -58,7 +56,6 @@ public class SurveyController {
 		}
 	}
 
-
 	// 설문 제출쪽 수정 오류 필요
 	@PostMapping("/submit")
 	public ResponseEntity<?> submitSurvey(@RequestBody final SubmitSurveyReq req) {
@@ -66,7 +63,7 @@ public class SurveyController {
 		try {
 			log.debug("/submit -> foodIdList : {}", Arrays.toString(req.getFoodIdList().toArray()));
 			return ResponseEntity.ok(
-					responseService.getSuccessMessageResult("설문 제출 성공")
+				responseService.getSuccessMessageResult("설문 제출 성공")
 			);
 		} catch (SurveyCountException e) {
 			return responseService.BAD_REQUEST();
@@ -84,7 +81,7 @@ public class SurveyController {
 		try {
 			log.debug("/submit -> foodIdList : {}", Arrays.toString(req.getFoodIdList().toArray()));
 			return ResponseEntity.ok(
-					responseService.getSuccessMessageResult("설문 제출 성공")
+				responseService.getSuccessMessageResult("설문 제출 성공")
 			);
 		} catch (SurveyCountException e) {
 			return responseService.BAD_REQUEST();

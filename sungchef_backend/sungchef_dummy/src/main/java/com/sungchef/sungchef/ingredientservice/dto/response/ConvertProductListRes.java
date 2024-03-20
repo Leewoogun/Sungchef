@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sungchef.sungchef.util.sungchefEnum.ConvertIngredientType;
+
 import lombok.Data;
 
 @Data
 public class ConvertProductListRes {
 	List<ConvertProductInfo> convertProductList;
+
 	public ConvertProductListRes() {
 		convertProductList = new ArrayList<>();
 		for (int i = 0; i < ConvertIngredientType.values().length; i++) {
@@ -17,7 +19,7 @@ public class ConvertProductListRes {
 					.ingredientType(ConvertIngredientType.values()[i])
 					.convertProductList(new ArrayList<>())
 					.build()
-				);
+			);
 		}
 	}
 }

@@ -2,9 +2,12 @@ package com.sungchef.sungchef.ingredientservice.controller;
 
 import java.util.List;
 
-import com.sungchef.sungchef.ingredientservice.dto.request.ConvertImageReq;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.sungchef.sungchef.ingredientservice.dto.response.ConvertProduct;
 import com.sungchef.sungchef.ingredientservice.dto.response.ConvertProductInfo;
@@ -34,7 +37,7 @@ public class IngredientController {
 	 * 2. OCR로 나온 재료 -> DB에 있는 재료로 변환
 	 */
 	@PostMapping("/convert")
-//	public ResponseEntity<?> convertImageToIngredients(@RequestBody ConvertImageReq req) {
+	//	public ResponseEntity<?> convertImageToIngredients(@RequestBody ConvertImageReq req) {
 	public ResponseEntity<?> convertImageToIngredients() {
 		// TODO
 		ConvertProductListRes convertProductListRes = new ConvertProductListRes();
@@ -144,8 +147,8 @@ public class IngredientController {
 
 		try {
 			return ResponseEntity.ok(
-					responseService.getSuccessSingleResult(convertProductListRes, "OCR 변환 완료"
-					)
+				responseService.getSuccessSingleResult(convertProductListRes, "OCR 변환 완료"
+				)
 			);
 		} catch (ConvertOCRException e) {
 			return responseService.BAD_REQUEST();
@@ -248,13 +251,14 @@ public class IngredientController {
 
 		try {
 			log.debug("/ingredient/{recipeId} : {}", recipeId);
-			return ResponseEntity.ok().body(responseService.getSuccessSingleResult(recipeIngredientListRes, "레시피 재료 조회 성공"));
+			return ResponseEntity.ok()
+				.body(responseService.getSuccessSingleResult(recipeIngredientListRes, "레시피 재료 조회 성공"));
 		} catch (HaveAllIngredientInRecipeException e) {
 			// exception은 아닌거같아서 추후 수정 필요
 			return responseService.NO_CONTENT();
 		} catch (RecipeNotFoundException e) {
 			return responseService.BAD_REQUEST();
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}

@@ -15,7 +15,6 @@ import com.sungchef.sungchef.searchservice.dto.response.SearchIngredient;
 import com.sungchef.sungchef.searchservice.dto.response.SearchIngredientListRes;
 import com.sungchef.sungchef.util.exception.FoodNotFoundException;
 import com.sungchef.sungchef.util.exception.IngredientNotFoundException;
-import com.sungchef.sungchef.util.exception.RecipeNotFoundException;
 import com.sungchef.sungchef.util.responsehelper.ResponseService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/search")
 public class SearchController {
 	private final ResponseService responseService;
+
 	@GetMapping("/ingredient/{ingredientName}")
 	public ResponseEntity<?> searchIngredient(@PathVariable("ingredientName") final String ingredientName) {
 
@@ -47,10 +47,10 @@ public class SearchController {
 		try {
 			log.debug("/search/ingredient/{ingredientName} : {}", ingredientName);
 			return ResponseEntity.ok(
-					responseService.getSuccessSingleResult(
-							res
-							, "재료 이름 조회 성공"
-					)
+				responseService.getSuccessSingleResult(
+					res
+					, "재료 이름 조회 성공"
+				)
 			);
 		} catch (IngredientNotFoundException e) {
 			return responseService.NO_CONTENT();
@@ -78,9 +78,9 @@ public class SearchController {
 		try {
 			log.debug("/search/food/{foodName} : {}", foodName);
 			return ResponseEntity.ok(
-					responseService.getSuccessSingleResult(
-							res
-							, "음식 이름 조회 성공")
+				responseService.getSuccessSingleResult(
+					res
+					, "음식 이름 조회 성공")
 			);
 		} catch (FoodNotFoundException e) {
 			return responseService.BAD_REQUEST();

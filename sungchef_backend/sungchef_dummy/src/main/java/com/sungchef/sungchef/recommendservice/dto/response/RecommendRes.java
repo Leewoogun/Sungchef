@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.sungchef.sungchef.util.sungchefEnum.RecommendFoodType;
 import com.sungchef.sungchef.util.sungchefEnum.RecommendRecipeType;
+
 import lombok.Data;
 
 @Data
@@ -12,6 +13,7 @@ public class RecommendRes {
 
 	List<RecommendFood> recommendFoodList;
 	List<RecommendRecipe> recommendRecipeList;
+
 	public RecommendRes() {
 
 		recommendFoodList = new ArrayList<>();

@@ -3,11 +3,14 @@ package com.sungchef.sungchef.userservice.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sungchef.sungchef.util.sungchefEnum.UserGenderType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.sungchef.sungchef.userservice.dto.request.BookmarkReq;
 import com.sungchef.sungchef.userservice.dto.request.ContactReq;
@@ -23,10 +26,11 @@ import com.sungchef.sungchef.userservice.dto.response.UserMakeRecipeRes;
 import com.sungchef.sungchef.userservice.dto.response.UserSimpleInfoRes;
 import com.sungchef.sungchef.userservice.dto.response.UserTokenRes;
 import com.sungchef.sungchef.util.exception.NicknameExistException;
-import com.sungchef.sungchef.util.exception.UserRecipeNotExistException;
 import com.sungchef.sungchef.util.exception.UserNeedSurveyException;
 import com.sungchef.sungchef.util.exception.UserNotFoundException;
+import com.sungchef.sungchef.util.exception.UserRecipeNotExistException;
 import com.sungchef.sungchef.util.responsehelper.ResponseService;
+import com.sungchef.sungchef.util.sungchefEnum.UserGenderType;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -123,7 +127,7 @@ public class UserController {
 		try {
 			log.debug("/exist/{nickname} : {}", nickname);
 			return ResponseEntity.ok(
-					responseService.getSuccessMessageResult("사용 가능한 닉네임")
+				responseService.getSuccessMessageResult("사용 가능한 닉네임")
 			);
 		} catch (UserNotFoundException e) {
 			return responseService.BAD_REQUEST();
@@ -147,7 +151,8 @@ public class UserController {
 				responseService.getSuccessSingleResult(
 					UserSimpleInfoRes.builder()
 						.userNickname("성훈")
-						.userImage("https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
+						.userImage(
+							"https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
 						.makeRecipeCount(10)
 						.bookmarkRecipeCount(20)
 						.build()
@@ -168,7 +173,8 @@ public class UserController {
 		for (int i = 0; i < 9; i++) {
 			makeRecipeList.add(UserMakeRecipe.builder()
 				.makeRecipeCreateDate("2024-03-1" + i)
-				.makeRecipeImage("https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
+				.makeRecipeImage(
+					"https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
 				.makeRecipeReview("고양이가 귀여워요")
 				.build());
 		}
@@ -185,7 +191,7 @@ public class UserController {
 				)
 
 			);
-		}catch (UserRecipeNotExistException e) {
+		} catch (UserRecipeNotExistException e) {
 			return responseService.NO_CONTENT();
 		} catch (UserNotFoundException e) {
 			return responseService.BAD_REQUEST();
@@ -201,8 +207,9 @@ public class UserController {
 		List<UserBookmarkRecipe> bookmarkRecipeList = new ArrayList<>();
 		for (int i = 0; i < 9; i++) {
 			bookmarkRecipeList.add(UserBookmarkRecipe.builder()
-					.recipeId(i)
-					.recipeImage("https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
+				.recipeId(i)
+				.recipeImage(
+					"https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
 				.build());
 		}
 		try {
@@ -218,7 +225,7 @@ public class UserController {
 				)
 
 			);
-		}catch (UserRecipeNotExistException e) {
+		} catch (UserRecipeNotExistException e) {
 			return responseService.NO_CONTENT();
 		} catch (UserNotFoundException e) {
 			return responseService.BAD_REQUEST();
@@ -226,20 +233,22 @@ public class UserController {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
+
 	@GetMapping("")
 	public ResponseEntity<?> userInfo() {
 		// TODO
 		try {
 			return ResponseEntity.ok().body(
-					responseService.getSuccessSingleResult(
-							UserInfoRes.builder()
-									.userBirthdate("1998-01-22")
-									.userNickName("성식당")
-									.userGender(UserGenderType.F)
-									.userImage("https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
-									.build()
-							, "유저 정보 호출 성공"
-					)
+				responseService.getSuccessSingleResult(
+					UserInfoRes.builder()
+						.userBirthdate("1998-01-22")
+						.userNickName("성식당")
+						.userGender(UserGenderType.F)
+						.userImage(
+							"https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
+						.build()
+					, "유저 정보 호출 성공"
+				)
 			);
 		} catch (UserNotFoundException e) {
 			return responseService.BAD_REQUEST();
@@ -255,7 +264,7 @@ public class UserController {
 		try {
 			log.debug("{}", req);
 			return ResponseEntity.ok().body(
-					responseService.getSuccessMessageResult("유저 정보 변경 성공")
+				responseService.getSuccessMessageResult("유저 정보 변경 성공")
 			);
 		} catch (NicknameExistException e) {
 			return responseService.CONFLICT();
@@ -272,7 +281,7 @@ public class UserController {
 		try {
 			log.debug("/contact : {}", req);
 			return ResponseEntity.ok(
-					responseService.getSuccessMessageResult("문의 완료")
+				responseService.getSuccessMessageResult("문의 완료")
 			);
 		} catch (UserNotFoundException e) {
 			return responseService.BAD_REQUEST();
@@ -280,13 +289,14 @@ public class UserController {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
+
 	@PostMapping("/bookmark")
 	public ResponseEntity<?> bookmark(@RequestBody BookmarkReq req) {
 		// TODO
 		try {
 			log.debug("/bookmark : {}", req);
 			return ResponseEntity.ok(
-					responseService.getSuccessMessageResult("북마크 성공")
+				responseService.getSuccessMessageResult("북마크 성공")
 			);
 		} catch (UserNotFoundException e) {
 			return responseService.BAD_REQUEST();

@@ -8,7 +8,9 @@ public enum RecommendFoodType {
 
 	int code;
 	String recommendDetail;
+
 	RecommendFoodType(int _code, String _recommendDetail) {
-		code = _code; recommendDetail = _recommendDetail;
+		code = _code;
+		recommendDetail = _recommendDetail;
 	}
 }

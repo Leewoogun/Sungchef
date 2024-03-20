@@ -30,6 +30,7 @@ public class TestController {
 	public ResponseEntity<?> test400() {
 		return responseService.BAD_REQUEST();
 	}
+
 	@GetMapping("/401")
 	public ResponseEntity<?> test401() {
 		return responseService.UNAUTHORIZED();
@@ -44,10 +45,12 @@ public class TestController {
 	public ResponseEntity<?> test404() {
 		return responseService.NOT_FOUND();
 	}
+
 	@GetMapping("/409")
 	public ResponseEntity<?> test409() {
 		return responseService.CONFLICT();
 	}
+
 	@GetMapping("/500")
 	public ResponseEntity<?> test500() {
 		return responseService.INTERNAL_SERVER_ERROR();

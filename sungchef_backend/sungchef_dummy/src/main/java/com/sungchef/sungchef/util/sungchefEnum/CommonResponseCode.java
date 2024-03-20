@@ -10,6 +10,7 @@ public enum CommonResponseCode {
 	UNAUTHORIZED(401);
 
 	private final int code;
+
 	CommonResponseCode(int _code) {
 		code = _code;
 	}

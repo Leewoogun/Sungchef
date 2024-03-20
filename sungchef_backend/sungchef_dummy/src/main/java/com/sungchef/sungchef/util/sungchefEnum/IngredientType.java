@@ -2,10 +2,8 @@ package com.sungchef.sungchef.util.sungchefEnum;
 
 import lombok.Getter;
 
-import java.io.Serializable;
-
 @Getter
-public enum IngredientType{
+public enum IngredientType {
 
 	FRUIT(0),
 	VEGETABLE(1),
