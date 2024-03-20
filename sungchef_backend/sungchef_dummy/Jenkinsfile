@@ -24,7 +24,7 @@ pipeline{
                         script{
                             sh 'docker build -t dummy_backend .'
                             sh 'docker rm -f dummy_backend'
-                            sh 'docker run -d --name backend-jenkins -p 8081:8081 dummy_backend'
+                            sh 'docker run -d --name dummy_backend -p 8081:8081 dummy_backend'
                         }
                     }
                 }
