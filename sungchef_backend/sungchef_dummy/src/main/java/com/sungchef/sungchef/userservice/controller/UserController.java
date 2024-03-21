@@ -155,8 +155,8 @@ public class UserController {
 						.userNickname("성훈")
 						.userImage(
 							"https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
-						.makeRecipeCount(10)
-						.bookmarkRecipeCount(20)
+						.makeRecipeCount(18)
+						.bookmarkRecipeCount(4)
 						.build()
 					, "유저 요약 정보 호출 성공"
 				)
