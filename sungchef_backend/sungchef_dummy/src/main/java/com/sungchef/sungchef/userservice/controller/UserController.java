@@ -122,16 +122,18 @@ public class UserController {
 	}
 
 	@GetMapping("/exist/{nickname}")
-	public ResponseEntity<?> nicknameExist(@PathVariable(value = "nickname") final String nickname) {
+	public ResponseEntity<?> nicknameExist(@PathVariable("nickname") final String nickname) {
 		// TODO
 		try {
 			log.debug("/exist/{nickname} : {}", nickname);
+			if (nickname.contains("우건"))
+				throw new NicknameExistException("닉네임 존재");
 			return ResponseEntity.ok(
 				responseService.getSuccessMessageResult("사용 가능한 닉네임")
 			);
 		} catch (UserNotFoundException e) {
 			return responseService.BAD_REQUEST();
-		} catch (UserNeedSurveyException e) {
+		} catch (NicknameExistException e) {
 			return responseService.CONFLICT();
 		} catch (Exception e) {
 			return responseService.INTERNAL_SERVER_ERROR();
