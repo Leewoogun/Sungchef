@@ -6,6 +6,7 @@ pipeline {
                 expression {
                     script {
                         def serviceName = env.GIT_BRANCH.split('/')[-1]
+                        serviceName == 'apigateway-service' ||
                         serviceName == 'discovery-service' ||
                         serviceName == 'fridge-service' ||
                         serviceName == 'ingredient-service' ||
