@@ -1,8 +1,9 @@
-def branchParts = env.GIT_BRANCH.split('/')
-def serviceName = branchParts[-1]
-
 pipeline {
     agent any
+    environment {
+        branchParts = env.GIT_BRANCH.split('/')
+        serviceName = branchParts[-1]
+    }
     stages {
         stage('Build') {
             when {
