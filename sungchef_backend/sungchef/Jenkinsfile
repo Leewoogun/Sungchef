@@ -28,7 +28,6 @@ pipeline {
             when {
                 expression {
                     def serviceName = env.GIT_BRANCH.split('/')[-1]
-//                     serviceName == 'discovery-service' ||
                     serviceName == 'fridge-service' ||
                     serviceName == 'ingredient-service' ||
                     serviceName == 'recipe-service' ||
