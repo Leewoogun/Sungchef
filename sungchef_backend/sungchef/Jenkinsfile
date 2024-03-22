@@ -1,0 +1,117 @@
+def branchParts = env.GIT_BRANCH.split('/')
+def serviceName = branchParts[-1]
+
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            when {
+                expression {
+                    serviceName == 'discovery-service'
+                }
+                expression {
+                    serviceName == 'fridge-service'
+                }
+                expression {
+                    serviceName == 'ingredient-service'
+                }
+                expression {
+                    serviceName == 'recipe-service'
+                }
+                expression {
+                    serviceName == 'recommend-service'
+                }
+                expression {
+                    serviceName == 'search-service'
+                }
+                expression {
+                    serviceName == 'user-service'
+                }
+            }
+            steps {
+                script {
+                    buildService(serviceName)
+                }
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                expression {
+                    serviceName == 'discovery-service'
+                }
+                expression {
+                    serviceName == 'fridge-service'
+                }
+                expression {
+                    serviceName == 'ingredient-service'
+                }
+                expression {
+                    serviceName == 'recipe-service'
+                }
+                expression {
+                    serviceName == 'recommend-service'
+                }
+                expression {
+                    serviceName == 'search-service'
+                }
+                expression {
+                    serviceName == 'user-service'
+                }
+            }
+            steps {
+                script {
+                    deployService(serviceName)
+                }
+            }
+        }
+        post{
+            success {
+                script {
+                    def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
+                    def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                    mattermostSend ( color: 'good',
+                    message: "빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>) ",
+                    )
+                }
+            }
+            failure {
+                script {
+                    def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
+                    def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                    mattermostSend ( color: 'danger',
+                    message: "빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)",
+                    )
+                }
+            }
+        }
+    }
+
+def buildService(serviceName) {
+    dir('sungchef_backend'){
+        dir('sungchef'){
+            dir(serviceName) {
+                script{
+                    sh 'chmod +x gradlew'
+                    sh './gradlew clean build'
+                    sh 'chmod +x ./docker_install.sh'
+                    sh './docker_install.sh'
+                }
+            }
+        }
+    }
+}
+
+def deployService(serviceName) {
+    dir('sungchef_backend'){
+        dir('sungchef'){
+            dir(serviceName) {
+                script{
+                    sh "docker build -t ${serviceName} ."
+                    sh "docker rm -f ${serviceName}"
+                    sh "docker run --network sungchef-network -d --name ${serviceName} ${serviceName}"
+                }
+            }
+        }
+    }
+}
