@@ -64,6 +64,27 @@ pipeline {
                 }
             }
         }
+        stage('Deploy-gateway') {
+            when {
+                expression {
+                    def serviceName = env.GIT_BRANCH.split('/')[-1]
+                    serviceName == 'apigateway-service'
+                }
+            }
+            steps {
+                dir('sungchef_backend'){
+                    dir('sungchef'){
+                        dir('apigateway-service') {
+                            script{
+                                sh 'docker build -t apigateway-service .'
+                                sh 'docker rm -f apigateway-service'
+                                sh 'docker run --network sungchef-network -d --name apigateway-service -p 8000:8000 apigateway-service'
+                            }
+                        }
+                    }
+                }
+            }
+        }		
     }
     post {
         success {
