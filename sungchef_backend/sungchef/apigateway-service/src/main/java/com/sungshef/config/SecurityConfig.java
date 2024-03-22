@@ -35,8 +35,9 @@ public class SecurityConfig {
 				// .requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
 				// .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
 				//                        .requestMatchers("/**").access(this::hasIpAddress)
-				.requestMatchers("/**").permitAll()
-				.anyRequest().authenticated()
+				// .requestMatchers("/**").permitAll()
+				// .anyRequest().authenticated()
+				.anyRequest().permitAll()
 			)
 			.authenticationManager(authenticationManager)
 			.sessionManagement((session) -> session
