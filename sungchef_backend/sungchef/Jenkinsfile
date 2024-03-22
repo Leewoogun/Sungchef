@@ -28,7 +28,7 @@ pipeline {
             when {
                 expression {
                     def serviceName = env.GIT_BRANCH.split('/')[-1]
-                    serviceName == 'discovery-service' ||
+//                     serviceName == 'discovery-service' ||
                     serviceName == 'fridge-service' ||
                     serviceName == 'ingredient-service' ||
                     serviceName == 'recipe-service' ||
@@ -43,24 +43,46 @@ pipeline {
                     deployService(serviceName)
                 }
             }
+
+            when {
+                expression {
+                    def serviceName = env.GIT_BRANCH.split('/')[-1]
+                    serviceName == 'discovery-service'
+                }
+            }
+            steps {
+                dir('sungchef_backend'){
+                    dir('sungchef'){
+                        dir('discovery-service') {
+                            script{
+                                sh 'docker build -t discovery-service .'
+                                sh 'docker rm -f discovery-service'
+                                sh 'docker run --network sungchef-network -d --name discovery-service -p 8762:8762 discovery-service'
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     post {
         success {
             script {
+                def serviceName = env.GIT_BRANCH.split('/')[-1]
                 def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
                 def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
                 mattermostSend ( color: 'good',
-                message: "빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>) ",
+                message: "빌드 성공: ${serviceName} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>) ",
                 )
             }
         }
         failure {
             script {
+                def serviceName = env.GIT_BRANCH.split('/')[-1]
                 def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
                 def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
                 mattermostSend ( color: 'danger',
-                message: "빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)",
+                message: "빌드 실패: ${serviceName} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)",
                 )
             }
         }
