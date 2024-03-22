@@ -86,6 +86,7 @@ pipeline {
             }
         }
     }
+}
 
 def buildService(serviceName) {
     dir('sungchef_backend'){
