@@ -24,7 +24,7 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy-service') {
             when {
                 expression {
                     def serviceName = env.GIT_BRANCH.split('/')[-1]
@@ -42,7 +42,8 @@ pipeline {
                     deployService(serviceName)
                 }
             }
-
+        }
+        stage('Deploy-discovery') {
             when {
                 expression {
                     def serviceName = env.GIT_BRANCH.split('/')[-1]
