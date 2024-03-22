@@ -1,36 +1,24 @@
 pipeline {
     agent any
-    environment {
-        serviceName = env.GIT_BRANCH.split('/')[-1]
-//         serviceName = branchParts[-1]
-    }
     stages {
         stage('Build') {
             when {
                 expression {
-                    serviceName == 'discovery-service'
-                }
-                expression {
-                    serviceName == 'fridge-service'
-                }
-                expression {
-                    serviceName == 'ingredient-service'
-                }
-                expression {
-                    serviceName == 'recipe-service'
-                }
-                expression {
-                    serviceName == 'recommend-service'
-                }
-                expression {
-                    serviceName == 'search-service'
-                }
-                expression {
-                    serviceName == 'user-service'
+                    script {
+                        def serviceName = env.GIT_BRANCH.split('/')[-1]
+                        serviceName == 'discovery-service' ||
+                        serviceName == 'fridge-service' ||
+                        serviceName == 'ingredient-service' ||
+                        serviceName == 'recipe-service' ||
+                        serviceName == 'recommend-service' ||
+                        serviceName == 'search-service' ||
+                        serviceName == 'user-service'
+                    }
                 }
             }
             steps {
                 script {
+                    def serviceName = env.GIT_BRANCH.split('/')[-1]
                     buildService(serviceName)
                 }
             }
@@ -39,36 +27,25 @@ pipeline {
         stage('Deploy') {
             when {
                 expression {
-                    serviceName == 'discovery-service'
-                }
-                expression {
-                    serviceName == 'fridge-service'
-                }
-                expression {
-                    serviceName == 'ingredient-service'
-                }
-                expression {
-                    serviceName == 'recipe-service'
-                }
-                expression {
-                    serviceName == 'recommend-service'
-                }
-                expression {
-                    serviceName == 'search-service'
-                }
-                expression {
+                    def serviceName = env.GIT_BRANCH.split('/')[-1]
+                    serviceName == 'discovery-service' ||
+                    serviceName == 'fridge-service' ||
+                    serviceName == 'ingredient-service' ||
+                    serviceName == 'recipe-service' ||
+                    serviceName == 'recommend-service' ||
+                    serviceName == 'search-service' ||
                     serviceName == 'user-service'
                 }
-
             }
             steps {
                 script {
+                    def serviceName = env.GIT_BRANCH.split('/')[-1]
                     deployService(serviceName)
                 }
             }
         }
     }
-    post{
+    post {
         success {
             script {
                 def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
