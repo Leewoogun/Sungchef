@@ -22,7 +22,7 @@ spring:
         corsConfigurations:
           '[/**]':
             allowedOrigins:
-              - 'https://xxxxxxxxxx'
+#              - 'https://xxxxxxxxxx'
             allow-credentials: true
             allowedHeaders: '*'
             exposedHeaders: '*'
@@ -41,21 +41,21 @@ spring:
             postLogger: false
 
       routes:
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user/**
+#          filters:
+#            - CustomFilter
+
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user/**
-          filters:
-            - CustomFilter
-
-#        - id: user-service
-#          uri: lb://USER-SERVICE
-#          predicates:
-#            - Path=/user/signup
 #            - Method=POST
-#          filters:
-#            - RemoveRequestHeader=Cookie
-#            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 #        - id: user-service
 #          uri: lb://USER-SERVICE
 #          predicates:
