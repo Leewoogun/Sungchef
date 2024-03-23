@@ -1,10 +1,6 @@
 pipeline {
     agent any
-	
-    environment {
-		discovery-port = $discovery-port
-		discovery = $discovery
-	}
+
     stages {
         stage('Build') {
             when {
@@ -63,7 +59,7 @@ pipeline {
                             script{
                                 sh 'docker build -t discovery-service .'
                                 sh 'docker rm -f discovery-service'
-                                sh 'docker run --network sungchef-network -d --name discovery-service -e discovery=$discovery -e discovery-port=$discovery-port -p 8762:8762 discovery-service'
+                                sh 'docker run --network sungchef-network -d --name discovery-service -e DISCOVERY=$DISCOVERY -e DISCOVERY_PORT=$DISCOVERY_PORT -p 8762:8762 discovery-service'
                             }
                         }
                     }
@@ -84,7 +80,7 @@ pipeline {
                             script{
                                 sh 'docker build -t apigateway-service .'
                                 sh 'docker rm -f apigateway-service'
-                                sh 'docker run --network sungchef-network -d --name apigateway-service -e discovery=${env.discovery} -e discovery-port=${env.discovery-port} -p 8000:8000 apigateway-service'
+                                sh 'docker run --network sungchef-network -d --name apigateway-service -e DISCOVERY=${env.DISCOVERY} -e DISCOVERY_PORT=${env.DISCOVERY_PORT} -p 8000:8000 apigateway-service'
                             }
                         }
                     }
@@ -139,7 +135,7 @@ def deployService(serviceName) {
                 script{
                     sh "docker build -t ${serviceName} ."
                     sh "docker rm -f ${serviceName}"
-                    sh "docker run --network sungchef-network -e discovery=${env.discovery} -e discovery-port=${env.discovery-port} -d --name ${serviceName} ${serviceName}"
+                    sh "docker run --network sungchef-network -e DISCOVERY=${env.DISCOVERY} -e DISCOVERY_PORT=${env.DISCOVERY_PORT} -d --name ${serviceName} ${serviceName}"
                 }
             }
         }
