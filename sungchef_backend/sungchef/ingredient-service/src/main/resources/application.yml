@@ -1,12 +1,17 @@
 server:
-  port: 9002
+  port: 0
 spring:
   application:
     name: ingredient-service
 
 eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://127.0.0.1:8762/eureka
+      defaultZone: http://${DISCOVERY}:${DISCOVERY_PORT}/eureka

@@ -1,12 +1,17 @@
 server:
-  port: 8000
+  port: ${GATEWAY_PORT}
 
 eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://discovery-service:8762/eureka
+      defaultZone: http://${DISCOVERY}:${DISCOVERY_PORT}/eureka
 
 spring:
   application:
@@ -18,7 +23,7 @@ spring:
         corsConfigurations:
           '[/**]':
             allowedOrigins:
-              - 'https://xxxxxxxxxx'
+#              - 'https://xxxxxxxxxx'
             allow-credentials: true
             allowedHeaders: '*'
             exposedHeaders: '*'
@@ -43,22 +48,24 @@ spring:
 #            - Path=/user/**
 #          filters:
 #            - CustomFilter
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/user/signup
-            - Method=POST
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/user/**
-            - Method=GET
+#            - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user-service/user/**
+#            - Method=GET
+#          filters:
+#            - RemoveRequestHeader=Cookie
+#            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
 #        - id: user-service
 #          uri: lb://USER-SERVICE
 #          predicates:

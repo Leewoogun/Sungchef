@@ -56,9 +56,10 @@ pipeline {
                     dir('sungchef'){
                         dir('discovery-service') {
                             script{
+								def DISCOVERY_PORT = env.DISCOVERY_PORT							
                                 sh 'docker build -t discovery-service .'
                                 sh 'docker rm -f discovery-service'
-                                sh 'docker run --network sungchef-network -d --name discovery-service -p 8762:8762 discovery-service'
+                                sh 'docker run --network sungchef-network -d --name discovery-service -e DISCOVERY_PORT=$DISCOVERY_PORT -p $DISCOVERY_PORT:$DISCOVERY_PORT discovery-service'
                             }
                         }
                     }
@@ -77,9 +78,12 @@ pipeline {
                     dir('sungchef'){
                         dir('apigateway-service') {
                             script{
-                                sh 'docker build -t apigateway-service .'
+								def DISCOVERY = env.DISCOVERY
+								def DISCOVERY_PORT = env.DISCOVERY_PORT
+								def GATEWAY_PORT = env.GATEWAY_PORT
+								sh 'docker build -t apigateway-service .'
                                 sh 'docker rm -f apigateway-service'
-                                sh 'docker run --network sungchef-network -d --name apigateway-service -p 8000:8000 apigateway-service'
+                                sh 'docker run --network sungchef-network -d --name apigateway-service -e DISCOVERY=$DISCOVERY -e DISCOVERY_PORT=$DISCOVERY_PORT -p $GATEWAY_PORT:$GATEWAY_PORT apigateway-service'
                             }
                         }
                     }
@@ -93,8 +97,10 @@ pipeline {
                 def serviceName = env.GIT_BRANCH.split('/')[-1]
                 def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
                 def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
-                mattermostSend ( color: 'good',
-                message: "${serviceName} 빌드 성공: #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>) ",
+				def GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
+				
+                mattermostSend ( color: 'good',			
+                message: "${serviceName} 빌드 성공: #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n${GIT_COMMIT_MSG}\n(<${env.BUILD_URL}|Details>)",
                 )
             }
         }
@@ -103,8 +109,9 @@ pipeline {
                 def serviceName = env.GIT_BRANCH.split('/')[-1]
                 def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
                 def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+				def GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
                 mattermostSend ( color: 'danger',
-                message: "${serviceName} 빌드 실패: #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)",
+                message: "${serviceName} 빌드 실패: #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n${GIT_COMMIT_MSG}\n(<${env.BUILD_URL}|Details>)",
                 )
             }
         }
@@ -133,7 +140,7 @@ def deployService(serviceName) {
                 script{
                     sh "docker build -t ${serviceName} ."
                     sh "docker rm -f ${serviceName}"
-                    sh "docker run --network sungchef-network -d --name ${serviceName} ${serviceName}"
+                    sh "docker run --network sungchef-network -e  DISCOVERY=$DISCOVERY -e DISCOVERY_port=$DISCOVERY_PORT -d --name ${serviceName} ${serviceName}"
                 }
             }
         }
