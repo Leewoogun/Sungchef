@@ -141,7 +141,7 @@ def buildService(serviceName) {
     }
 }
 
-deployService(serviceName, DISCOVERY, DISCOVERY_PORT) {
+def deployService(serviceName, DISCOVERY, DISCOVERY_PORT) {
     dir('sungchef_backend'){
         dir('sungchef'){
             dir(serviceName) {
