@@ -1,5 +1,5 @@
 server:
-  port: 9006
+  port: 0
 spring:
   application:
     name: recommend-service
@@ -9,4 +9,4 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://127.0.0.1:8762/eureka
+      defaultZone: http://discovery-service:8762/eureka
