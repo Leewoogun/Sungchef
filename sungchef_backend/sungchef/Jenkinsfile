@@ -79,7 +79,7 @@ pipeline {
                             script{
                                 sh 'docker build -t apigateway-service .'
                                 sh 'docker rm -f apigateway-service'
-                                sh 'docker run --network sungchef-network -d --name apigateway-service -e discovery=$discovery -e discovery-port=$discovery-port -p 8000:8000 apigateway-service'
+                                sh 'docker run --network sungchef-network -d --name apigateway-service -e discovery=${env.discovery} -e discovery-port=${env.discovery-port} -p 8000:8000 apigateway-service'
                             }
                         }
                     }
@@ -134,7 +134,7 @@ def deployService(serviceName) {
                 script{
                     sh "docker build -t ${serviceName} ."
                     sh "docker rm -f ${serviceName}"
-                    sh "docker run --network sungchef-network -e discovery=$discovery -e discovery-port=$discovery-port -d --name ${serviceName} ${serviceName}"
+                    sh "docker run --network sungchef-network -e discovery=${env.discovery} -e discovery-port=${env.discovery-port} -d --name ${serviceName} ${serviceName}"
                 }
             }
         }
