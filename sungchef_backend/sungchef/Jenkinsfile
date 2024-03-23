@@ -140,7 +140,7 @@ def deployService(serviceName) {
                 script{
                     sh "docker build -t ${serviceName} ."
                     sh "docker rm -f ${serviceName}"
-                    sh "docker run --network sungchef-network -e  DISCOVERY=$DISCOVERY -e DISCOVERY_port=$DISCOVERY_PORT -d --name ${serviceName} ${serviceName}"
+                    sh "docker run --network sungchef-network -d --name ${serviceName} ${serviceName} -e DISCOVERY=$DISCOVERY -e DISCOVERY_port=$DISCOVERY_PORT"
                 }
             }
         }
