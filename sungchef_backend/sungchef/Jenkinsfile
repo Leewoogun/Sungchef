@@ -83,7 +83,7 @@ pipeline {
 								def GATEWAY_PORT = env.GATEWAY_PORT
 								sh 'docker build -t apigateway-service .'
                                 sh 'docker rm -f apigateway-service'
-                                sh 'docker run --network sungchef-network -d --name apigateway-service -e DISCOVERY=$DISCOVERY -e DISCOVERY_PORT=$DISCOVERY_PORT -p GATEWAY_PORT:$GATEWAY_PORT apigateway-service'
+                                sh 'docker run --network sungchef-network -d --name apigateway-service -e GATEWAY_PORT=$GATEWAY_PORT -e DISCOVERY=$DISCOVERY -e DISCOVERY_PORT=$DISCOVERY_PORT -p $GATEWAY_PORT:$GATEWAY_PORT apigateway-service'
                             }
                         }
                     }
