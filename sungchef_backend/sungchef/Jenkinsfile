@@ -58,7 +58,7 @@ pipeline {
                             script{
                                 sh 'docker build -t discovery-service .'
                                 sh 'docker rm -f discovery-service'
-                                sh 'docker run --network sungchef-network -d --name discovery-service -e DISCOVERY=${env.DISCOVERY} -e DISCOVERY_port=${env.DISCOVERY_PORT} -p 8762:8762 discovery-service'
+                                sh 'docker run --network sungchef-network -d --name discovery-service -e DISCOVERY=${env.DISCOVERY} -e DISCOVERY_PORT=${env.DISCOVERY_PORT} -p 8762:8762 discovery-service'
                             }
                         }
                     }
@@ -77,9 +77,10 @@ pipeline {
                     dir('sungchef'){
                         dir('apigateway-service') {
                             script{
+								echo "docker run --network sungchef-network -d --name apigateway-service -e DISCOVERY=${env.DISCOVERY} -e DISCOVERY_PORT=${env.DISCOVERY_PORT} -p 8000:8000 apigateway-service"
                                 sh 'docker build -t apigateway-service .'
                                 sh 'docker rm -f apigateway-service'
-                                sh 'docker run --network sungchef-network -d --name apigateway-service -e DISCOVERY=${env.DISCOVERY} -e DISCOVERY_port=${env.DISCOVERY_PORT} -p 8000:8000 apigateway-service'
+                                sh 'docker run --network sungchef-network -d --name apigateway-service -e DISCOVERY=${env.DISCOVERY} -e DISCOVERY_PORT=${env.DISCOVERY_PORT} -p 8000:8000 apigateway-service'
                             }
                         }
                     }
