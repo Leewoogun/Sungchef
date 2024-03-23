@@ -152,7 +152,7 @@ def deployService(serviceName, DISCOVERY, DISCOVERY_PORT) {
 					echo "${DISCOVERY_PORT}"				
                     sh "docker build -t ${serviceName} ."
                     sh "docker rm -f ${serviceName}"
-                    sh "docker run --network sungchef-network -d --name ${serviceName} ${serviceName} -e DISCOVERY=${DISCOVERY} -e DISCOVERY_PORT=${DISCOVERY_PORT}"
+                    sh "docker run --network sungchef-network -d --name ${serviceName} -e DISCOVERY=${DISCOVERY} -e DISCOVERY_PORT=${DISCOVERY_PORT} ${serviceName}"
                 }
             }
         }
