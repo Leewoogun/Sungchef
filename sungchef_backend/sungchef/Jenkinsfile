@@ -1,10 +1,5 @@
 pipeline {
     agent any
-    environment {
-		DISCOVERY_PORT = "${env.DISCOVERY_PORT}"
-		DISCOVERY = "${env.DISCOVERY}"
-	}
-
     stages {
         stage('Build') {
             when {
@@ -61,9 +56,9 @@ pipeline {
                     dir('sungchef'){
                         dir('discovery-service') {
                             script{
-								sh 'docker build --build-arg DISCOVERY_PORT=$DISCOVERY_PORT --build-arg DISCOVERY=$DISCOVERY -t discovery-service .'							
+                                sh 'docker build -t discovery-service .'
                                 sh 'docker rm -f discovery-service'
-                                sh 'docker run --network sungchef-network -d --name discovery-service -e -p ${DISCOVERY_PORT}:${DISCOVERY_PORT} discovery-service'
+                                sh 'docker run --network sungchef-network -d --name discovery-service -e DISCOVERY=${env.DISCOVERY} -e DISCOVERY_port=${env.DISCOVERY_PORT} -p 8762:8762 discovery-service'
                             }
                         }
                     }
@@ -82,9 +77,9 @@ pipeline {
                     dir('sungchef'){
                         dir('apigateway-service') {
                             script{
-								sh 'docker build --build-arg DISCOVERY_PORT=$DISCOVERY_PORT --build-arg DISCOVERY=$DISCOVERY -t discovery-service .'							
+                                sh 'docker build -t apigateway-service .'
                                 sh 'docker rm -f apigateway-service'
-                                sh 'docker run --network sungchef-network -d --name apigateway-service -p 8000:8000 apigateway-service'
+                                sh 'docker run --network sungchef-network -d --name apigateway-service -e DISCOVERY=${env.DISCOVERY} -e DISCOVERY_port=${env.DISCOVERY_PORT} -p 8000:8000 apigateway-service'
                             }
                         }
                     }
@@ -123,8 +118,6 @@ def buildService(serviceName) {
             dir(serviceName) {
                 script{
                     sh 'chmod +x gradlew'
-				    sh "sed -i 's/\${DISCOVERY}/${DISCOVERY}/' ./src/main/resources/application.yml"
-				    sh "sed -i 's/\${DISCOVERY_PORT}/${DISCOVERY_PORT}/' ./src/main/resources/application.yml"					
                     sh './gradlew clean build'
                     sh 'chmod +x ./docker_install.sh'
                     sh './docker_install.sh'
@@ -141,7 +134,7 @@ def deployService(serviceName) {
                 script{
                     sh "docker build -t ${serviceName} ."
                     sh "docker rm -f ${serviceName}"
-                    sh "docker run --network sungchef-network -e DISCOVERY=${env.DISCOVERY} -e DISCOVERY_PORT=${env.DISCOVERY_PORT} -d --name ${serviceName} ${serviceName}"
+                    sh "docker run --network sungchef-network -e -e DISCOVERY=${env.DISCOVERY} -e DISCOVERY_port=${env.DISCOVERY_PORT} -d --name ${serviceName} ${serviceName}"
                 }
             }
         }
