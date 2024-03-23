@@ -40,7 +40,9 @@ pipeline {
             steps {
                 script {
                     def serviceName = env.GIT_BRANCH.split('/')[-1]
-                    deployService(serviceName)
+					def DISCOVERY = env.DISCOVERY
+					def DISCOVERY_PORT = env.DISCOVERY_PORT
+                    deployService(serviceName, DISCOVERY, DISCOVERY_PORT)
                 }
             }
         }
@@ -135,14 +137,11 @@ def buildService(serviceName) {
     }
 }
 
-def deployService(serviceName) {
+deployService(serviceName, DISCOVERY, DISCOVERY_PORT) {
     dir('sungchef_backend'){
         dir('sungchef'){
             dir(serviceName) {
-                script{
-					def DISCOVERY = env.DISCOVERY
-					def DISCOVERY_PORT = env.DISCOVERY_PORT
-					def GATEWAY_PORT = env.GATEWAY_PORT				
+                script{		
                     sh "docker build -t ${serviceName} ."
                     sh "docker rm -f ${serviceName}"
                     sh "docker run --network sungchef-network -d --name ${serviceName} ${serviceName} -e DISCOVERY=$DISCOVERY -e DISCOVERY_port=$DISCOVERY_PORT"
