@@ -21,15 +21,15 @@ public class SecurityConfig {
 	@Bean
 	protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
 		// Configure AuthenticationManagerBuilder
-		AuthenticationManagerBuilder authenticationManagerBuilder =
-			http.getSharedObject(AuthenticationManagerBuilder.class);
-
-		AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
-
-		http.csrf( (csrf) -> csrf.disable());
+		// AuthenticationManagerBuilder authenticationManagerBuilder =
+		// 	http.getSharedObject(AuthenticationManagerBuilder.class);
+		//
+		// AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+		//
+		// http.csrf( (csrf) -> csrf.disable());
 		//        http.csrf(AbstractHttpConfigurer::disable);
 
-		http.authorizeHttpRequests((authz) -> authz
+		// http.authorizeHttpRequests((authz) -> authz
 				// .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll()
 				// .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
 				// .requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
@@ -37,15 +37,17 @@ public class SecurityConfig {
 				//                        .requestMatchers("/**").access(this::hasIpAddress)
 				// .requestMatchers("/**").permitAll()
 				// .anyRequest().authenticated()
-				.anyRequest().permitAll()
-			)
-			.authenticationManager(authenticationManager)
-			.sessionManagement((session) -> session
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+				// .anyRequest().permitAll()
+			// )
+			// .authenticationManager(authenticationManager)
+			// .sessionManagement((session) -> session
+			// 	.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		// http.addFilter(getAuthenticationFilter(authenticationManager));
-		http.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()));
+		// http.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()));
 
-		return http.build();
+		return http
+			.csrf( (csrf) -> csrf.disable())
+			.build();
 	}
 }
