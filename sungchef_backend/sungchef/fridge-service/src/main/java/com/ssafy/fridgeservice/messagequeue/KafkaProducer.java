@@ -18,7 +18,7 @@ public class KafkaProducer {
 
 	public Ingredient send(String topic, Ingredient dto) {
 		ObjectMapper mapper = new ObjectMapper();
-		String jsonInString = "";
+		String jsonInString = ""; //
 		try {
 			jsonInString = mapper.writeValueAsString(dto);
 		} catch (JsonProcessingException e) {
