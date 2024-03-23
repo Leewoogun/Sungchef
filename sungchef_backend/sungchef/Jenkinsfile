@@ -29,6 +29,7 @@ pipeline {
             when {
                 expression {
                     def serviceName = env.GIT_BRANCH.split('/')[-1]
+					
                     serviceName == 'fridge-service' ||
                     serviceName == 'ingredient-service' ||
                     serviceName == 'recipe-service' ||
@@ -42,6 +43,9 @@ pipeline {
                     def serviceName = env.GIT_BRANCH.split('/')[-1]
 					def DISCOVERY = env.DISCOVERY
 					def DISCOVERY_PORT = env.DISCOVERY_PORT
+					echo "${serviceName}"
+					echo "${DISCOVERY}"
+					echo "${DISCOVERY_PORT}"
                     deployService(serviceName, DISCOVERY, DISCOVERY_PORT)
                 }
             }
@@ -142,6 +146,10 @@ deployService(serviceName, DISCOVERY, DISCOVERY_PORT) {
         dir('sungchef'){
             dir(serviceName) {
                 script{		
+					echo "plz"
+					echo "${serviceName}"
+					echo "${DISCOVERY}"
+					echo "${DISCOVERY_PORT}"				
                     sh "docker build -t ${serviceName} ."
                     sh "docker rm -f ${serviceName}"
                     sh "docker run --network sungchef-network -d --name ${serviceName} ${serviceName} -e DISCOVERY=$DISCOVERY -e DISCOVERY_port=$DISCOVERY_PORT"
