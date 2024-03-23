@@ -61,7 +61,7 @@ pipeline {
                     dir('sungchef'){
                         dir('discovery-service') {
                             script{
-								sh 'docker build --build-arg DISCOVERY_PORT=$DISCOVERY_PORT DISCOVERY=$DISCOVERY -t discovery-service .'							
+								sh 'docker build --build-arg DISCOVERY_PORT=$DISCOVERY_PORT --build-arg DISCOVERY=$DISCOVERY -t discovery-service .'							
                                 sh 'docker rm -f discovery-service'
                                 sh 'docker run --network sungchef-network -d --name discovery-service -e -p ${DISCOVERY_PORT}:${DISCOVERY_PORT} discovery-service'
                             }
@@ -82,7 +82,7 @@ pipeline {
                     dir('sungchef'){
                         dir('apigateway-service') {
                             script{
-								sh 'docker build --build-arg DISCOVERY_PORT=$DISCOVERY_PORT DISCOVERY=$DISCOVERY -t discovery-service .'							
+								sh 'docker build --build-arg DISCOVERY_PORT=$DISCOVERY_PORT --build-arg DISCOVERY=$DISCOVERY -t discovery-service .'							
                                 sh 'docker rm -f apigateway-service'
                                 sh 'docker run --network sungchef-network -d --name apigateway-service -p 8000:8000 apigateway-service'
                             }
