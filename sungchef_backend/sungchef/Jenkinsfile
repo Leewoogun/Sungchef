@@ -56,7 +56,9 @@ pipeline {
                     dir('sungchef'){
                         dir('discovery-service') {
                             script{
-								def DISCOVERY_PORT = env.DISCOVERY_PORT							
+								def DISCOVERY = env.DISCOVERY
+								def DISCOVERY_PORT = env.DISCOVERY_PORT
+								def GATEWAY_PORT = env.GATEWAY_PORT					
                                 sh 'docker build -t discovery-service .'
                                 sh 'docker rm -f discovery-service'
                                 sh 'docker run --network sungchef-network -d --name discovery-service -e DISCOVERY_PORT=$DISCOVERY_PORT -p $DISCOVERY_PORT:$DISCOVERY_PORT discovery-service'
@@ -122,7 +124,7 @@ def buildService(serviceName) {
     dir('sungchef_backend'){
         dir('sungchef'){
             dir(serviceName) {
-                script{
+                script{		
                     sh 'chmod +x gradlew'
                     sh './gradlew clean build'
                     sh 'chmod +x ./docker_install.sh'
@@ -138,6 +140,9 @@ def deployService(serviceName) {
         dir('sungchef'){
             dir(serviceName) {
                 script{
+					def DISCOVERY = env.DISCOVERY
+					def DISCOVERY_PORT = env.DISCOVERY_PORT
+					def GATEWAY_PORT = env.GATEWAY_PORT				
                     sh "docker build -t ${serviceName} ."
                     sh "docker rm -f ${serviceName}"
                     sh "docker run --network sungchef-network -d --name ${serviceName} ${serviceName} -e DISCOVERY=$DISCOVERY -e DISCOVERY_port=$DISCOVERY_PORT"
