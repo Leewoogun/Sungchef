@@ -78,8 +78,10 @@ spring:
         - id: fridge-service
           uri: lb://FRIDGE-SERVICE
           predicates:
-            - Path=/fridge/**
+            - Path=/fridge-service/fridge/**
           filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/fridge-service/(?<segment>.*), /$\{segment}
             - name: CustomFilter
             - name: LoggingFilter
               args:
