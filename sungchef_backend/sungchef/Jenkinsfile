@@ -94,7 +94,7 @@ pipeline {
                 def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
                 def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
                 mattermostSend ( color: 'good',
-                message: "${serviceName} 빌드 성공: #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)\n${GIT_COMMIT_MSG}",
+                message: "${serviceName} 빌드 성공: #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n${GIT_COMMIT_MSG}\n(<${env.BUILD_URL}|Details>)",
                 )
             }
         }
@@ -105,7 +105,7 @@ pipeline {
                 def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
 				def GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
                 mattermostSend ( color: 'danger',
-                message: "${serviceName} 빌드 실패: #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)\n${GIT_COMMIT_MSG}",
+                message: "${serviceName} 빌드 실패: #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n${GIT_COMMIT_MSG}\n(<${env.BUILD_URL}|Details>)",
                 )
             }
         }
