@@ -1,5 +1,10 @@
 pipeline {
     agent any
+	
+    environment {
+		discovery-port = $discovery-port
+		discovery = $discovery
+	}
     stages {
         stage('Build') {
             when {
