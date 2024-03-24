@@ -73,7 +73,7 @@ spring:
         - id: recipe-service
           uri: lb://RECIPE-SERVICE
           predicates:
-            - Path=/recipe-service/fridge/**
+            - Path=/recipe-service/recipe/**
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/recipe-service/(?<segment>.*), /$\{segment}
