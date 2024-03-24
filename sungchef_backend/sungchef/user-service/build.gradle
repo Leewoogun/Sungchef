@@ -36,6 +36,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	// 입력 데이터 체크 @Validation관련
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// kafka
+	implementation 'org.springframework.kafka:spring-kafka'
 }
 
 dependencyManagement {
