@@ -42,56 +42,68 @@ spring:
             postLogger: false
 
       routes:
-#        - id: user-service
-#          uri: lb://USER-SERVICE
-#          predicates:
-#            - Path=/user/**
-#          filters:
-#            - CustomFilter
-
+        # USER-SERVICE
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/user/signup
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/user/**
-#            - Method=POST
+            - Method=GET
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-#        - id: user-service
-#          uri: lb://USER-SERVICE
-#          predicates:
-#            - Path=/user-service/user/**
-#            - Method=GET
-#          filters:
-#            - RemoveRequestHeader=Cookie
-#            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 
-#        - id: user-service
-#          uri: lb://USER-SERVICE
-#          predicates:
-#            - Path=/user-service/login
-#            - Method=GET
-#          filters:
-#            - RemoveRequestHeader=Cookie
-#            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-
+        # FRIDGE-SERVICE
         - id: fridge-service
           uri: lb://FRIDGE-SERVICE
           predicates:
-            - Path=/fridge/**
+            - Path=/fridge-service/fridge/**
           filters:
-            - name: CustomFilter
-            - name: LoggingFilter
-              args:
-                baseMessage: Hi, there.
-                preLogger: true
-                postLogger: true
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/fridge-service/(?<segment>.*), /$\{segment}
 
-#        - id: fridge-service
-#          uri: lb://FRIDGE-SERVICE
-#          predicates:
-#            - Path=/fridge/**
-#          filters:
+        #RECIPE-SERVICE
+        - id: recipe-service
+          uri: lb://RECIPE-SERVICE
+          predicates:
+            - Path=/recipe-service/fridge/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/recipe-service/(?<segment>.*), /$\{segment}
+
+        #SEARCH-SERVICE
+        - id: search-service
+          uri: lb://SEARCH-SERVICE
+          predicates:
+            - Path=/search-service/fridge/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/search-service/(?<segment>.*), /$\{segment}
+
+        #INGREDIENT-SERVICE
+        - id: ingredient-service
+          uri: lb://INGREDIENT-SERVICE
+          predicates:
+            - Path=/ingredient-service/fridge/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/ingredient-service/(?<segment>.*), /$\{segment}
+
+        #RECOMMEND-SERVICE
+        - id: recommend-service
+          uri: lb://RECOMMEND-SERVICE
+          predicates:
+            - Path=/recommend-service/fridge/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/recommend-service/(?<segment>.*), /$\{segment}
 #            - name: CustomFilter
 #            - name: LoggingFilter
 #              args:
