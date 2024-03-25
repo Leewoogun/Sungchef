@@ -80,6 +80,7 @@ public class UserController {
 		} catch (NicknameExistException e) {
 			return responseService.CONFLICT();
 		} catch (Exception e) {
+			log.error("signup INTERNAL_SERVER_ERROR", e);
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}

@@ -3,6 +3,7 @@ package com.ssafy.userservice.config.security;
 import com.ssafy.userservice.config.filter.AuthenticationFilter;
 import com.ssafy.userservice.service.UserDetailsServiceImpl;
 
+import com.ssafy.userservice.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authorization.AuthorizationDecision;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,7 @@ import java.util.function.Supplier;
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
-	private final UserDetailsServiceImpl userDetailsService;
+	private final UserService userService;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final Environment env;
 	public static final String ALLOWED_IP_ADDRESS = "127.0.0.1";
@@ -43,7 +44,7 @@ public class SecurityConfig {
 		// Configure AuthenticationManagerBuilder
 		AuthenticationManagerBuilder authenticationManagerBuilder =
 				http.getSharedObject(AuthenticationManagerBuilder.class);
-		authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+		authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
 
 		AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
@@ -76,7 +77,7 @@ public class SecurityConfig {
 	}
 
 	private AuthenticationFilter getAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
-		return new AuthenticationFilter(authenticationManager, userDetailsService, env);
+		return new AuthenticationFilter(authenticationManager, userService, env);
 	}
 
 }

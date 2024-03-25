@@ -1,6 +1,7 @@
 package com.ssafy.userservice.dto.request;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -25,6 +26,6 @@ public class SignUpReq {
 	@EnumPattern(regexp = "M|F", message = "M 또는 F만 가능합니다")
 	UserGenderType userGender; // M or F -> 선택지 2개로 제한
 	@Past
-	@DateTimeFormat(pattern = "yyyy-MM-DD")
-	LocalDate userBirthdate; // yyyy-MM-DD 형식
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	LocalDate userBirthdate; // yyyy-MM-dd 형식
 }

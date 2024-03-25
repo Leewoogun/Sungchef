@@ -5,7 +5,7 @@ import com.ssafy.userservice.vaild.annotation.EnumValue;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class ValueOfEnumValidator implements ConstraintValidator<EnumValue, String> {
+public class EnumValueValidator implements ConstraintValidator<EnumValue, String> {
 
 	private EnumValue enumValue;
 	@Override

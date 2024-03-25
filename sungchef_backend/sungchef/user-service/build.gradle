@@ -37,7 +37,7 @@ dependencies {
 	// 입력 데이터 체크 @Validation관련
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-	// kafka
+	// Kafka
 	implementation 'org.springframework.kafka:spring-kafka'
 
 	// Feign Client
@@ -46,6 +46,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
 	implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.4'
 
+	// JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 }
 

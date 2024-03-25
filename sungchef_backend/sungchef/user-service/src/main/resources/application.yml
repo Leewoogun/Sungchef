@@ -10,11 +10,12 @@ spring:
       hibernate:
         format_sql: true #To beautify or pretty print the SQL
         show_sql: true #show sql
+        dialect: org.hibernate.dialect.MySQLDialect
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://${SERVER_URL}:${MARIADB_PORT}/${DB_NAME}characterEncoding=UTF-8&serverTimezone=UTC
-    username: userName
-    password: password
+    url: jdbc:mariadb://${SERVER_URL}:${DB_PORT}/${spring.application.name}?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
 logging:
   level:
