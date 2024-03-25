@@ -3,26 +3,6 @@ server:
 spring:
   application:
     name: user-service
-  jpa:
-    hibernate:
-      ddl-auto: none
-    properties:
-      hibernate:
-        format_sql: true #To beautify or pretty print the SQL
-        show_sql: true #show sql
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://${SERVER_URL}:${MARIADB_PORT}/${DB_NAME}characterEncoding=UTF-8&serverTimezone=UTC
-    username: userName
-    password: password
-
-logging:
-  level:
-    com.ssafy.userservice.client: DEBUG
-    org.hibernate:
-      type.descriptor.sql: trace #show parameter binding
-      SQL: DEBUG
-
 
 eureka:
   instance:

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.userservice.service.client.FridgeServiceClient;
+import com.ssafy.userservice.client.FridgeServiceClient;
 import com.ssafy.userservice.dto.request.BookmarkReq;
 import com.ssafy.userservice.dto.request.ContactReq;
 import com.ssafy.userservice.dto.request.LoginReq;
@@ -26,12 +26,14 @@ import com.ssafy.userservice.dto.response.UserMakeRecipe;
 import com.ssafy.userservice.dto.response.UserMakeRecipeRes;
 import com.ssafy.userservice.dto.response.UserSimpleInfoRes;
 import com.ssafy.userservice.dto.response.UserTokenRes;
+import com.ssafy.userservice.dto.response.fridge.FridgeIngredientListRes;
 import com.ssafy.userservice.service.ResponseService;
 import com.ssafy.userservice.service.UserService;
 import com.ssafy.userservice.util.exception.NicknameExistException;
 import com.ssafy.userservice.util.exception.UserNeedSurveyException;
 import com.ssafy.userservice.util.exception.UserNotFoundException;
 import com.ssafy.userservice.util.exception.UserRecipeNotExistException;
+import com.ssafy.userservice.util.result.CommonResult;
 import com.ssafy.userservice.util.result.SingleResult;
 import com.ssafy.userservice.util.sungchefEnum.UserGenderType;
 
@@ -51,8 +53,6 @@ public class UserController {
 
 	@GetMapping("/getFridgeIngredient")
 	public ResponseEntity<?> getFridgeIngredient() {
-
-		//
 		ResponseEntity<SingleResult<?>> res = fridgeServiceClient.getFridgeIngredient();
 		log.info("result : {}", res.getBody().getData());
 		return fridgeServiceClient.getFridgeIngredient();
@@ -64,7 +64,7 @@ public class UserController {
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<?> signUp(@Valid @RequestBody final SignUpReq req) {
+	public ResponseEntity<?> signUp(@RequestBody final SignUpReq req) {
 		// TODO
 		try {
 			userService.createUser(req);
