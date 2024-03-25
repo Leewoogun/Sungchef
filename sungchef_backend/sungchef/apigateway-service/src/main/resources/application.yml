@@ -73,7 +73,7 @@ spring:
         - id: recipe-service
           uri: lb://RECIPE-SERVICE
           predicates:
-            - Path=/recipe-service/fridge/**
+            - Path=/recipe-service/recipe/**
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/recipe-service/(?<segment>.*), /$\{segment}
@@ -82,7 +82,7 @@ spring:
         - id: search-service
           uri: lb://SEARCH-SERVICE
           predicates:
-            - Path=/search-service/fridge/**
+            - Path=/search-service/search/**
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/search-service/(?<segment>.*), /$\{segment}
@@ -91,7 +91,7 @@ spring:
         - id: ingredient-service
           uri: lb://INGREDIENT-SERVICE
           predicates:
-            - Path=/ingredient-service/fridge/**
+            - Path=/ingredient-service/ingredient/**
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/ingredient-service/(?<segment>.*), /$\{segment}
@@ -100,7 +100,7 @@ spring:
         - id: recommend-service
           uri: lb://RECOMMEND-SERVICE
           predicates:
-            - Path=/recommend-service/fridge/**
+            - Path=/recommend-service/recommend/**
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/recommend-service/(?<segment>.*), /$\{segment}
