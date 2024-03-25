@@ -1,6 +1,7 @@
 package com.sungchef.sungchef.util.sungchefEnum;
 
 public enum RecommendFoodType {
+	SUNG(1, "성식당 종합 추천"),
 	SIMILAR_USER(2, "비슷한 유저 추천"),
 	GENDER(3, "동일한 성별 추천"),
 	AGE(4, "동일 나이대 추천"),

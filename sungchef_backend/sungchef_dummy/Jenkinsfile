@@ -8,7 +8,6 @@ pipeline{
                     dir('sungchef_dummy'){
                         script{
                             sh 'chmod +x gradlew'
-
                             sh './gradlew clean build'
                             sh 'chmod +x ./docker_install.sh'
                             sh './docker_install.sh'
@@ -24,10 +23,30 @@ pipeline{
                         script{
                             sh 'docker build -t dummy_backend .'
                             sh 'docker rm -f dummy_backend'
-                            sh 'docker run -d --name backend-jenkins -p 8081:8081 dummy_backend'
+                            sh 'docker run --network sungchef-network -d --name dummy_backend -p 8081:8081 dummy_backend'
                         }
                     }
                 }
+            }
+        }
+    }
+    post{
+        success {
+            script {
+                def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
+                def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                mattermostSend ( color: 'good',
+                message: "빌드 성공: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)",
+                )
+            }
+        }
+        failure {
+            script {
+                def Author_ID = sh(script: "git show -s --pretty=%an", returnStdout: true).trim()
+                def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
+                mattermostSend ( color: 'danger',
+                message: "빌드 실패: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_ID}(${Author_Name})\n(<${env.BUILD_URL}|Details>)",
+                )
             }
         }
     }
