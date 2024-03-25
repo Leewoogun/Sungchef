@@ -1,11 +1,8 @@
-package com.ssafy.userservice.dto.request;
+package com.ssafy.fridgeservice.dto.request.user;
 
-import org.springframework.format.annotation.DateTimeFormat;
+import com.ssafy.fridgeservice.util.sungchefEnum.UserSnsType;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
-import com.ssafy.userservice.util.sungchefEnum.UserSnsType;
 
 @Data
 public class SignUpReq {

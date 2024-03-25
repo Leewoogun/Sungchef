@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.fridgeservice.client.UserServiceClient;
 import com.ssafy.fridgeservice.dto.request.FridgeIngredientListReq;
+import com.ssafy.fridgeservice.dto.request.user.SignUpReq;
 import com.ssafy.fridgeservice.dto.response.FridgeIngredientListRes;
 import com.ssafy.fridgeservice.dto.response.Ingredient;
 import com.ssafy.fridgeservice.dto.response.IngredientInfo;
+import com.ssafy.fridgeservice.dto.response.user.UserTokenRes;
 import com.ssafy.fridgeservice.messagequeue.KafkaProducer;
 import com.ssafy.fridgeservice.service.ResponseService;
 import com.ssafy.fridgeservice.util.exception.IngredientNotFoundException;
@@ -33,6 +36,18 @@ public class FridgeController {
 	private final ResponseService responseService;
 	private final KafkaProducer kafkaProducer;
 
+	private final UserServiceClient userServiceClient;
+
+	@GetMapping("/user/healthcheck")
+	ResponseEntity<?> getHealthcheck() {
+		return userServiceClient.getHealthcheck();
+	}
+
+	@PostMapping("/user/signup")
+	ResponseEntity<?> signup(@RequestBody final SignUpReq req) {
+		return userServiceClient.signup(req);
+	}
+
 	@GetMapping("/produce")
 	public ResponseEntity<?> produceTest() {
 		kafkaProducer.send("example-catalog-topic", Ingredient.builder().ingredientId(100).ingredientName("잘 갈까?").build());
@@ -44,7 +59,6 @@ public class FridgeController {
 
 		try {
 			// TODO
-
 			FridgeIngredientListRes fridgeIngredientListRes = new FridgeIngredientListRes();
 
 			List<IngredientInfo> ingredientInfoList = fridgeIngredientListRes.getIngredientInfoList();
