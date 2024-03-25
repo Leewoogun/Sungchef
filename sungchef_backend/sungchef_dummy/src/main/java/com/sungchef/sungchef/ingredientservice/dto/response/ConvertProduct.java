@@ -8,5 +8,6 @@ import lombok.Data;
 public class ConvertProduct {
 	boolean isConverted;
 	String convertedName;
+	@Builder.Default
 	int ingredientId = -1;
 }
