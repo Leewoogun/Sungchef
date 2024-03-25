@@ -1,4 +1,4 @@
-package com.ssafy.userservice.filter;
+package com.ssafy.userservice.config.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.userservice.dto.request.LoginReq;

@@ -1,4 +1,4 @@
-package com.ssafy.userservice.messagequeue;
+package com.ssafy.userservice.util.messagequeue;
 
 import java.util.HashMap;
 import java.util.Map;
