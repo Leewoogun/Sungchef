@@ -1,4 +1,4 @@
-package com.ssafy.userservice.filter;
+package com.ssafy.userservice.config.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.userservice.dto.request.LoginReq;
@@ -27,13 +27,13 @@ import java.util.Base64;
 @Slf4j
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private UserDetailsServiceImpl userDetailsService;
+    private UserService userService;
     private Environment environment;
 
     public AuthenticationFilter(AuthenticationManager authenticationManager,
-                                UserDetailsServiceImpl userService, Environment environment) {
+                                UserService userService, Environment environment) {
         super(authenticationManager);
-        this.userDetailsService = userDetailsService;
+        this.userService = userService;
         this.environment = environment;
     }
 

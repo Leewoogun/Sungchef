@@ -1,14 +1,16 @@
 package com.ssafy.userservice.db.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ssafy.userservice.db.entity.SampleEntity;
-import com.ssafy.userservice.dto.request.SignUpReq;
-import com.ssafy.userservice.dto.request.UserInfoReq;
+import com.ssafy.userservice.db.entity.User;
 
-// @Repository
-// public interface FridgeRepository extends JpaRepository<SampleEntity, Integer> {
+import java.util.Optional;
+
 @Repository
-public interface UserRepository {
-	int insertUser(SignUpReq req);
+public interface UserRepository extends JpaRepository<User, Integer> {
+	User save(User user);
+	Optional<User> searchUserByUserSnsId(String userSnsId);
+
+	Optional<User> searchUserByUserNickname(String userNickname);
 }
