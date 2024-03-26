@@ -23,7 +23,7 @@ spring:
         corsConfigurations:
           '[/**]':
             allowedOrigins:
-#              - 'https://xxxxxxxxxx'
+              - 'https://xxxxxxxxxx'
             allow-credentials: true
             allowedHeaders: '*'
             exposedHeaders: '*'
