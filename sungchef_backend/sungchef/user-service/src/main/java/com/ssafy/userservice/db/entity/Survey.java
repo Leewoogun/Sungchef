@@ -1,8 +1,6 @@
 package com.ssafy.userservice.db.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,11 +15,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Survey {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "survey_id")
   private int surveyId;
+
   @Column(name = "suser_id")
   private int suserId;
-  @Column(name = "food_interface_id")
-  private int foodInterfaceId;
+
+  @Column(name = "food_id")
+  private int foodId;
 
 }
