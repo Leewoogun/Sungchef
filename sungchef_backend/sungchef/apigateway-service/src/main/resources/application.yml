@@ -46,64 +46,64 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/user/signup
+            - Path=/user/signup
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+#            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/user/**
+            - Path=/user/**
             - Method=GET
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+#            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 
         # FRIDGE-SERVICE
         - id: fridge-service
           uri: lb://FRIDGE-SERVICE
           predicates:
-            - Path=/fridge-service/fridge/**
+            - Path=/fridge/**
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/fridge-service/(?<segment>.*), /$\{segment}
+#            - RewritePath=/fridge-service/(?<segment>.*), /$\{segment}
 
         #RECIPE-SERVICE
         - id: recipe-service
           uri: lb://RECIPE-SERVICE
           predicates:
-            - Path=/recipe-service/recipe/**
+            - Path=/recipe/**
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/recipe-service/(?<segment>.*), /$\{segment}
+#            - RewritePath=/recipe-service/(?<segment>.*), /$\{segment}
 
         #SEARCH-SERVICE
         - id: search-service
           uri: lb://SEARCH-SERVICE
           predicates:
-            - Path=/search-service/search/**
+            - Path=/search/**
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/search-service/(?<segment>.*), /$\{segment}
+#            - RewritePath=/search-service/(?<segment>.*), /$\{segment}
 
         #INGREDIENT-SERVICE
         - id: ingredient-service
           uri: lb://INGREDIENT-SERVICE
           predicates:
-            - Path=/ingredient-service/ingredient/**
+            - Path=/ingredient/**
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/ingredient-service/(?<segment>.*), /$\{segment}
+#            - RewritePath=/ingredient-service/(?<segment>.*), /$\{segment}
 
         #RECOMMEND-SERVICE
         - id: recommend-service
           uri: lb://RECOMMEND-SERVICE
           predicates:
-            - Path=/recommend-service/recommend/**
+            - Path=/recommend/**
           filters:
             - RemoveRequestHeader=Cookie
-            - RewritePath=/recommend-service/(?<segment>.*), /$\{segment}
+#            - RewritePath=/recommend-service/(?<segment>.*), /$\{segment}
 #            - name: CustomFilter
 #            - name: LoggingFilter
 #              args:
