@@ -61,7 +61,7 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/survey/**
+            - Path=/user/survey/**
           filters:
             - RemoveRequestHeader=Cookie
         #            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
