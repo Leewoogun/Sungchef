@@ -58,9 +58,9 @@ public class SecurityConfig {
 								.requestMatchers(new AntPathRequestMatcher("/user/**", "PUT")).permitAll()
 								// .requestMatchers(new AntPathRequestMatcher("/user/signup", "POST")).permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/user/**", "GET")).permitAll()
-								// .requestMatchers(new AntPathRequestMatcher("/survey", "GET")).permitAll()
-								// .requestMatchers(new AntPathRequestMatcher("/survey/submit", "POST")).permitAll()
-								// .requestMatchers(new AntPathRequestMatcher("/survey/submit", "PUT")).permitAll()
+								.requestMatchers(new AntPathRequestMatcher("/survey", "GET")).permitAll()
+								.requestMatchers(new AntPathRequestMatcher("/survey/submit", "POST")).permitAll()
+								.requestMatchers(new AntPathRequestMatcher("/survey/submit", "PUT")).permitAll()
 								// .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
 //                        .requestMatchers("/**").access(this::hasIpAddress)
 // 								.requestMatchers("/**").access(

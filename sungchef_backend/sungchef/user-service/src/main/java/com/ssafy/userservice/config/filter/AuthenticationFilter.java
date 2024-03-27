@@ -8,7 +8,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,11 +25,10 @@ import java.time.Instant;
 import java.util.Base64;
 
 @Slf4j
-@AllArgsConstructor
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private final UserService userService;
-    private final Environment environment;
+    private UserService userService;
+    private Environment environment;
 
     public AuthenticationFilter(AuthenticationManager authenticationManager,
                                 UserService userService, Environment environment) {
@@ -41,7 +39,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
-        throws AuthenticationException {
+            throws AuthenticationException {
         try {
 
             LoginReq creds = new ObjectMapper().readValue(req.getInputStream(), LoginReq.class);
