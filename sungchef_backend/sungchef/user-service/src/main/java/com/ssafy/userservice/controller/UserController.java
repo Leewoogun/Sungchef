@@ -262,7 +262,7 @@ public class UserController {
 			return ResponseEntity.ok().body(
 				responseService.getSuccessSingleResult(
 					UserInfoRes.builder()
-						.userBirthdate("1998-01-22")
+						.userBirthdate("6666-01-22")
 						.userNickName("성식당")
 						.userGender(UserGenderType.F)
 						.userImage(
