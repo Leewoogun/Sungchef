@@ -2,6 +2,7 @@ package com.ssafy.userservice.service;
 
 import com.ssafy.userservice.db.entity.User;
 import com.ssafy.userservice.db.repository.UserRepository;
+import com.ssafy.userservice.util.exception.UserNotCreatedException;
 import com.ssafy.userservice.util.exception.UserNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -34,7 +35,7 @@ public class UserService implements UserDetailsService {
 
 		User user = userRepository.save(User.builder()
 						.userId(-1)
-//						.userSnsId(bCryptPasswordEncoder.encode(req.getUserSnsId()))
+						// .userSnsId(bCryptPasswordEncoder.encode(req.getUserSnsId()))
 						.userSnsId(req.getUserSnsId())
 						.userGenderType(req.getUserGender())
 						.userSnsType(req.getUserSnsType())
@@ -43,14 +44,8 @@ public class UserService implements UserDetailsService {
 				.build()
 		);
 
-		if (user.getUserId() == -1) throw new UserNotFoundException(req.toString());
-//		String s = req.getUserSnsId();
-//		String encode = bCryptPasswordEncoder.encode(s);
-//		log.info("encode Id: {}", encode);
-//		log.info("equals : {}", bCryptPasswordEncoder.matches(s, encode));
-		// log.info("userres : {}", passwordEncoder.matches("1234", req.getUserSnsId()));
+		if (user.getUserId() == -1) throw new UserNotCreatedException(req.toString());
 		return user;
-		// return userRepository.insertUser(req);
 	}
 
 	@Override
