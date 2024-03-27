@@ -46,7 +46,7 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user/signup
+            - Path=/user/**
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
@@ -59,6 +59,13 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
 #            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/survey/**
+          filters:
+            - RemoveRequestHeader=Cookie
+        #            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 
         # FRIDGE-SERVICE
         - id: fridge-service
