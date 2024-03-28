@@ -287,4 +287,11 @@ public class IngredientController {
 //			return responseService.INTERNAL_SERVER_ERROR();
 //		}
 	}
+
+	@GetMapping("/communication")
+	public String communicationTest(){
+		log.debug("comm test in ingredientService");
+		return "ingredientService 입니다.";
+	}
+
 }
