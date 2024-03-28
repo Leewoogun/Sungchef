@@ -51,19 +51,19 @@ public class RecipeService {
         return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "레시피 조회 성공"));
     }
 
-    public ResponseEntity<?> getRecipeDetail(Integer recipeId) throws RecipeNotFoundException {
-        Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
-        if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
-        Recipe recipe = searchRecipe.get();
-        RecipeDetailRes recipeDetailRes = RecipeDetailRes.builder()
-                .recipeId(recipeId)
-                .recipeName(recipe.getRecipeName())
-                .recipeDescription(recipe.getRecipeDescription())
-                .recipeImage(recipe.getRecipeImage())
-                .recipeCookingTime(recipe.getRecipeCookingTime())
-                .recipeVolume(recipe.getRecipeVolume())
-                .build();
-
-    }
+//    public ResponseEntity<?> getRecipeDetail(Integer recipeId) throws RecipeNotFoundException {
+//        Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
+//        if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
+//        Recipe recipe = searchRecipe.get();
+//        RecipeDetailRes recipeDetailRes = RecipeDetailRes.builder()
+//                .recipeId(recipeId)
+//                .recipeName(recipe.getRecipeName())
+//                .recipeDescription(recipe.getRecipeDescription())
+//                .recipeImage(recipe.getRecipeImage())
+//                .recipeCookingTime(recipe.getRecipeCookingTime())
+//                .recipeVolume(recipe.getRecipeVolume())
+//                .build();
+//
+//    }
 
 }
