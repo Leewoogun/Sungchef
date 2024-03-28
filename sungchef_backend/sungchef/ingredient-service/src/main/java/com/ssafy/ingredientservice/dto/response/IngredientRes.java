@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class Ingredient {
+public class IngredientRes {
 	String ingredientName;
 	int ingredientId;
 }
