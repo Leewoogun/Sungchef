@@ -197,7 +197,8 @@ public class FridgeController {
 
 	@GetMapping("/communication")
 	public String fridgeIngredientTest() {
-		log.debug("냉장고 - 재료 서비스 간 통신 가능");
-		return "냉장고 - 재료 서비스 간 통신 가능";
+		log.debug("fridgeController - fridgeIngredientTest");
+		String res = ingredientServiceClient.communicationTest();
+		return res;
 	}
 }
