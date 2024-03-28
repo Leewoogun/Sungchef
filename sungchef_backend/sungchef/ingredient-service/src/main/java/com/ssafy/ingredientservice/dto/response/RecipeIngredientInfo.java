@@ -9,10 +9,10 @@ import java.util.List;
 @Data
 public class RecipeIngredientInfo {
 	IngredientType recipeIngredientType;
-	List<RecipeIngredient> recipeIngredientList;
+	List<RecipeIngredientRes> recipeIngredientResList;
 
 	public RecipeIngredientInfo(IngredientType _recipeIngredientType) {
-		recipeIngredientList = new ArrayList<>();
+		recipeIngredientResList = new ArrayList<>();
 		recipeIngredientType = _recipeIngredientType;
 	}
 }

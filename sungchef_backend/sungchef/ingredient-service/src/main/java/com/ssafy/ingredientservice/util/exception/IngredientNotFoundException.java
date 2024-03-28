@@ -1,7 +1,7 @@
 package com.ssafy.ingredientservice.util.exception;
 
-public class RecipeNotFoundException extends RuntimeException {
-	public RecipeNotFoundException(String message) {
+public class IngredientNotFoundException extends RuntimeException {
+	public IngredientNotFoundException(String message) {
 		super(message);
 	}
 }

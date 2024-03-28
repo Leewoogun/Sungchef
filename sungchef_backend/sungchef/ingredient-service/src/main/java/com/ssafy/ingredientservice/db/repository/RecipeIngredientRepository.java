@@ -6,8 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface RecipeIngredientRepository extends JpaRepository<RecipeIngredient, Integer> {
-    Optional<RecipeIngredient> findRecipeIngredientsByRecipeId(Integer recipeId);
+    List<RecipeIngredient> findRecipeIngredientsByRecipeId(Integer recipeId);
 }

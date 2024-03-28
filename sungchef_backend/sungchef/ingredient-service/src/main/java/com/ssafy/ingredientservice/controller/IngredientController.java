@@ -1,9 +1,13 @@
 package com.ssafy.ingredientservice.controller;
 
+import com.ssafy.ingredientservice.db.entity.Ingredient;
+import com.ssafy.ingredientservice.dto.request.IngredientListReq;
 import com.ssafy.ingredientservice.dto.response.*;
+import com.ssafy.ingredientservice.service.IngredientService;
 import com.ssafy.ingredientservice.service.ResponseService;
 import com.ssafy.ingredientservice.util.exception.ConvertOCRException;
 import com.ssafy.ingredientservice.util.exception.HaveAllIngredientInRecipeException;
+import com.ssafy.ingredientservice.util.exception.IngredientNotFoundException;
 import com.ssafy.ingredientservice.util.exception.RecipeNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +23,7 @@ import java.util.List;
 public class IngredientController {
 
 	private final ResponseService responseService;
-
+	private final IngredientService ingredientService;
 	/**
 	 * MultipartFile 업로드 필요
 	 * 1. 이미지 -> OCR 네이버 API로 변환
@@ -148,109 +152,34 @@ public class IngredientController {
 
 	@GetMapping("/{recipeId}")
 	public ResponseEntity<?> getUsedIngredientsInRecipe(@PathVariable("recipeId") final String recipeId) {
-
-		RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes();
-
-		List<RecipeIngredientInfo> recipeIngredientInfoList = recipeIngredientListRes.getRecipeIngredientInfoList();
-
-		for (RecipeIngredientInfo info : recipeIngredientInfoList) {
-
-			List<RecipeIngredient> recipeIngredientList = info.getRecipeIngredientList();
-
-			switch (info.getRecipeIngredientType()) {
-
-				case FRUIT -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(10)
-							.recipeIngredientName("사과")
-							.recipeIngredientVolume("1쪽")
-							.build()
-					);
-				}
-				case VEGETABLE -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(11)
-							.recipeIngredientName("대파")
-							.recipeIngredientVolume("1망")
-							.build()
-					);
-				}
-				case RICE_GRAIN -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(13)
-							.recipeIngredientName("햅쌀")
-							.recipeIngredientVolume("1큰술")
-							.build()
-					);
-				}
-				case MEAT_EGG -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(14)
-							.recipeIngredientName("달걀")
-							.recipeIngredientVolume("흰자")
-							.build()
-					);
-				}
-				case FISH -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(15)
-							.recipeIngredientName("고등어")
-							.recipeIngredientVolume("1마리")
-							.build()
-					);
-				}
-				case MILK -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(16)
-							.recipeIngredientName("체다치즈")
-							.recipeIngredientVolume("1장")
-							.build()
-					);
-				}
-				case SAUCE -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(17)
-							.recipeIngredientName("고추장")
-							.recipeIngredientVolume("1큰술")
-							.build()
-					);
-				}
-				case ETC -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(18)
-							.recipeIngredientName("제육볶음")
-							.recipeIngredientVolume("1팩")
-							.build()
-					);
-				}
-				default -> {
-					return responseService.INTERNAL_SERVER_ERROR();
-				}
-
-			}
-		}
-
 		try {
-			log.debug("/ingredient/{recipeId} : {}", recipeId);
-			return ResponseEntity.ok()
-				.body(responseService.getSuccessSingleResult(recipeIngredientListRes, "레시피 재료 조회 성공"));
-		} catch (HaveAllIngredientInRecipeException e) {
-			// exception은 아닌거같아서 추후 수정 필요
-			return responseService.NO_CONTENT();
-		} catch (RecipeNotFoundException e) {
+			return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
+		} catch (IngredientNotFoundException e) {
 			return responseService.BAD_REQUEST();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
 		}
+//		} catch (HaveAllIngredientInRecipeException e) {
+//			// exception은 아닌거같아서 추후 수정 필요
+//			return responseService.NO_CONTENT();
+//		} catch (Exception e) {
+//			return responseService.INTERNAL_SERVER_ERROR();
+//		}
 	}
+
+	@PostMapping("/list")
+	public ResponseEntity<?> getIngredientList(@RequestBody final IngredientListReq req) {
+		try {
+			return ingredientService.getIngredientList(req);
+		} catch (IngredientNotFoundException e) {
+			return responseService.BAD_REQUEST();
+		}
+//		} catch (HaveAllIngredientInRecipeException e) {
+//			// exception은 아닌거같아서 추후 수정 필요
+//			return responseService.NO_CONTENT();
+//		} catch (Exception e) {
+//			return responseService.INTERNAL_SERVER_ERROR();
+//		}
+	}
+
 
 	@GetMapping("/need/{recipeId}")
 	public ResponseEntity<?> getIngredientIdToCook(@PathVariable("recipeId") final String recipeId) {
@@ -260,13 +189,13 @@ public class IngredientController {
 
 		for (RecipeIngredientInfo info : recipeIngredientInfoList) {
 
-			List<RecipeIngredient> recipeIngredientList = info.getRecipeIngredientList();
+			List<RecipeIngredientRes> recipeIngredientResList = info.getRecipeIngredientResList();
 
 			switch (info.getRecipeIngredientType()) {
 
 				case FRUIT -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
+					recipeIngredientResList.add(
+						RecipeIngredientRes.builder()
 							.recipeIngredientId(10)
 							.recipeIngredientName("사과")
 							.recipeIngredientVolume("1쪽")
@@ -274,8 +203,8 @@ public class IngredientController {
 					);
 				}
 				case VEGETABLE -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
+					recipeIngredientResList.add(
+						RecipeIngredientRes.builder()
 							.recipeIngredientId(11)
 							.recipeIngredientName("대파")
 							.recipeIngredientVolume("1망")
@@ -283,8 +212,8 @@ public class IngredientController {
 					);
 				}
 				case RICE_GRAIN -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
+					recipeIngredientResList.add(
+						RecipeIngredientRes.builder()
 							.recipeIngredientId(13)
 							.recipeIngredientName("햅쌀")
 							.recipeIngredientVolume("1큰술")
@@ -292,8 +221,8 @@ public class IngredientController {
 					);
 				}
 				case MEAT_EGG -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
+					recipeIngredientResList.add(
+						RecipeIngredientRes.builder()
 							.recipeIngredientId(14)
 							.recipeIngredientName("달걀")
 							.recipeIngredientVolume("흰자")
@@ -301,8 +230,8 @@ public class IngredientController {
 					);
 				}
 				case FISH -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
+					recipeIngredientResList.add(
+						RecipeIngredientRes.builder()
 							.recipeIngredientId(15)
 							.recipeIngredientName("고등어")
 							.recipeIngredientVolume("1마리")
@@ -310,8 +239,8 @@ public class IngredientController {
 					);
 				}
 				case MILK -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
+					recipeIngredientResList.add(
+						RecipeIngredientRes.builder()
 							.recipeIngredientId(16)
 							.recipeIngredientName("체다치즈")
 							.recipeIngredientVolume("1장")
@@ -319,8 +248,8 @@ public class IngredientController {
 					);
 				}
 				case SAUCE -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
+					recipeIngredientResList.add(
+						RecipeIngredientRes.builder()
 							.recipeIngredientId(17)
 							.recipeIngredientName("고추장")
 							.recipeIngredientVolume("1큰술")
@@ -328,8 +257,8 @@ public class IngredientController {
 					);
 				}
 				case ETC -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
+					recipeIngredientResList.add(
+						RecipeIngredientRes.builder()
 							.recipeIngredientId(18)
 							.recipeIngredientName("제육볶음")
 							.recipeIngredientVolume("1팩")

@@ -1,8 +1,11 @@
 package com.ssafy.recipeservice.controller;
 
+import com.ssafy.recipeservice.dto.request.FoodListReq;
 import com.ssafy.recipeservice.dto.request.MakeRecipeReq;
 import com.ssafy.recipeservice.dto.response.*;
+import com.ssafy.recipeservice.service.RecipeService;
 import com.ssafy.recipeservice.service.ResponseService;
+import com.ssafy.recipeservice.util.exception.FoodNotFoundException;
 import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +23,7 @@ import java.util.List;
 public class RecipeController {
 
 	private final ResponseService responseService;
-
+	private final RecipeService recipeService;
 	/**
 	 * 레시피의 모든 정보를 반환
 	 */
@@ -391,6 +394,15 @@ public class RecipeController {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
 			return responseService.INTERNAL_SERVER_ERROR();
+		}
+	}
+
+	@PostMapping("/foodList")
+	public ResponseEntity<?> getFoodList(@RequestBody final FoodListReq req) {
+		try {
+			return recipeService.getFoodList(req);
+		} catch (FoodNotFoundException e) {
+			return responseService.BAD_REQUEST();
 		}
 	}
 }

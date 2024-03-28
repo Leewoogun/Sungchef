@@ -33,7 +33,7 @@ public class RecipeIngredient {
   @Column(name = "recipe_show_name_id")
   private int recipeShowNameId;
 
-  @Column(name = "ingredinet_id")
+  @Column(name = "ingredient_id")
   private int ingredientId;
 
 }
