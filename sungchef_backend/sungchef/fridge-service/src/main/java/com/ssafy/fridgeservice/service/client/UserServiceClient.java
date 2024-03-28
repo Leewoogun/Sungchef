@@ -1,4 +1,4 @@
-package com.ssafy.fridgeservice.client;
+package com.ssafy.fridgeservice.service.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
