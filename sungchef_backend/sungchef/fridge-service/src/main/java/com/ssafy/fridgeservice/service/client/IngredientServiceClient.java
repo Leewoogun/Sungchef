@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.ssafy.fridgeservice.dto.request.user.SignUpReq;
 import com.ssafy.fridgeservice.util.result.SingleResult;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 @FeignClient("ingredient-service")
 public interface IngredientServiceClient {
 
@@ -19,5 +22,9 @@ public interface IngredientServiceClient {
 
 	@PostMapping("/list")
 	ResponseEntity<?> getIngredientInfoList(List<Integer> ingredientIdList);
+
+
+	@GetMapping("/communication")
+	String communicationTest();
 
 }
