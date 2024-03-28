@@ -273,7 +273,7 @@ public class IngredientController {
 		}
 
 	}
-	@GetMapping("/{recipeId}")
+	@GetMapping("/recipe/{recipeId}")
 	public ResponseEntity<?> getUsedIngredientsInRecipe(@PathVariable("recipeId") final String recipeId) {
 		try {
 			return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
