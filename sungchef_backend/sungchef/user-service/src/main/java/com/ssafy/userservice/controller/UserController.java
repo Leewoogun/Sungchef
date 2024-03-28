@@ -110,6 +110,8 @@ public class UserController {
 		} catch (UserNeedSurveyException e) {
 			return responseService.FORBIDDEN();
 		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e.getMessage());
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
