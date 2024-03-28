@@ -284,5 +284,6 @@ public class IngredientController {
 		} catch (Exception e) {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
+		
 	}
 }
