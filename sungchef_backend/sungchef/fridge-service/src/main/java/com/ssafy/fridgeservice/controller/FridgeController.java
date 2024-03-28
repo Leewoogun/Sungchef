@@ -37,6 +37,7 @@ public class FridgeController {
 	private final ResponseService responseService;
 	private final KafkaProducer kafkaProducer;
 	private final UserServiceClient userServiceClient;
+	private final IngredientServiceClient ingredientServiceClient;
 
 
 	@GetMapping("/user/healthcheck")
@@ -192,5 +193,11 @@ public class FridgeController {
 		} catch (Exception e) {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
+	}
+
+	@GetMapping("/communication")
+	public String fridgeIngredientTest() {
+		log.debug("냉장고 - 재료 서비스 간 통신 가능");
+		return "냉장고 - 재료 서비스 간 통신 가능";
 	}
 }
