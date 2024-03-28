@@ -154,7 +154,7 @@ public class IngredientController {
 	public ResponseEntity<?> getUsedIngredientsInRecipe(@PathVariable("recipeId") final String recipeId) {
 		try {
 			return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
-		} catch (IngredientNotFoundException e) {
+		} catch (RecipeNotFoundException | IngredientNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		}
 //		} catch (HaveAllIngredientInRecipeException e) {

@@ -12,6 +12,7 @@ import com.ssafy.ingredientservice.dto.response.IngredientRes;
 import com.ssafy.ingredientservice.dto.response.RecipeIngredientListRes;;
 import com.ssafy.ingredientservice.dto.response.IngredientListRes;
 import com.ssafy.ingredientservice.util.exception.IngredientNotFoundException;
+import com.ssafy.ingredientservice.util.exception.RecipeNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +30,9 @@ public class IngredientService {
     private final RecipeIngredientRepository recipeIngredientRepository;
     private final IngredientRepository ingredientRepository;
 
-    public ResponseEntity<?> getUsedIngredientsInRecipe(Integer recipeId) throws IngredientNotFoundException {
+    public ResponseEntity<?> getUsedIngredientsInRecipe(Integer recipeId) throws IngredientNotFoundException, RecipeNotFoundException {
         List<RecipeIngredient> searchRecipeIngredients = recipeIngredientRepository.findRecipeIngredientsByRecipeId(recipeId);
-        if (searchRecipeIngredients.size()==0) throw new IngredientNotFoundException("recipeId="+recipeId+"인 재료가 없습니다.");
+        if (searchRecipeIngredients.size()==0) throw new RecipeNotFoundException("recipeId="+recipeId+"인 재료가 없습니다.");
 
         RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes(recipeId);
 
