@@ -150,20 +150,7 @@ public class IngredientController {
 		}
 	}
 
-	@GetMapping("/{recipeId}")
-	public ResponseEntity<?> getUsedIngredientsInRecipe(@PathVariable("recipeId") final String recipeId) {
-		try {
-			return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
-		} catch (RecipeNotFoundException | IngredientNotFoundException e) {
-			return responseService.BAD_REQUEST();
-		}
-//		} catch (HaveAllIngredientInRecipeException e) {
-//			// exception은 아닌거같아서 추후 수정 필요
-//			return responseService.NO_CONTENT();
-//		} catch (Exception e) {
-//			return responseService.INTERNAL_SERVER_ERROR();
-//		}
-	}
+
 
 	@PostMapping("/list")
 	public ResponseEntity<?> getIngredientList(@RequestBody final IngredientListReq req) {
@@ -284,6 +271,20 @@ public class IngredientController {
 		} catch (Exception e) {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
-		
+
+	}
+	@GetMapping("/{recipeId}")
+	public ResponseEntity<?> getUsedIngredientsInRecipe(@PathVariable("recipeId") final String recipeId) {
+		try {
+			return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
+		} catch (RecipeNotFoundException | IngredientNotFoundException e) {
+			return responseService.BAD_REQUEST();
+		}
+//		} catch (HaveAllIngredientInRecipeException e) {
+//			// exception은 아닌거같아서 추후 수정 필요
+//			return responseService.NO_CONTENT();
+//		} catch (Exception e) {
+//			return responseService.INTERNAL_SERVER_ERROR();
+//		}
 	}
 }
