@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.userservice.service.RedisService;
 import com.ssafy.userservice.service.client.FridgeServiceClient;
 import com.ssafy.userservice.dto.request.BookmarkReq;
 import com.ssafy.userservice.dto.request.ContactReq;
@@ -49,32 +50,29 @@ public class UserController {
 	private final UserService userService;
 	private final FridgeServiceClient fridgeServiceClient;
 
-	@GetMapping("/getFridgeIngredient")
-	public ResponseEntity<?> getFridgeIngredient() {
-
-		//
-		ResponseEntity<SingleResult<?>> res = fridgeServiceClient.getFridgeIngredient();
-		log.info("result : {}", res.getBody().getData());
-		return fridgeServiceClient.getFridgeIngredient();
-	}
-
-	@GetMapping("/getIngredientIdToCook/{recipeId}")
-	public ResponseEntity<?> getIngredientIdToCook(@PathVariable("recipeId") final String recipeId) {
-		return fridgeServiceClient.getIngredientIdToCook(recipeId);
-	}
+	// @GetMapping("/getFridgeIngredient")
+	// public ResponseEntity<?> getFridgeIngredient() {
+	//
+	// 	//
+	// 	ResponseEntity<SingleResult<?>> res = fridgeServiceClient.getFridgeIngredient();
+	// 	log.info("result : {}", res.getBody().getData());
+	// 	return fridgeServiceClient.getFridgeIngredient();
+	// }
+	//
+	// @GetMapping("/getIngredientIdToCook/{recipeId}")
+	// public ResponseEntity<?> getIngredientIdToCook(@PathVariable("recipeId") final String recipeId) {
+	// 	return fridgeServiceClient.getIngredientIdToCook(recipeId);
+	// }
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> signUp(@Valid @RequestBody final SignUpReq req) {
 		// TODO
 		try {
-			userService.createUser(req);
+
 			log.debug("/login : {}", req);
 			return ResponseEntity.ok().body(
 				responseService.getSuccessSingleResult(
-					UserTokenRes.builder()
-						.accessToken("adkssudgktpdy")
-						.refreshToken("qksrkqtmqslek")
-						.build()
+					userService.createUser(req)
 					, "회원가입 성공")
 			);
 		} catch (NicknameExistException e) {
@@ -164,7 +162,7 @@ public class UserController {
 	 * @return
 	 */
 	@GetMapping("/simple")
-	public ResponseEntity<?> getUserSimpleInfo() {
+	public ResponseEntity<?> getUserSimpleInfo(@) {
 
 		//TODO
 		try {

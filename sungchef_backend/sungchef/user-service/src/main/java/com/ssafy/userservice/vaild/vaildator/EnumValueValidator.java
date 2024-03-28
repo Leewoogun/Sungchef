@@ -5,7 +5,7 @@ import com.ssafy.userservice.vaild.annotation.EnumValue;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class EnumValueValidator implements ConstraintValidator<EnumValue, String> {
+public class EnumValueValidator implements ConstraintValidator<EnumValue, Enum<?>> {
 
 	private EnumValue enumValue;
 	@Override
@@ -14,13 +14,12 @@ public class EnumValueValidator implements ConstraintValidator<EnumValue, String
 	}
 
 	@Override
-	public boolean isValid(String value, ConstraintValidatorContext context) {
+	public boolean isValid(Enum<?> value, ConstraintValidatorContext context) {
 		boolean result = false;
 		Enum<?>[] enumValues = this.enumValue.enumClass().getEnumConstants();
 		if (enumValues != null) {
 			for (Object enumValue : enumValues) {
-				if (value.equals(enumValue.toString())
-					|| this.enumValue.ignoreCase() && value.equalsIgnoreCase(enumValue.toString())) {
+				if (value.equals(enumValue) || (this.enumValue.ignoreCase() && value.name().equalsIgnoreCase(enumValue.getClass().getName()))) {
 					result = true;
 					break;
 				}

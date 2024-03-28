@@ -1,13 +1,10 @@
 package com.ssafy.userservice.service;
 
+import com.ssafy.userservice.config.security.jwt.JwtToken;
 import com.ssafy.userservice.db.entity.User;
 import com.ssafy.userservice.db.repository.UserRepository;
 import com.ssafy.userservice.util.exception.UserNotCreatedException;
-import com.ssafy.userservice.util.exception.UserNotFoundException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.stereotype.Component;
 
 import com.ssafy.userservice.dto.request.SignUpReq;
@@ -15,23 +12,24 @@ import com.ssafy.userservice.dto.request.SignUpReq;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Optional;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+// public class UserService implements UserDetailsService {
+public class UserService {
 
 	// private final FridgeRepository fridgeRepository;
 	private final UserRepository userRepository;
-	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final AuthenticationManagerBuilder authenticationManagerBuilder;
+	private final JwtTokenProvider jwtTokenProvider;
+	private final RedisService redisService;
+	// private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
-	public User createUser(SignUpReq req) {
+	public JwtToken createUser(SignUpReq req) {
 
 		User user = userRepository.save(User.builder()
 						.userId(-1)
@@ -45,18 +43,24 @@ public class UserService implements UserDetailsService {
 		);
 
 		if (user.getUserId() == -1) throw new UserNotCreatedException(req.toString());
-		return user;
+
+		// UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(req.getUserSnsId(), req.getUserSnsId());
+		// Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+		JwtToken token = jwtTokenProvider.generateToken(req.getUserSnsId());
+
+		redisService.setValues("user_" + req.getUserSnsId(), token.getRefreshToken(), Duration.ofMillis(1000 * 60 * 60 * 36));
+		return jwtTokenProvider.generateToken(req.getUserSnsId());
 	}
 
-	@Override
-	public UserDetails loadUserByUsername(String userNickName) throws UsernameNotFoundException {
-		Optional<User> searchUser =  userRepository.searchUserByUserNickname(userNickName);
-
-		if (!searchUser.isPresent()) throw new UsernameNotFoundException(userNickName);
-		User user = searchUser.get();
-		return new org.springframework.security.core.userdetails.User(user.getUserNickname(), user.getUserSnsId(),
-				true, true, true, true,
-				new ArrayList<>()
-		);
-	}
+	// @Override
+	// public UserDetails loadUserByUsername(String userSnsId) throws UsernameNotFoundException {
+	// 	Optional<User> searchUser =  userRepository.findByUserSnsId(userSnsId);
+	//
+	// 	if (searchUser.isEmpty()) throw new UsernameNotFoundException(userSnsId);
+	// 	User user = searchUser.get();
+	// 	return new org.springframework.security.core.userdetails.User(user.getUserSnsId(), user.getUserSnsId(),
+	// 			true, true, true, true,
+	// 			new ArrayList<>()
+	// 	);
+	// }
 }
