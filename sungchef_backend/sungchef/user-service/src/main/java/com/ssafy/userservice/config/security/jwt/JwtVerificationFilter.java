@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
+// public class JwtVerificationFilter {
 public class JwtVerificationFilter extends OncePerRequestFilter {
 	// 인증에서 제외할 url
 	private static final List<String> EXCLUDE_URL =
@@ -28,8 +29,8 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 			"/user/signup",
 			"/user/login",
 			"/user/autologin",
-			"/user/reissue",
-			"/user/exist/**"
+			"/user/reissue"
+			// "/user/exist/**"
 		);
 	private final JwtTokenProvider jwtTokenProvider;
 	private final RedisService redisService;
@@ -44,8 +45,23 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 			if (StringUtils.hasText(accessToken) && doNotLogout(accessToken)
 				&& jwtTokenProvider.validateToken(accessToken)) {
 				setAuthenticationToContext(accessToken);
+			} else {
+				String refreshToken = request.getHeader("Refresh");
+				if (StringUtils.hasText(refreshToken) && jwtTokenProvider.validateToken(refreshToken)) {
+					// refresh token이 유효하면 새 액세스 토큰 발급
+					JwtToken newTokens = jwtTokenProvider.generateTokenFromRefreshToken(refreshToken);
+
+					// 새 access token을 authentication 객체에 설정하고 security context에 저장
+					Authentication newAuthentication = jwtTokenProvider.getAuthentication(newTokens.getAccessToken());
+					SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+
+					// 새 access token과 refresh token을 응답 헤더에 추가
+					response.setHeader("Authorization", "Bearer_" + newTokens.getAccessToken());
+					response.setHeader("Refresh", "Bearer_" + newTokens.getRefreshToken());
+
+				}
 			}
-			// TODO: 예외처리 리팩토링
+
 		} catch (RuntimeException e) {
 			throw new BaseException(e.getMessage());
 			// if (e instanceof BusinessLogicException) {
@@ -59,7 +75,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 	}
 
 	private boolean doNotLogout(String accessToken) {
-		String isLogout = redisService.getValues(accessToken);
+		String isLogout = redisService.getValues("user_" + accessToken);
 		return isLogout.equals("false");
 	}
 
@@ -67,7 +83,6 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		boolean result = EXCLUDE_URL.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
-
 		return result;
 	}
 

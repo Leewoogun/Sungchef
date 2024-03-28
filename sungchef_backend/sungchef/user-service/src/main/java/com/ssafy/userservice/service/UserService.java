@@ -1,19 +1,30 @@
 package com.ssafy.userservice.service;
 
 import com.ssafy.userservice.config.security.jwt.JwtToken;
+import com.ssafy.userservice.config.security.jwt.JwtTokenProvider;
 import com.ssafy.userservice.db.entity.User;
 import com.ssafy.userservice.db.repository.UserRepository;
+import com.ssafy.userservice.dto.request.LoginReq;
+import com.ssafy.userservice.util.exception.JwtExpiredException;
+import com.ssafy.userservice.util.exception.NicknameExistException;
 import com.ssafy.userservice.util.exception.UserNotCreatedException;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.ssafy.userservice.dto.request.SignUpReq;
+import com.ssafy.userservice.util.exception.UserNotFoundException;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -26,18 +37,26 @@ public class UserService {
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final RedisService redisService;
-	// private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	public boolean userExist(String userSnsId) {
-		Optional<User> user = userRepository.searchUserByUserSnsId(userSnsId);
+		Optional<User> user = userRepository.findByUserSnsId(userSnsId);
 		return user.isPresent();
 	}
 
+	public boolean nicknameExist(String userNickname) {
+		Optional<User> user = userRepository.findByUserNickname(userNickname);
+		return user.isPresent();
+	}
+
+	@Transactional
 	public JwtToken createUser(SignUpReq req) {
+		if (userExist(req.getUserSnsId())) throw new UserNotFoundException("이미 존재하는 유저");
+		if (nicknameExist(req.getUserSnsId())) throw new NicknameExistException("이미 존재하는 닉네임");
 
 		User user = userRepository.save(User.builder()
 						.userId(-1)
-						// .userSnsId(bCryptPasswordEncoder.encode(req.getUserSnsId()))
+						.userPassword(bCryptPasswordEncoder.encode(req.getUserSnsId()))
 						.userSnsId(req.getUserSnsId())
 						.userGenderType(req.getUserGender())
 						.userSnsType(req.getUserSnsType())
@@ -46,25 +65,28 @@ public class UserService {
 				.build()
 		);
 
-		if (user.getUserId() == -1) throw new UserNotCreatedException(req.toString());
+		if (user.getUserId() == -1) throw new UserNotCreatedException("유저 생성 실패");
 
-		// UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(req.getUserSnsId(), req.getUserSnsId());
-		// Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-		JwtToken token = jwtTokenProvider.generateToken(req.getUserSnsId());
-
-		redisService.setValues("user_" + req.getUserSnsId(), token.getRefreshToken(), Duration.ofMillis(1000 * 60 * 60 * 36));
-		return jwtTokenProvider.generateToken(req.getUserSnsId());
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(req.getUserSnsId(), req.getUserSnsId());
+		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+		JwtToken token = jwtTokenProvider.generateToken(authentication, req.getUserSnsId());
+		return token;
 	}
 
-	// @Override
-	// public UserDetails loadUserByUsername(String userSnsId) throws UsernameNotFoundException {
-	// 	Optional<User> searchUser =  userRepository.findByUserSnsId(userSnsId);
-	//
-	// 	if (searchUser.isEmpty()) throw new UsernameNotFoundException(userSnsId);
-	// 	User user = searchUser.get();
-	// 	return new org.springframework.security.core.userdetails.User(user.getUserSnsId(), user.getUserSnsId(),
-	// 			true, true, true, true,
-	// 			new ArrayList<>()
-	// 	);
-	// }
+	@Transactional
+	public JwtToken loginUser(LoginReq req) {
+
+		Optional<User> selectUser = userRepository.findByUserSnsId(req.getUserSnsId());
+
+		if (selectUser.isEmpty()) throw new UserNotFoundException("유저가 존재하지 않음");
+		User user = selectUser.get();
+
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUserSnsId(), user.getUserSnsId());
+		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+		return jwtTokenProvider.generateToken(authentication, req.getUserSnsId());
+	}
+
+	public JwtToken reissue(String refreshToken) {
+		return jwtTokenProvider.generateTokenFromRefreshToken(refreshToken.substring(7));
+	}
 }

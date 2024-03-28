@@ -7,6 +7,9 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 
+	// USER
+	JWT_TOKEN_EXPIRED(403, "U001", "Token Expired"),
+
 	// Common
 	INVALID_INPUT_VALUE(400, "C001", " Invalid Input Value"),
 	HANDLE_ACCESS_DENIED(403, "C002", "Access is Denied"),
@@ -16,6 +19,10 @@ public enum ErrorCode {
 	// Member
 	EMAIL_DUPLICATION(400, "M001", "Email is Duplication"),
 	LOGIN_INPUT_INVALID(400, "M002", "Login input is invalid"),
+
+
+
+	INTERNAL_SERVER_ERROR(500, "S002", "VIEW LOGS"),
 
 
 

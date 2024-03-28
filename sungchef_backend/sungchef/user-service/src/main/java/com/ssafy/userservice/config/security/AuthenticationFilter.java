@@ -3,6 +3,7 @@ package com.ssafy.userservice.config.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.userservice.db.entity.User;
 import com.ssafy.userservice.dto.request.LoginReq;
+import com.ssafy.userservice.service.UserDetailServiceImpl;
 import com.ssafy.userservice.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,13 +28,13 @@ import org.springframework.core.env.Environment;
 @AllArgsConstructor
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private UserService userService;
+    private UserDetailServiceImpl userDetailService;
     private Environment environment;
 
     public AuthenticationFilter(AuthenticationManager authenticationManager,
-        UserService userService, Environment environment) {
+        UserDetailServiceImpl userDetailService, Environment environment) {
         super(authenticationManager);
-        this.userService = userService;
+        this.userDetailService = userDetailService;
         this.environment = environment;
     }
 

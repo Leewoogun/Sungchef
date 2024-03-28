@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class JwtToken {
+	private String grantType; // jwt 인증 타입. (Bearer)
 	private String accessToken;
 	private String refreshToken;
 }
