@@ -24,6 +24,10 @@ public class FridgeService {
 	private final FridgeRepository fridgeRepository;
 	private final IngredientServiceClient ingredientServiceClient;
 
+	// sUserId 를 받은 다음에 ingredient info 반환해주는 함수 (controller 에서 호출할 용도)
+
+
+
 
 	// fridgeDB 가서 suserId 로 ingredientId 1개 GET
 	public Integer getSingleIngredientIdFromFridge(int sUserId) {
