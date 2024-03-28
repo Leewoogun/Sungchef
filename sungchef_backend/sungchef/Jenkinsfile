@@ -64,9 +64,10 @@ pipeline {
                         dir('discovery-service') {
                             script{
 								def DISCOVERY_PORT = env.DISCOVERY_PORT
+								def DISCOVERY = env.DISCOVERY
                                 sh 'docker build -t discovery-service .'
                                 sh 'docker rm -f discovery-service'
-                                sh 'docker run --network sungchef-network -d --name discovery-service -e DISCOVERY_PORT=$DISCOVERY_PORT -p $DISCOVERY_PORT:$DISCOVERY_PORT discovery-service'
+                                sh 'docker run --network sungchef-network -d --name $DISCOVERY -e DISCOVERY=$DISCOVERY -e DISCOVERY_PORT=$DISCOVERY_PORT -p $DISCOVERY_PORT:$DISCOVERY_PORT discovery-service'
                             }
                         }
                     }

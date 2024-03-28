@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.userservice.db.entity.User;
 import com.ssafy.userservice.service.RedisService;
 import com.ssafy.userservice.service.client.FridgeServiceClient;
 import com.ssafy.userservice.dto.request.BookmarkReq;
@@ -29,6 +30,7 @@ import com.ssafy.userservice.dto.response.UserSimpleInfoRes;
 import com.ssafy.userservice.dto.response.UserTokenRes;
 import com.ssafy.userservice.service.ResponseService;
 import com.ssafy.userservice.service.UserService;
+import com.ssafy.userservice.util.exception.BaseException;
 import com.ssafy.userservice.util.exception.NicknameExistException;
 import com.ssafy.userservice.util.exception.UserNeedSurveyException;
 import com.ssafy.userservice.util.exception.UserNotFoundException;
@@ -68,11 +70,14 @@ public class UserController {
 	public ResponseEntity<?> signUp(@Valid @RequestBody final SignUpReq req) {
 		// TODO
 		try {
-
-			log.debug("/login : {}", req);
-			return ResponseEntity.ok().body(
+			User user = userService.createUser(req);
+			if (user.getUserId() == -1) throw new BaseException("USER NOT CREATED");
+			else return  ResponseEntity.ok().body(
 				responseService.getSuccessSingleResult(
-					userService.createUser(req)
+					UserTokenRes.builder()
+						.accessToken("adkssudgktpdy")
+						.refreshToken("qksrkqtmqslek")
+						.build()
 					, "회원가입 성공")
 			);
 		} catch (NicknameExistException e) {
@@ -87,20 +92,27 @@ public class UserController {
 	public ResponseEntity<?> login(@RequestBody LoginReq req) {
 		// TODO
 		try {
-			log.debug("/login : {}", req);
-			return ResponseEntity.ok()
-				.body(
-					responseService.getSuccessSingleResult(UserTokenRes
-							.builder()
-							.accessToken("adkssudgktpdy")
-							.refreshToken("qksrkqtmqslek")
-							.build()
-						, "로그인 성공"));
+			if (userService.userExist(req.getUserSnsId())) {
+				return responseService.FORBIDDEN(); // 설문이 필요
+			} else {
+				return responseService.NOT_FOUND(); // 회원가입이 필요
+			}
+			// log.debug("/login : {}", req);
+			// return ResponseEntity.ok()
+			// 	.body(
+			// 		responseService.getSuccessSingleResult(UserTokenRes
+			// 				.builder()
+			// 				.accessToken("adkssudgktpdy")
+			// 				.refreshToken("qksrkqtmqslek")
+			// 				.build()
+			// 			, "로그인 성공"));
 		} catch (UserNotFoundException e) {
 			return responseService.NOT_FOUND();
 		} catch (UserNeedSurveyException e) {
 			return responseService.FORBIDDEN();
 		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e.getMessage());
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
@@ -162,7 +174,7 @@ public class UserController {
 	 * @return
 	 */
 	@GetMapping("/simple")
-	public ResponseEntity<?> getUserSimpleInfo(@) {
+	public ResponseEntity<?> getUserSimpleInfo() {
 
 		//TODO
 		try {

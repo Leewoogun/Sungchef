@@ -28,6 +28,10 @@ public class UserService {
 	private final RedisService redisService;
 	// private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+	public boolean userExist(String userSnsId) {
+		Optional<User> user = userRepository.searchUserByUserSnsId(userSnsId);
+		return user.isPresent();
+	}
 
 	public JwtToken createUser(SignUpReq req) {
 
