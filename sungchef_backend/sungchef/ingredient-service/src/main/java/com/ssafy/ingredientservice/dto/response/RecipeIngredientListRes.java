@@ -10,7 +10,8 @@ import java.util.List;
 public class RecipeIngredientListRes {
 	int recipeId;
 	List<RecipeIngredientInfo> recipeIngredientInfoList;
-	public RecipeIngredientListRes() {
+	public RecipeIngredientListRes(int recipeId) {
+		this.recipeId = recipeId;
 		recipeIngredientInfoList = new ArrayList<>();
 		for (int i = 0; i < IngredientType.values().length; i++) {
 			recipeIngredientInfoList.add(

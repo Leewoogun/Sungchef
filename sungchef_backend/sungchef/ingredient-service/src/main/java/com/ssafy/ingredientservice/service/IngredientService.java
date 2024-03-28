@@ -33,7 +33,7 @@ public class IngredientService {
         List<RecipeIngredient> searchRecipeIngredients = recipeIngredientRepository.findRecipeIngredientsByRecipeId(recipeId);
         if (searchRecipeIngredients.size()==0) throw new IngredientNotFoundException("recipeId="+recipeId+"인 재료가 없습니다.");
 
-        RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes();
+        RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes(recipeId);
 
 		List<RecipeIngredientInfo> recipeIngredientInfoList = recipeIngredientListRes.getRecipeIngredientInfoList();
 

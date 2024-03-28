@@ -183,7 +183,7 @@ public class IngredientController {
 
 	@GetMapping("/need/{recipeId}")
 	public ResponseEntity<?> getIngredientIdToCook(@PathVariable("recipeId") final String recipeId) {
-		RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes();
+		RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes(1);
 
 		List<RecipeIngredientInfo> recipeIngredientInfoList = recipeIngredientListRes.getRecipeIngredientInfoList();
 
