@@ -17,7 +17,7 @@ public class RecipeDetailRes {
 	String recipeCookingTime;
 	String recipeVolume;
 	List<RecipeIngredientInfo> recipeIngredientInfoList;
-	List<RecipeDetail> recipeDetailList;
+	List<RecipeStep> recipeDetailList;
 
 	/**
 	 * 내부의 리스트들을 초기화하는 함수
@@ -31,7 +31,6 @@ public class RecipeDetailRes {
 				)
 			);
 		}
-		recipeDetailList = new ArrayList<>();
 	}
 
 }
