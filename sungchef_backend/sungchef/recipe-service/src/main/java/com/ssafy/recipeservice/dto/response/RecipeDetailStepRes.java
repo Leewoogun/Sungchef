@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class RecipeDetailStepRes {
 	int recipeId;
-	List<RecipeDetail> recipeDetailList;
+	List<RecipeStep> recipeDetailList;
 
 	public RecipeDetailStepRes(int _recipeId) {
 		recipeId = _recipeId;

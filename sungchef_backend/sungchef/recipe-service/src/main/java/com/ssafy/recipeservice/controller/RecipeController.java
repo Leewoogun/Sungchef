@@ -29,123 +29,9 @@ public class RecipeController {
 	 */
 	@GetMapping("/{recipeId}")
 	public ResponseEntity<?> recipeDetail(@PathVariable("recipeId") final String recipeId) {
-		// TODO
-		RecipeDetailRes recipeDetailRes = RecipeDetailRes.builder()
-			.recipeId(Integer.parseInt(recipeId))
-			.recipeName("국가권력급 김치찌개")
-			.recipeDescription("너무 맛있는 김치찌개에요")
-			.recipeImage("https://gomean.co.kr/wp-content/uploads/2023/07/gm-kimchijjigaetiny.jpg")
-			.recipeCookingTime("30분 이내")
-			.recipeVolume("2~3인분")
-			.build();
-
-		recipeDetailRes.initRecipeDetailResList();
-
-		List<RecipeIngredientInfo> recipeIngredientInfoList = recipeDetailRes.getRecipeIngredientInfoList();
-
-		for (RecipeIngredientInfo recipeIngredientInfo : recipeIngredientInfoList) {
-
-			List<RecipeIngredient> recipeIngredientList = recipeIngredientInfo.getRecipeIngredientList();
-
-			switch (recipeIngredientInfo.getRecipeIngredientType()) {
-
-				case FRUIT -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(10)
-							.recipeIngredientName("사과")
-							.recipeIngredientVolume("1쪽")
-							.build()
-					);
-				}
-				case VEGETABLE -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(11)
-							.recipeIngredientName("대파")
-							.recipeIngredientVolume("1망")
-							.build()
-					);
-				}
-				case RICE_GRAIN -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(13)
-							.recipeIngredientName("햅쌀")
-							.recipeIngredientVolume("1큰술")
-							.build()
-					);
-				}
-				case MEAT_EGG -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(14)
-							.recipeIngredientName("달걀")
-							.recipeIngredientVolume("흰자")
-							.build()
-					);
-				}
-				case FISH -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(15)
-							.recipeIngredientName("고등어")
-							.recipeIngredientVolume("1마리")
-							.build()
-					);
-				}
-				case MILK -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(16)
-							.recipeIngredientName("체다치즈")
-							.recipeIngredientVolume("1장")
-							.build()
-					);
-				}
-				case SAUCE -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(17)
-							.recipeIngredientName("고추장")
-							.recipeIngredientVolume("1큰술")
-							.build()
-					);
-				}
-				case ETC -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(18)
-							.recipeIngredientName("제육볶음")
-							.recipeIngredientVolume("1팩")
-							.build()
-					);
-				}
-				default -> {
-					return responseService.INTERNAL_SERVER_ERROR();
-				}
-			}
-		}
-
-		List<RecipeDetail> recipeDetailList = recipeDetailRes.getRecipeDetailList();
-		for (int i = 1; i < 10; i++) {
-			recipeDetailList.add(
-				RecipeDetail.builder()
-					.recipeDetailStep(i)
-					.recipeDetailDescription(i + "번 김치찌개를 끓여요")
-					.recipeDetailImage("https://i.ytimg.com/vi/0tiuhim4OCs/maxresdefault.jpg")
-					.build()
-			);
-		}
-
 		try {
-			return ResponseEntity.ok(responseService.getSuccessSingleResult(
-				recipeDetailRes
-				, "레시피 조회 성공")
-			);
-		} catch (NumberFormatException e) {
-			return responseService.BAD_REQUEST();
-		} catch (RecipeNotFoundException e) {
+			return recipeService.getRecipeDetail(Integer.parseInt(recipeId));
+		} catch (FoodNotFoundException | NumberFormatException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
 			return responseService.INTERNAL_SERVER_ERROR();
@@ -158,27 +44,9 @@ public class RecipeController {
 	 */
 	@GetMapping("/detail/{recipeId}")
 	public ResponseEntity<?> recipeDetailStep(@PathVariable("recipeId") final String recipeId) {
-		// TODO
-		RecipeDetailStepRes recipeDetailStepRes = new RecipeDetailStepRes(Integer.parseInt(recipeId));
-		List<RecipeDetail> recipeDetailList = recipeDetailStepRes.getRecipeDetailList();
-		for (int i = 1; i < 10; i++) {
-			recipeDetailList.add(
-				RecipeDetail.builder()
-					.recipeDetailStep(i)
-					.recipeDetailDescription(i + "번 김치찌개를 끓여요")
-					.recipeDetailImage("https://i.ytimg.com/vi/0tiuhim4OCs/maxresdefault.jpg")
-					.build()
-			);
-		}
 		try {
-			return ResponseEntity.ok(
-				responseService.getSuccessSingleResult(
-					recipeDetailStepRes
-					, "레시피 조회 성공")
-			);
-		} catch (NumberFormatException e) {
-			return responseService.BAD_REQUEST();
-		} catch (RecipeNotFoundException e) {
+			return recipeService.recipeDetailStep(Integer.parseInt(recipeId));
+		} catch (FoodNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
 			return responseService.INTERNAL_SERVER_ERROR();
@@ -401,6 +269,15 @@ public class RecipeController {
 	public ResponseEntity<?> getFoodList(@RequestBody final FoodListReq req) {
 		try {
 			return recipeService.getFoodList(req);
+		} catch (FoodNotFoundException e) {
+			return responseService.BAD_REQUEST();
+		}
+	}
+
+	@GetMapping("/test/{recipeId}")
+	public ResponseEntity<?> test(@PathVariable("recipeId") final String recipeId) {
+		try {
+			return recipeService.recipeDetailStep(Integer.parseInt(recipeId));
 		} catch (FoodNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		}
