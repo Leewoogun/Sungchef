@@ -41,13 +41,15 @@ pipeline {
             steps {
                 script {
                     def serviceName = env.GIT_BRANCH.split('/')[-1]
-					def DISCOVERY = env.DISCOVERY
-					def DISCOVERY_PORT = env.DISCOVERY_PORT
-					def SERVER_URL = env.SERVER_URL
-					def DB_PORT = env.DB_PORT
-					def DB_USERNAME = env.DB_USERNAME
-					def DB_PASSWORD = env.DB_PASSWORD
-                    deployService(serviceName, DISCOVERY, DISCOVERY_PORT, SERVER_URL, DB_PORT, DB_USERNAME, DB_PASSWORD)
+// 					def DISCOVERY = env.DISCOVERY
+// 					def DISCOVERY_PORT = env.DISCOVERY_PORT
+// 					def SERVER_URL = env.SERVER_URL
+// 					def DB_PORT = env.DB_PORT
+// 					def DB_USERNAME = env.DB_USERNAME
+// 					def DB_PASSWORD = env.DB_PASSWORD
+					def REDIS_PORT = env.REDIS_PORT
+					def JASYPT_PASSWORD = env.JASYPT_PASSWORD
+                    deployService(serviceName, REDIS_PORT, JASYPT_PASSWORD)
                 }
             }
         }
@@ -141,14 +143,14 @@ def buildService(serviceName) {
     }
 }
 
-def deployService(serviceName, DISCOVERY, DISCOVERY_PORT, SERVER_URL, DB_PORT, DB_USERNAME, DB_PASSWORD) {
+def deployService(serviceName, REDIS_PORT, JASYPT_PASSWORD) {
     dir('sungchef_backend'){
         dir('sungchef'){
             dir(serviceName) {
                 script{		
                     sh "docker build -t ${serviceName} ."
                     sh "docker rm -f ${serviceName}"
-                    sh "docker run --network sungchef-network -d --name $serviceName -e DISCOVERY=$DISCOVERY -e DISCOVERY_PORT=$DISCOVERY_PORT -e SERVER_URL=$SERVER_URL -e DB_PORT=$DB_PORT -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD $serviceName"
+                    sh "docker run --network sungchef-network -d --name $serviceName -e REDIS_PORT=$REDIS_PORT -e JASYPT_PASSWORD=$JASYPT_PASSWORD $serviceName"
                 }
             }
         }

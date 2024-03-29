@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 			filterChain.doFilter(request, response);
-		} catch (SecurityConfig.TokenNotValidateException | ExpiredJwtException e) {
+		} catch (ExpiredJwtException e) {
 			ErrorResponse errorResponse = new ErrorResponse(ErrorCode.JWT_TOKEN_EXPIRED);
 			response.setStatus(errorResponse.getStatus());
 			response.setContentType("application/json");
