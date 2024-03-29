@@ -1,22 +1,9 @@
 package com.ssafy.userservice.config.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.userservice.config.security.jwt.JwtAuthenticationEntryPoint;
 import com.ssafy.userservice.config.security.jwt.JwtAuthenticationFilter;
-import com.ssafy.userservice.config.security.jwt.JwtExceptionFilter;
 import com.ssafy.userservice.config.security.jwt.JwtTokenProvider;
-import com.ssafy.userservice.service.UserDetailServiceImpl;
-import com.ssafy.userservice.service.UserService;
-
-import org.checkerframework.checker.units.qual.A;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 
 import io.jsonwebtoken.JwtException;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
@@ -29,7 +16,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 @EnableWebSecurity
