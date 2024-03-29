@@ -74,7 +74,7 @@ public class FridgeService {
 
 	// ingredientService 호출해서 ingredientIdList 넘겨주고 FridgeIngredientListRes 받아오기
 	public ResponseEntity<SingleResult<?>> getIngredientInfoList(List<Integer> ingredientIdList) {
-		log.debug("재료 리스트 정보 받아오기");
+		log.debug("재료 리스트 정보 받아오기..");
 		return ingredientServiceClient.getIngredientInfoList(ingredientIdList);
 	}
 
