@@ -8,7 +8,10 @@ import lombok.Getter;
 public enum ErrorCode {
 
 	// USER
-	JWT_TOKEN_EXPIRED(403, "U001", "Token Expired"),
+	JWT_TOKEN_EXPIRED(401, "U001", "TOKEN EXPIRED"),
+	UNAUTHORIZED(401, "U004", "TOKEN UNAUTHORIZED"),
+
+	SECURITY_ERROR(500, "U005", "SECURITY ERROR"),
 
 	// Common
 	INVALID_INPUT_VALUE(400, "C001", " Invalid Input Value"),

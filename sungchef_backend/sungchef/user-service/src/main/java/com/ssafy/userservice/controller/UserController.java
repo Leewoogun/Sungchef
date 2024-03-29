@@ -24,6 +24,7 @@ import com.ssafy.userservice.dto.response.UserInfoRes;
 import com.ssafy.userservice.dto.response.UserMakeRecipe;
 import com.ssafy.userservice.dto.response.UserMakeRecipeRes;
 import com.ssafy.userservice.dto.response.UserSimpleInfoRes;
+import com.ssafy.userservice.service.JwtService;
 import com.ssafy.userservice.service.ResponseService;
 import com.ssafy.userservice.service.UserService;
 import com.ssafy.userservice.util.exception.JwtExpiredException;
@@ -45,6 +46,8 @@ public class UserController {
 
 	private final ResponseService responseService;
 	private final UserService userService;
+
+	private final JwtService jwtService;
 	// private final FridgeServiceClient fridgeServiceClient;
 
 	// @GetMapping("/getFridgeIngredient")
@@ -105,7 +108,8 @@ public class UserController {
 	@PostMapping("/autologin")
 	public ResponseEntity<?> autologin(@RequestHeader("Authorization") final String accessToken) {
 		// TODO
-		log.info(accessToken);
+
+		log.info("token : {}", jwtService.getUserSnsId(accessToken));
 		try {
 			log.debug("/autologin");
 			return ResponseEntity.ok(responseService.getSuccessMessageResult("자동 로그인 성공"));
@@ -118,13 +122,13 @@ public class UserController {
 
 	@PostMapping("/reissue")
 	public ResponseEntity<?> reissue(@RequestHeader("Refresh") final String refreshToken) {
-		// TODO
 		// try {
-			return ResponseEntity.ok()
-				.body(
-					responseService.getSuccessSingleResult(
-						userService.reissue(refreshToken)
-						, "토큰 재발급 성공"));
+		return ResponseEntity.ok()
+			.body(
+				responseService.getSuccessSingleResult(
+					userService.reissue(refreshToken)
+					, "토큰 재발급 성공")
+			);
 		// } catch (UserNotFoundException e) {
 		// 	return responseService.NOT_FOUND();
 		// } catch (JwtExpiredException e) {
@@ -136,7 +140,7 @@ public class UserController {
 	}
 
 	@GetMapping("/exist/{nickname}")
-	public ResponseEntity<?> nicknameExist(@PathVariable(value = "nickname") final String nickname) {
+	public ResponseEntity<?> nicknameExist(@PathVariable("nickname") final String nickname) {
 		// TODO
 		try {
 			log.debug("/exist/{nickname} : {}", nickname);

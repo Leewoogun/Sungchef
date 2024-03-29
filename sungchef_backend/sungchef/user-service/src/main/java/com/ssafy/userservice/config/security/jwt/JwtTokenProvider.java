@@ -1,6 +1,7 @@
 package com.ssafy.userservice.config.security.jwt;
 
 import java.security.Key;
+import java.security.SignatureException;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import com.ssafy.userservice.service.RedisService;
 import com.ssafy.userservice.service.UserDetailServiceImpl;
+import com.ssafy.userservice.util.exception.BaseException;
 import com.ssafy.userservice.util.exception.JwtExpiredException;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -58,7 +60,8 @@ public class JwtTokenProvider {
 		long now = (new Date()).getTime();
 
 		// Access Token 생성
-		Date accessTokenExpiresIn = new Date(now + 3600000 * 24 * 3); // 1시간 => 시연, 테스트 위한 3일
+		// Date accessTokenExpiresIn = new Date(now + 3600000 * 24 * 3); // 1시간 => 시연, 테스트 위한 3일
+		Date accessTokenExpiresIn = new Date(now + 6000); // 1시간 => 시연, 테스트 위한 3일
 		String accessToken = Jwts.builder()
 			.setSubject(authentication.getName())
 			.claim("auth", authoritiesString)
@@ -84,6 +87,13 @@ public class JwtTokenProvider {
 	}
 
 	// Jwt 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
+
+	public String getUserSnsId(String token) {
+		Claims claims = parseClaims(token);
+		String userSnsId = claims.getSubject();
+		if (userSnsId == null) throw new UnsupportedJwtException("userSnsId가 없는 토큰");
+		return userSnsId;
+	}
 	public Authentication getAuthentication(String accessToken) {
 		// Jwt 토큰 복호화
 		Claims claims = parseClaims(accessToken);
@@ -106,22 +116,12 @@ public class JwtTokenProvider {
 
 	// 토큰 정보를 검증하는 메서드
 	public Boolean validateToken(String token) {
-		try {
-			Jwts.parserBuilder()
-				.setSigningKey(key)
-				.build()
-				.parseClaimsJws(token);
-			return true;
-		} catch (SecurityException | MalformedJwtException e) {
-			log.info("Invalid JWT Token", e);
-		} catch (ExpiredJwtException e) {
-			log.info("Expired JWT Token", e);
-		} catch (UnsupportedJwtException e) {
-			log.info("Unsupported JWT Token", e);
-		} catch (IllegalArgumentException e) {
-			log.info("JWT claims string is empty.", e);
-		}
-		return false;
+		Jwts.parserBuilder()
+			.setSigningKey(key)
+			.build()
+			.parseClaimsJws(token);
+		return true;
+		// return false;
 	}
 
 
@@ -134,7 +134,21 @@ public class JwtTokenProvider {
 				.parseClaimsJws(accessToken)
 				.getBody();
 		} catch (ExpiredJwtException e) {
-			return e.getClaims();
+			// 토큰이 만료된 경우
+			log.error("Expired refresh token", e);
+			throw new BaseException("Expired refresh token.");
+		} catch (UnsupportedJwtException e) {
+			// 지원되지 않는 JWT 형식인 경우
+			log.error("Unsupported JWT token", e);
+			throw new SecurityException("Unsupported JWT token.", e);
+		} catch (MalformedJwtException e) {
+			// JWT 형식이 잘못된 경우
+			log.error("Invalid JWT token", e);
+			throw new SecurityException("Invalid JWT token.", e);
+		} catch (IllegalArgumentException e) {
+			// refreshToken 인자가 잘못된 경우 (null 또는 빈 문자열 등)
+			log.info("JWT token compact of handler are invalid.", e);
+			throw new SecurityException("JWT token compact of handler are invalid.", e);
 		} catch (Exception e) {
 			log.info("토큰 파싱 중 오류 발생", e);
 			return null;

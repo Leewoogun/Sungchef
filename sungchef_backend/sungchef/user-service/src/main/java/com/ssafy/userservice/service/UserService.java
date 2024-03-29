@@ -36,7 +36,6 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final JwtTokenProvider jwtTokenProvider;
-	private final RedisService redisService;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	public boolean userExist(String userSnsId) {
@@ -51,7 +50,7 @@ public class UserService {
 
 	@Transactional
 	public JwtToken createUser(SignUpReq req) {
-		if (userExist(req.getUserSnsId())) throw new UserNotFoundException("이미 존재하는 유저");
+		if (userExist(req.getUserSnsId())) throw new UserNotFoundException("이미 존재하는 유저"); // 처리필요
 		if (nicknameExist(req.getUserSnsId())) throw new NicknameExistException("이미 존재하는 닉네임");
 
 		User user = userRepository.save(User.builder()
@@ -69,8 +68,7 @@ public class UserService {
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(req.getUserSnsId(), req.getUserSnsId());
 		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-		JwtToken token = jwtTokenProvider.generateToken(authentication, req.getUserSnsId());
-		return token;
+		return jwtTokenProvider.generateToken(authentication, req.getUserSnsId());
 	}
 
 	@Transactional
