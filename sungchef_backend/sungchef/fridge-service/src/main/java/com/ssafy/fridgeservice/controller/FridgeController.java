@@ -201,10 +201,13 @@ public class FridgeController {
 
 	@GetMapping("")
 	public ResponseEntity<?> getIngredientInFridge() {
+		log.debug("fridgeController - getIngredientInFridge");
 		try {
 		FridgeIngredientListRes data = fridgeService.getIngredientInFridge();
+		log.debug("fridgeController - fridgeService 호출 완료");
 		return ResponseEntity.ok().body(responseService.getSuccessSingleResult(data, "조회 성공"));
 		} catch (Exception e) {
+			log.error(e.getMessage());
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
