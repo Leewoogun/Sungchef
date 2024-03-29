@@ -199,7 +199,6 @@ public class RecipeService {
                     .build();
             recipeStepList.add(recipeStep);
         }
-
         return ResponseEntity.ok(responseService.getSuccessSingleResult(recipeDetailStepRes, "레시피 조회 성공"));
     }
 }
