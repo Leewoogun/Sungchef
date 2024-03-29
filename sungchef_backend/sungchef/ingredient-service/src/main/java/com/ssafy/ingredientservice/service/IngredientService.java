@@ -1,13 +1,12 @@
 package com.ssafy.ingredientservice.service;
 
-import com.ssafy.ingredientservice.db.entity.RecipeIngredient;
 import com.ssafy.ingredientservice.db.entity.Ingredient;
 import com.ssafy.ingredientservice.db.repository.IngredientRepository;
 import com.ssafy.ingredientservice.db.repository.RecipeIngredientRepository;
 import com.ssafy.ingredientservice.dto.request.IngredientListReq;
 import com.ssafy.ingredientservice.dto.response.RecipeIngredientInfo;
 import com.ssafy.ingredientservice.dto.response.IngredientInfo;
-import com.ssafy.ingredientservice.dto.response.RecipeIngredientRes;
+import com.ssafy.ingredientservice.dto.response.RecipeIngredient;
 import com.ssafy.ingredientservice.dto.response.IngredientRes;
 import com.ssafy.ingredientservice.dto.response.RecipeIngredientListRes;;
 import com.ssafy.ingredientservice.dto.response.IngredientListRes;
@@ -31,7 +30,7 @@ public class IngredientService {
     private final IngredientRepository ingredientRepository;
 
     public ResponseEntity<?> getUsedIngredientsInRecipe(Integer recipeId) throws IngredientNotFoundException, RecipeNotFoundException {
-        List<RecipeIngredient> searchRecipeIngredients = recipeIngredientRepository.findRecipeIngredientsByRecipeId(recipeId);
+        List<com.ssafy.ingredientservice.db.entity.RecipeIngredient> searchRecipeIngredients = recipeIngredientRepository.findRecipeIngredientsByRecipeId(recipeId);
         if (searchRecipeIngredients.size()==0) throw new RecipeNotFoundException("recipeId="+recipeId+"인 재료가 없습니다.");
 
         RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes(recipeId);
@@ -40,17 +39,17 @@ public class IngredientService {
 
 		for (RecipeIngredientInfo info : recipeIngredientInfoList) {
 
-			List<RecipeIngredientRes> recipeIngredientResList = info.getRecipeIngredientResList();
+			List<RecipeIngredient> recipeIngredientList = info.getRecipeIngredientList();
 
-            for (RecipeIngredient recipeIngredient : searchRecipeIngredients){
+            for (com.ssafy.ingredientservice.db.entity.RecipeIngredient recipeIngredient : searchRecipeIngredients){
                 Optional<Ingredient> searchIngredient = ingredientRepository.findIngredientByIngredientId(recipeIngredient.getIngredientId());
                 if (!searchIngredient.isPresent()) throw new IngredientNotFoundException("IngredientId="+recipeIngredient.getIngredientId()+"인 재료가 없습니다.");
                 Ingredient ingredient = searchIngredient.get();
                 switch (info.getRecipeIngredientType()) {
                     case FRUIT -> {
                         if (ingredient.getIngredientTypeId()==0) {
-                            recipeIngredientResList.add(
-                                    RecipeIngredientRes.builder()
+                            recipeIngredientList.add(
+                                    RecipeIngredient.builder()
                                             .recipeIngredientId(recipeIngredient.getRecipeIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
@@ -60,8 +59,8 @@ public class IngredientService {
                     }
                     case VEGETABLE -> {
                         if (ingredient.getIngredientTypeId()==1) {
-                            recipeIngredientResList.add(
-                                    RecipeIngredientRes.builder()
+                            recipeIngredientList.add(
+                                    RecipeIngredient.builder()
                                             .recipeIngredientId(recipeIngredient.getRecipeIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
@@ -71,8 +70,8 @@ public class IngredientService {
                     }
                     case RICE_GRAIN -> {
                         if (ingredient.getIngredientTypeId()==2) {
-                            recipeIngredientResList.add(
-                                    RecipeIngredientRes.builder()
+                            recipeIngredientList.add(
+                                    RecipeIngredient.builder()
                                             .recipeIngredientId(recipeIngredient.getRecipeIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
@@ -82,8 +81,8 @@ public class IngredientService {
                     }
                     case MEAT_EGG -> {
                         if (ingredient.getIngredientTypeId()==3) {
-                            recipeIngredientResList.add(
-                                    RecipeIngredientRes.builder()
+                            recipeIngredientList.add(
+                                    RecipeIngredient.builder()
                                             .recipeIngredientId(recipeIngredient.getRecipeIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
@@ -93,8 +92,8 @@ public class IngredientService {
                     }
                     case FISH -> {
                         if (ingredient.getIngredientTypeId()==4) {
-                            recipeIngredientResList.add(
-                                    RecipeIngredientRes.builder()
+                            recipeIngredientList.add(
+                                    RecipeIngredient.builder()
                                             .recipeIngredientId(recipeIngredient.getRecipeIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
@@ -104,8 +103,8 @@ public class IngredientService {
                     }
                     case MILK -> {
                         if (ingredient.getIngredientTypeId()==5) {
-                            recipeIngredientResList.add(
-                                    RecipeIngredientRes.builder()
+                            recipeIngredientList.add(
+                                    RecipeIngredient.builder()
                                             .recipeIngredientId(recipeIngredient.getRecipeIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
@@ -115,8 +114,8 @@ public class IngredientService {
                     }
                     case SAUCE -> {
                         if (ingredient.getIngredientTypeId()==6) {
-                            recipeIngredientResList.add(
-                                    RecipeIngredientRes.builder()
+                            recipeIngredientList.add(
+                                    RecipeIngredient.builder()
                                             .recipeIngredientId(recipeIngredient.getRecipeIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
@@ -126,8 +125,8 @@ public class IngredientService {
                     }
                     case ETC -> {
                         if (ingredient.getIngredientTypeId()==7) {
-                            recipeIngredientResList.add(
-                                    RecipeIngredientRes.builder()
+                            recipeIngredientList.add(
+                                    RecipeIngredient.builder()
                                             .recipeIngredientId(recipeIngredient.getRecipeIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())

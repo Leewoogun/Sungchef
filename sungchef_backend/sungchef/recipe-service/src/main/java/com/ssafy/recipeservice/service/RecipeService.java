@@ -175,13 +175,21 @@ public class RecipeService {
                 , "레시피 조회 성공"));
     }
     public ResponseEntity<?> test() {
-        return ingredientServiceClient.getUsedIngredientsInRecipe("6");
+        ResponseEntity<SingleResult<RecipeIngredientListRes>> res = ingredientServiceClient.getUsedIngredientsInRecipe("6");
+        RecipeIngredientListRes recipeIngredientListRes = res.getBody().getData();
+
+        return ResponseEntity.ok(responseService.getSuccessSingleResult(
+                recipeIngredientListRes
+                , "레시피 조회 성공"));
     }
 
     public ResponseEntity<?> recipeDetailStep(Integer recipeId) {
+        Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
+        if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
+        Recipe recipe = searchRecipe.get();
         List<RecipeDetail> searchRecipeDetail = recipeDetailRepository.findRecipeDetailsByRecipeIdOrderByRecipeDetailStep(recipeId);
         if(searchRecipeDetail.size() == 0) throw new RecipeNotFoundException("recipeId="+recipeId+"인 레시피가 없습니다.");
-        RecipeDetailStepRes recipeDetailStepRes = new RecipeDetailStepRes(recipeId);
+        RecipeDetailStepRes recipeDetailStepRes = new RecipeDetailStepRes(recipeId, recipe.getRecipeName());
         List<RecipeStep> recipeStepList = recipeDetailStepRes.getRecipeDetailList();
         for (RecipeDetail recipeDetail : searchRecipeDetail) {
             RecipeStep recipeStep = RecipeStep.builder()
