@@ -295,7 +295,7 @@ public class IngredientController {
 	@GetMapping("/communication")
 	public String communicationTest(){
 		log.debug("comm test in ingredientService");
-		return "ingredientService 입니다.";
+		return "ingredientService 입니다...";
 	}
 
 }
