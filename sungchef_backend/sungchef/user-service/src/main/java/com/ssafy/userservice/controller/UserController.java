@@ -9,15 +9,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.userservice.db.entity.User;
-import com.ssafy.userservice.service.client.FridgeServiceClient;
 import com.ssafy.userservice.dto.request.BookmarkReq;
 import com.ssafy.userservice.dto.request.ContactReq;
 import com.ssafy.userservice.dto.request.LoginReq;
-import com.ssafy.userservice.dto.request.ReissueReq;
 import com.ssafy.userservice.dto.request.SignUpReq;
 import com.ssafy.userservice.dto.request.UserInfoReq;
 import com.ssafy.userservice.dto.response.UserBookmarkRecipe;
@@ -26,15 +24,14 @@ import com.ssafy.userservice.dto.response.UserInfoRes;
 import com.ssafy.userservice.dto.response.UserMakeRecipe;
 import com.ssafy.userservice.dto.response.UserMakeRecipeRes;
 import com.ssafy.userservice.dto.response.UserSimpleInfoRes;
-import com.ssafy.userservice.dto.response.UserTokenRes;
+import com.ssafy.userservice.service.JwtService;
 import com.ssafy.userservice.service.ResponseService;
 import com.ssafy.userservice.service.UserService;
-import com.ssafy.userservice.util.exception.BaseException;
+import com.ssafy.userservice.util.exception.JwtExpiredException;
 import com.ssafy.userservice.util.exception.NicknameExistException;
 import com.ssafy.userservice.util.exception.UserNeedSurveyException;
 import com.ssafy.userservice.util.exception.UserNotFoundException;
 import com.ssafy.userservice.util.exception.UserRecipeNotExistException;
-import com.ssafy.userservice.util.result.SingleResult;
 import com.ssafy.userservice.util.sungchefEnum.UserGenderType;
 
 import jakarta.validation.Valid;
@@ -49,39 +46,39 @@ public class UserController {
 
 	private final ResponseService responseService;
 	private final UserService userService;
-	private final FridgeServiceClient fridgeServiceClient;
 
-	@GetMapping("/getFridgeIngredient")
-	public ResponseEntity<?> getFridgeIngredient() {
+	private final JwtService jwtService;
+	// private final FridgeServiceClient fridgeServiceClient;
 
-		//
-		ResponseEntity<SingleResult<?>> res = fridgeServiceClient.getFridgeIngredient();
-		log.info("result : {}", res.getBody().getData());
-		return fridgeServiceClient.getFridgeIngredient();
-	}
-
-	@GetMapping("/getIngredientIdToCook/{recipeId}")
-	public ResponseEntity<?> getIngredientIdToCook(@PathVariable("recipeId") final String recipeId) {
-		return fridgeServiceClient.getIngredientIdToCook(recipeId);
-	}
+	// @GetMapping("/getFridgeIngredient")
+	// public ResponseEntity<?> getFridgeIngredient() {
+	//
+	// 	//
+	// 	ResponseEntity<SingleResult<?>> res = fridgeServiceClient.getFridgeIngredient();
+	// 	log.info("result : {}", res.getBody().getData());
+	// 	return fridgeServiceClient.getFridgeIngredient();
+	// }
+	//
+	// @GetMapping("/getIngredientIdToCook/{recipeId}")
+	// public ResponseEntity<?> getIngredientIdToCook(@PathVariable("recipeId") final String recipeId) {
+	// 	return fridgeServiceClient.getIngredientIdToCook(recipeId);
+	// }
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> signUp(@Valid @RequestBody final SignUpReq req) {
 		// TODO
 		try {
-			User user = userService.createUser(req);
-			if (user.getUserId() == -1) throw new BaseException("USER NOT CREATED");
-			else return  ResponseEntity.ok().body(
+			// if (user.getUserId() == -1) throw new BaseException("USER NOT CREATED");
+			log.debug("/signup : {}", req);
+			return  ResponseEntity.ok().body(
 				responseService.getSuccessSingleResult(
-					UserTokenRes.builder()
-						.accessToken("adkssudgktpdy")
-						.refreshToken("qksrkqtmqslek")
-						.build()
+					userService.createUser(req)
 					, "회원가입 성공")
 			);
 		} catch (NicknameExistException e) {
 			return responseService.CONFLICT();
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("signup INTERNAL_SERVER_ERROR", e);
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
@@ -91,20 +88,12 @@ public class UserController {
 	public ResponseEntity<?> login(@RequestBody LoginReq req) {
 		// TODO
 		try {
-			if (userService.userExist(req.getUserSnsId())) {
-				return responseService.FORBIDDEN(); // 설문이 필요
-			} else {
-				return responseService.NOT_FOUND(); // 회원가입이 필요
-			}
-			// log.debug("/login : {}", req);
-			// return ResponseEntity.ok()
-			// 	.body(
-			// 		responseService.getSuccessSingleResult(UserTokenRes
-			// 				.builder()
-			// 				.accessToken("adkssudgktpdy")
-			// 				.refreshToken("qksrkqtmqslek")
-			// 				.build()
-			// 			, "로그인 성공"));
+			log.debug("/login : {}", req);
+			return ResponseEntity.ok()
+				.body(
+					responseService.getSuccessSingleResult(
+						userService.loginUser(req)
+						, "로그인 성공"));
 		} catch (UserNotFoundException e) {
 			return responseService.NOT_FOUND();
 		} catch (UserNeedSurveyException e) {
@@ -117,8 +106,10 @@ public class UserController {
 	}
 
 	@PostMapping("/autologin")
-	public ResponseEntity<?> autologin() {
+	public ResponseEntity<?> autologin(@RequestHeader("Authorization") final String accessToken) {
 		// TODO
+
+		log.info("token : {}", jwtService.getUserSnsId(accessToken));
 		try {
 			log.debug("/autologin");
 			return ResponseEntity.ok(responseService.getSuccessMessageResult("자동 로그인 성공"));
@@ -130,29 +121,26 @@ public class UserController {
 	}
 
 	@PostMapping("/reissue")
-	public ResponseEntity<?> reissue(@RequestBody final ReissueReq req) {
-		// TODO
-		try {
-			log.debug("/reissue : {}", req);
-			return ResponseEntity.ok()
-				.body(
-					responseService.getSuccessSingleResult(UserTokenRes
-							.builder()
-							.accessToken("adkssudgktpdy")
-							.refreshToken("qksrkqtmqslek")
-							.build()
-						, "토큰 재발급 성공"));
-		} catch (UserNotFoundException e) {
-			return responseService.NOT_FOUND();
-		} catch (UserNeedSurveyException e) {
-			return responseService.FORBIDDEN();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
+	public ResponseEntity<?> reissue(@RequestHeader("Refresh") final String refreshToken) {
+		// try {
+		return ResponseEntity.ok()
+			.body(
+				responseService.getSuccessSingleResult(
+					userService.reissue(refreshToken)
+					, "토큰 재발급 성공")
+			);
+		// } catch (UserNotFoundException e) {
+		// 	return responseService.NOT_FOUND();
+		// } catch (JwtExpiredException e) {
+		// 	return responseService.FORBIDDEN();
+		// } catch (Exception e) {
+		// 	e.printStackTrace();
+		// 	return responseService.INTERNAL_SERVER_ERROR();
+		// }
 	}
 
 	@GetMapping("/exist/{nickname}")
-	public ResponseEntity<?> nicknameExist(@PathVariable(value = "nickname") final String nickname) {
+	public ResponseEntity<?> nicknameExist(@PathVariable("nickname") final String nickname) {
 		// TODO
 		try {
 			log.debug("/exist/{nickname} : {}", nickname);

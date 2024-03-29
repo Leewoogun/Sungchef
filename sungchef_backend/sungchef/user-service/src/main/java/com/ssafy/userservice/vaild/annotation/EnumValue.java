@@ -19,7 +19,7 @@ import jakarta.validation.Payload;
 public @interface EnumValue {
 	Class<? extends Enum<?>> enumClass();
 
-	String message() default "";
+	String message() default "잘못된 값입니다.";
 
 	Class<?>[] groups() default {};
 
