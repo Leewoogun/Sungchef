@@ -1,4 +1,4 @@
-package com.ssafy.fridgeservice.util.exception;
+package com.ssafy.fridgeservice.exception.exception;
 
 public class RecipeNotFoundException extends RuntimeException {
 	public RecipeNotFoundException(String message) {

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.ssafy.fridgeservice.db.repository.FridgeRepository;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @AllArgsConstructor
+@Service
 public class FridgeService {
 
 	private final ResponseService responseService;
@@ -27,19 +29,15 @@ public class FridgeService {
 	private final IngredientServiceClient ingredientServiceClient;
 
 	// sUserId 를 받은 다음에 ingredient info 반환해주는 함수 (controller 에서 호출할 용도)
-	public FridgeIngredientListRes getIngredientInFridge() {
-		log.debug("fridgeService - getIngredientInFridge");
-		// userService 에서 sUserId 받아오기
+	public ResponseEntity<?> getIngredientInFridge() {
+		// header token 까서 snsId String 형태로 받아오기
+		// DB에 유저 식별자 Integer 로 되어 있는데 varchar 로 바꾸기
+		// dummy 값으로 일단 Integer 7073 으로 진행하기
 		Integer sUserId = 7073;
 		// fridge 의 ingredientId 받아오기
 		List<Integer> ingredientIdList = getIngredientIdListFromFridge(sUserId);
-		log.debug("ingredientIdList:{}",ingredientIdList);
 		// ingredientService 에서 getIngredientInfoList 의 .body.data 가져오기
-		ResponseEntity<SingleResult<?>> res = getIngredientInfoList(ingredientIdList);
-		log.debug("res:{}",res);
-		log.debug("res.getBody:{}",res.getBody());
-		log.debug("res.getBody.getData:{}",res.getBody().getData());
-		return (FridgeIngredientListRes)Objects.requireNonNull(res.getBody()).getData();
+		return getIngredientInfoList(ingredientIdList);
 	}
 
 
@@ -73,7 +71,7 @@ public class FridgeService {
 
 
 	// ingredientService 호출해서 ingredientIdList 넘겨주고 FridgeIngredientListRes 받아오기
-	public ResponseEntity<SingleResult<?>> getIngredientInfoList(List<Integer> ingredientIdList) {
+	public ResponseEntity<?> getIngredientInfoList(List<Integer> ingredientIdList) {
 		log.debug("재료 리스트 정보 받아오기..");
 		return ingredientServiceClient.getIngredientInfoList(ingredientIdList);
 	}

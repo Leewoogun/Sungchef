@@ -1,0 +1,4 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: ENC(tlSZUkwtP1vP5UxaUwBzF7j2ybPw6NjPOvOV92ZkP6Muyt9rW2UR2qMFlHXDgn53)

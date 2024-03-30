@@ -1,4 +1,4 @@
-package com.ssafy.ingredientservice.util.exception;
+package com.ssafy.ingredientservice.exception.exception;
 
 public class ConvertOCRException extends RuntimeException {
 	public ConvertOCRException(String message) {

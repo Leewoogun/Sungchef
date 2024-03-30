@@ -1,7 +1,10 @@
 package com.ssafy.recommendservice.controller;
 
+import com.ssafy.recommendservice.service.JwtService;
 import com.ssafy.recommendservice.dto.response.*;
 import com.ssafy.recommendservice.service.ResponseService;
+
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,8 @@ import java.util.List;
 public class RecommendController {
 
 	private final ResponseService responseService;
+	// private final JwtService jwtService
+	// CheckController 참고
 
 	@GetMapping("")
 	public ResponseEntity<?> recommendFoodAndRecipe() {
