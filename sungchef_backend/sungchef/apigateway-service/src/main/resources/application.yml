@@ -10,8 +10,6 @@ eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
-    service-url:
-      defaultZone: http://${DISCOVERY}:${DISCOVERY_PORT}/eureka
 
 spring:
   application:
