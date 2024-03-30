@@ -1,8 +1,8 @@
 package com.ssafy.userservice.dto.request;
 
-import lombok.Data;
+public record FoodId (
+	int foodId
+)
+{
 
-@Data
-public class FoodId {
-	int foodId;
 }

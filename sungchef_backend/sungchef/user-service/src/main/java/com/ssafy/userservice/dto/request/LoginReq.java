@@ -1,8 +1,9 @@
 package com.ssafy.userservice.dto.request;
 
-import lombok.Data;
 
-@Data
-public class LoginReq {
-	String userSnsId;
+public record LoginReq (
+	String userSnsId
+)
+{
+
 }

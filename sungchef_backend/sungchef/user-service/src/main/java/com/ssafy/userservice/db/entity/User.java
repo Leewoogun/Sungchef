@@ -47,7 +47,6 @@ public class User {
 	@Column(name = "suser_isactive", nullable = true)
 	private boolean userIsActive;
 
-
 	@Column(name = "suser_issurvey", nullable = true)
 	private boolean userIsSurvey;
 

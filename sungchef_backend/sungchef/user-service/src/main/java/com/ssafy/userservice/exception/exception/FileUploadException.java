@@ -1,4 +1,4 @@
-package com.ssafy.userservice.util.exception;
+package com.ssafy.userservice.exception.exception;
 
 public class FileUploadException extends RuntimeException {
 	public FileUploadException(String msg, Throwable t) {

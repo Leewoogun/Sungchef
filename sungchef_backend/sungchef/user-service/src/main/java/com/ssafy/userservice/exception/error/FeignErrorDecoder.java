@@ -1,4 +1,4 @@
-package com.ssafy.userservice.util.error;
+package com.ssafy.userservice.exception.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;

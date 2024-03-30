@@ -1,4 +1,4 @@
-package com.ssafy.userservice.util.exception;
+package com.ssafy.userservice.exception.exception;
 
 public class JwtExpiredException extends RuntimeException {
 	public JwtExpiredException(String msg, Throwable t) {

@@ -16,8 +16,9 @@ import com.ssafy.userservice.dto.request.SubmitSurveyReq;
 import com.ssafy.userservice.dto.response.FoodInfo;
 import com.ssafy.userservice.dto.response.SurveyRes;
 import com.ssafy.userservice.service.ResponseService;
-import com.ssafy.userservice.util.exception.SurveyCountException;
+import com.ssafy.userservice.exception.exception.SurveyCountException;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +32,6 @@ public class SurveyController {
 	@GetMapping("")
 	public ResponseEntity<?> getSurvey() {
 		// TODO
-
 		List<FoodInfo> surveyList = new ArrayList<>();
 		for (int i = 0; i < 9; i++) {
 			surveyList.add(FoodInfo.builder()
@@ -42,51 +42,36 @@ public class SurveyController {
 				.build());
 		}
 
-		try {
-			return ResponseEntity.ok().body(
-				responseService.getSuccessSingleResult(
-					SurveyRes.builder()
-						.foodInfoList(surveyList)
-						.build()
-					, "설문 목록 조회 성공"
-				)
-			);
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
+		return ResponseEntity.ok().body(
+			responseService.getSuccessSingleResult(
+				SurveyRes.builder()
+					.foodInfoList(surveyList)
+					.build()
+				, "설문 목록 조회 성공"
+			)
+		);
 	}
 
 	// 설문 제출쪽 수정 오류 필요
 	@PostMapping("/submit")
-	public ResponseEntity<?> submitSurvey(@RequestBody final SubmitSurveyReq req) {
+	public ResponseEntity<?> submitSurvey(HttpServletRequest request, @RequestBody final SubmitSurveyReq req) {
+		log.debug("POST /submit -> foodIdList : {}", Arrays.toString(req.foodIdList().toArray()));
 		// TODO
-		try {
-			log.debug("/submit -> foodIdList : {}", Arrays.toString(req.getFoodIdList().toArray()));
-			return ResponseEntity.ok(
-				responseService.getSuccessMessageResult("설문 제출 성공")
-			);
-		} catch (SurveyCountException e) {
-			return responseService.BAD_REQUEST();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
+		log.debug("/submit -> foodIdList : {}", Arrays.toString(req.foodIdList().toArray()));
+		return ResponseEntity.ok(
+			responseService.getSuccessMessageResult("설문 제출 성공")
+		);
 	}
 
 	/**
 	 * DB에서 유저 데이터 삭제하는 작업 필요
 	 */
 	@PutMapping("/submit")
-	public ResponseEntity<?> updateSurvey(@RequestBody final SubmitSurveyReq req) {
+	public ResponseEntity<?> updateSurvey(HttpServletRequest request, @RequestBody final SubmitSurveyReq req) {
 		// TODO
-		try {
-			log.debug("/submit -> foodIdList : {}", Arrays.toString(req.getFoodIdList().toArray()));
-			return ResponseEntity.ok(
-				responseService.getSuccessMessageResult("설문 제출 성공")
-			);
-		} catch (SurveyCountException e) {
-			return responseService.BAD_REQUEST();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
+		log.debug("PUT /submit -> foodIdList : {}", Arrays.toString(req.foodIdList().toArray()));
+		return ResponseEntity.ok(
+			responseService.getSuccessMessageResult("설문 제출 성공")
+		);
 	}
 }

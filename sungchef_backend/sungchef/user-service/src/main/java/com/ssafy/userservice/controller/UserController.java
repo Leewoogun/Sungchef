@@ -27,13 +27,12 @@ import com.ssafy.userservice.dto.response.UserSimpleInfoRes;
 import com.ssafy.userservice.service.JwtService;
 import com.ssafy.userservice.service.ResponseService;
 import com.ssafy.userservice.service.UserService;
-import com.ssafy.userservice.util.exception.JwtExpiredException;
-import com.ssafy.userservice.util.exception.NicknameExistException;
-import com.ssafy.userservice.util.exception.UserNeedSurveyException;
-import com.ssafy.userservice.util.exception.UserNotFoundException;
-import com.ssafy.userservice.util.exception.UserRecipeNotExistException;
+import com.ssafy.userservice.exception.exception.NicknameExistException;
+import com.ssafy.userservice.exception.exception.UserNotFoundException;
+import com.ssafy.userservice.exception.exception.UserRecipeNotExistException;
 import com.ssafy.userservice.util.sungchefEnum.UserGenderType;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,94 +65,51 @@ public class UserController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> signUp(@Valid @RequestBody final SignUpReq req) {
-		// TODO
-		try {
-			// if (user.getUserId() == -1) throw new BaseException("USER NOT CREATED");
-			log.debug("/signup : {}", req);
-			return  ResponseEntity.ok().body(
-				responseService.getSuccessSingleResult(
-					userService.createUser(req)
-					, "회원가입 성공")
-			);
-		} catch (NicknameExistException e) {
-			return responseService.CONFLICT();
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("signup INTERNAL_SERVER_ERROR", e);
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
+
+		log.debug("/signup : {}", req);
+		return  ResponseEntity.ok().body(
+			responseService.getSuccessSingleResult(
+				userService.createUser(req)
+				, "회원가입 성공")
+		);
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginReq req) {
-		// TODO
-		try {
-			log.debug("/login : {}", req);
-			return ResponseEntity.ok()
-				.body(
-					responseService.getSuccessSingleResult(
-						userService.loginUser(req)
-						, "로그인 성공"));
-		} catch (UserNotFoundException e) {
-			return responseService.NOT_FOUND();
-		} catch (UserNeedSurveyException e) {
-			return responseService.FORBIDDEN();
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error(e.getMessage());
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
+		log.debug("/login : {}", req);
+		return ResponseEntity.ok()
+			.body(
+				responseService.getSuccessSingleResult(
+					userService.loginUser(req)
+					, "로그인 성공")
+			);
 	}
 
 	@PostMapping("/autologin")
-	public ResponseEntity<?> autologin(@RequestHeader("Authorization") final String accessToken) {
-		// TODO
-
-		log.info("token : {}", jwtService.getUserSnsId(accessToken));
-		try {
-			log.debug("/autologin");
-			return ResponseEntity.ok(responseService.getSuccessMessageResult("자동 로그인 성공"));
-		} catch (UserNeedSurveyException e) {
-			return responseService.FORBIDDEN();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
+	public ResponseEntity<?> autologin(HttpServletRequest request) {
+		log.debug("/autologin called");
+		jwtService.getUserSnsId(request);
+		return ResponseEntity.ok(responseService.getSuccessMessageResult("자동 로그인 성공"));
 	}
 
 	@PostMapping("/reissue")
 	public ResponseEntity<?> reissue(@RequestHeader("Refresh") final String refreshToken) {
-		// try {
+		log.debug("/reissue : {}", refreshToken);
 		return ResponseEntity.ok()
 			.body(
 				responseService.getSuccessSingleResult(
 					userService.reissue(refreshToken)
 					, "토큰 재발급 성공")
 			);
-		// } catch (UserNotFoundException e) {
-		// 	return responseService.NOT_FOUND();
-		// } catch (JwtExpiredException e) {
-		// 	return responseService.FORBIDDEN();
-		// } catch (Exception e) {
-		// 	e.printStackTrace();
-		// 	return responseService.INTERNAL_SERVER_ERROR();
-		// }
 	}
 
 	@GetMapping("/exist/{nickname}")
 	public ResponseEntity<?> nicknameExist(@PathVariable("nickname") final String nickname) {
-		// TODO
-		try {
-			log.debug("/exist/{nickname} : {}", nickname);
-			return ResponseEntity.ok(
-				responseService.getSuccessMessageResult("사용 가능한 닉네임")
-			);
-		} catch (UserNotFoundException e) {
-			return responseService.BAD_REQUEST();
-		} catch (UserNeedSurveyException e) {
-			return responseService.CONFLICT();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
+
+		log.debug("/exist/{nickname} : {}", nickname);
+		return ResponseEntity.ok(
+			responseService.getSuccessMessageResult("사용 가능한 닉네임")
+		);
 	}
 
 	/**
@@ -161,31 +117,24 @@ public class UserController {
 	 * @return
 	 */
 	@GetMapping("/simple")
-	public ResponseEntity<?> getUserSimpleInfo() {
-
-		//TODO
-		try {
-			return ResponseEntity.ok().body(
-				responseService.getSuccessSingleResult(
-					UserSimpleInfoRes.builder()
-						.userNickname("성훈")
-						.userImage(
-							"https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
-						.makeRecipeCount(10)
-						.bookmarkRecipeCount(20)
-						.build()
-					, "유저 요약 정보 호출 성공"
-				)
-			);
-		} catch (UserNotFoundException e) {
-			return responseService.BAD_REQUEST();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
+	public ResponseEntity<?> getUserSimpleInfo(HttpServletRequest request) {
+		log.debug("/simple called");
+		return ResponseEntity.ok().body(
+			responseService.getSuccessSingleResult(
+				UserSimpleInfoRes.builder()
+					.userNickname("성훈")
+					.userImage(
+						"https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
+					.makeRecipeCount(10)
+					.bookmarkRecipeCount(20)
+					.build()
+				, "유저 요약 정보 호출 성공"
+			)
+		);
 	}
 
 	@GetMapping("/recipe/{page}")
-	public ResponseEntity<?> getUserRecipe(@PathVariable("page") final String page) {
+	public ResponseEntity<?> getUserRecipe(HttpServletRequest request, @PathVariable("page") final String page) {
 		// TODO
 		List<UserMakeRecipe> makeRecipeList = new ArrayList<>();
 		for (int i = 0; i < 9; i++) {
@@ -219,7 +168,7 @@ public class UserController {
 	}
 
 	@GetMapping("/bookmark/{page}")
-	public ResponseEntity<?> userRecipe(@PathVariable("page") final String page) {
+	public ResponseEntity<?> userRecipe(HttpServletRequest request, @PathVariable("page") final String page) {
 
 		// TODO
 		List<UserBookmarkRecipe> bookmarkRecipeList = new ArrayList<>();
@@ -253,7 +202,7 @@ public class UserController {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<?> userInfo() {
+	public ResponseEntity<?> userInfo(HttpServletRequest request) {
 		// TODO
 		try {
 			return ResponseEntity.ok().body(
@@ -276,7 +225,7 @@ public class UserController {
 	}
 
 	@PutMapping("")
-	public ResponseEntity<?> updateUser(@RequestBody final UserInfoReq req) {
+	public ResponseEntity<?> updateUser(HttpServletRequest request, @RequestBody final UserInfoReq req) {
 
 		// TODO
 		try {
@@ -309,7 +258,7 @@ public class UserController {
 	}
 
 	@PostMapping("/bookmark")
-	public ResponseEntity<?> bookmark(@RequestBody BookmarkReq req) {
+	public ResponseEntity<?> bookmark(HttpServletRequest request, @RequestBody BookmarkReq req) {
 		// TODO
 		try {
 			log.debug("/bookmark : {}", req);

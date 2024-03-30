@@ -1,14 +1,11 @@
-package com.ssafy.userservice.config.security;
+package com.ssafy.userservice.config;
 
-import com.ssafy.userservice.config.security.jwt.JwtAuthenticationFilter;
-import com.ssafy.userservice.config.security.jwt.JwtTokenProvider;
+import com.ssafy.userservice.config.jwt.JwtAuthenticationFilter;
+import com.ssafy.userservice.service.ErrorResponseService;
 
-import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,6 +19,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class SecurityConfig {
 	private final JwtTokenProvider jwtTokenProvider;
+	private final ErrorResponseService errorResponseService;
 
 	@Bean
 	protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
@@ -36,13 +34,10 @@ public class SecurityConfig {
 				.requestMatchers(new AntPathRequestMatcher("/user/login", "POST")).permitAll()
 
 				.anyRequest().authenticated()
-
 			)
-
 			.sessionManagement((session)
 				-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-			// .addFilterBefore(new JwtExceptionFilter(), JwtAuthenticationFilter.class)
 			.build();
 
 

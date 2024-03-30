@@ -1,4 +1,4 @@
-package com.ssafy.userservice.util.error;
+package com.ssafy.userservice.exception.error;
 
 import lombok.Getter;
 import lombok.Setter;

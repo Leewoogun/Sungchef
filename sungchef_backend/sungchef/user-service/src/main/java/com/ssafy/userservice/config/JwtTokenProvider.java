@@ -1,4 +1,4 @@
-package com.ssafy.userservice.config.security.jwt;
+package com.ssafy.userservice.config;
 
 import java.security.Key;
 import java.time.Duration;
@@ -16,10 +16,10 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.ssafy.userservice.config.jwt.JwtToken;
 import com.ssafy.userservice.service.RedisService;
 import com.ssafy.userservice.service.UserDetailServiceImpl;
-import com.ssafy.userservice.util.exception.BaseException;
-import com.ssafy.userservice.util.exception.JwtExpiredException;
+import com.ssafy.userservice.exception.exception.JwtExpiredException;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import io.jsonwebtoken.Claims;
@@ -30,7 +30,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -86,14 +85,6 @@ public class JwtTokenProvider {
 			.build();
 	}
 
-	// Jwt 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
-
-	public String getUserSnsId(String token) {
-		Claims claims = parseClaims(token);
-		String userSnsId = claims.getSubject();
-		if (userSnsId == null) throw new UnsupportedJwtException("userSnsId가 없는 토큰");
-		return userSnsId;
-	}
 	public Authentication getAuthentication(String accessToken) {
 		// Jwt 토큰 복호화
 		Claims claims = parseClaims(accessToken);
@@ -121,9 +112,7 @@ public class JwtTokenProvider {
 			.build()
 			.parseClaimsJws(token);
 		return true;
-		// return false;
 	}
-
 
 	// accessToken
 	private Claims parseClaims(String accessToken) {
@@ -136,7 +125,7 @@ public class JwtTokenProvider {
 		} catch (ExpiredJwtException e) {
 			// 토큰이 만료된 경우
 			log.error("Expired refresh token", e);
-			throw new BaseException("Expired refresh token.");
+			throw new JwtExpiredException("Expired refresh token.");
 		} catch (UnsupportedJwtException e) {
 			// 지원되지 않는 JWT 형식인 경우
 			log.error("Unsupported JWT token", e);
@@ -205,9 +194,5 @@ public class JwtTokenProvider {
 			log.info("JWT token compact of handler are invalid.", e);
 			throw new SecurityException("JWT token compact of handler are invalid.", e);
 		}
-	}
-
-	public String resolveAccessToken(HttpServletRequest request) {
-		return request.getHeader("Authorization").substring(7);
 	}
 }

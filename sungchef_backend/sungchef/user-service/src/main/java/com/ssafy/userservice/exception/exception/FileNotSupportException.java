@@ -1,4 +1,4 @@
-package com.ssafy.userservice.util.exception;
+package com.ssafy.userservice.exception.exception;
 
 public class FileNotSupportException extends RuntimeException {
 	public FileNotSupportException(String msg, Throwable t) {

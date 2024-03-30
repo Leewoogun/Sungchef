@@ -41,12 +41,6 @@ pipeline {
             steps {
                 script {
                     def serviceName = env.GIT_BRANCH.split('/')[-1]
-// 					def DISCOVERY = env.DISCOVERY
-// 					def DISCOVERY_PORT = env.DISCOVERY_PORT
-// 					def SERVER_URL = env.SERVER_URL
-// 					def DB_PORT = env.DB_PORT
-// 					def DB_USERNAME = env.DB_USERNAME
-// 					def DB_PASSWORD = env.DB_PASSWORD
 					def REDIS_PORT = env.REDIS_PORT
 					def JASYPT_PASSWORD = env.JASYPT_PASSWORD
                     deployService(serviceName, REDIS_PORT, JASYPT_PASSWORD)

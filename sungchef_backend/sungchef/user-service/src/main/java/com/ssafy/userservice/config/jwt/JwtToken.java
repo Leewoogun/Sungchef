@@ -1,4 +1,4 @@
-package com.ssafy.userservice.config.security.jwt;
+package com.ssafy.userservice.config.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
