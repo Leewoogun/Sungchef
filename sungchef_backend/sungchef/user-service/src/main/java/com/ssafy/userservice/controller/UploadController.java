@@ -17,14 +17,11 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/upload")
-@RequiredArgsConstructor
 public class UploadController {
-    private final AmazonS3Client amazonS3Client;
+    @Autowired
+    AmazonS3Client amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -32,7 +29,7 @@ public class UploadController {
     @Value("${cloud.aws.s3.base-url}")
     private String baseUrl;
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
             String fileName = file.getOriginalFilename();

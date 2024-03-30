@@ -3,6 +3,7 @@ package com.ssafy.userservice.dto.request;
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.userservice.util.sungchefEnum.UserGenderType;
 import com.ssafy.userservice.util.sungchefEnum.UserSnsType;
@@ -14,9 +15,8 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
 public record UserInfoReq (
-	// TODO userImage multipartfile로 변경
-	@EnumValue(enumClass = UserSnsType.class, message = "NAVER 또는 KAKAO만 가능합니다")
-	UserSnsType userSnsType, // Naver or Kakao -> String인데, 2개로 제한
+
+	MultipartFile userImage,
 	@Size(min = 2, max = 10)
 	@NotBlank
 	String userNickName, // 최소 2글자, 최대 10글자, 중복 확인 필요

@@ -29,17 +29,17 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(UnexpectedTypeException.class)
 	protected ResponseEntity<ErrorResponse> handelUnexpectedTypeException(UnexpectedTypeException e) {
-		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST,"UnexpectedTypeException", e);
+		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
 	}
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST,"HttpMessageNotReadableException", e);
+		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
 	}
 
 	@ExceptionHandler(NoResourceFoundException.class)
 	protected ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException e) {
-		return errorResponseService.getErrorResponse(INVALID_URL, HttpStatus.NOT_FOUND,"NoResourceFoundException", e);
+		return errorResponseService.getErrorResponse(INVALID_URL, HttpStatus.NOT_FOUND, e);
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
 	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST,"MethodArgumentNotValidException", e);
+		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
 	 */
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	protected ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST,"MethodArgumentTypeMismatchException", e);
+		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
 	}
 
 	/**
@@ -76,7 +76,12 @@ public class GlobalExceptionHandler {
 	 */
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
 	protected ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-		return errorResponseService.getErrorResponse(INVALID_URL, HttpStatus.NOT_FOUND,"HttpRequestMethodNotSupportedException", e);
+		return errorResponseService.getErrorResponse(INVALID_URL, HttpStatus.NOT_FOUND, e);
+	}
+
+	@ExceptionHandler(SecurityException.class)
+	protected ResponseEntity<ErrorResponse> handleSecurityException(SecurityException e) {
+		return errorResponseService.getErrorResponse(SECURITY_ERROR, HttpStatus.NOT_ACCEPTABLE, e);
 	}
 
 	/**
@@ -84,57 +89,72 @@ public class GlobalExceptionHandler {
 	 */
 	@ExceptionHandler(FileNotSupportException.class)
 	protected ResponseEntity<ErrorResponse> handleFileNotSupportException(FileNotSupportException e) {
-		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST,"MethodArgumentNotValidException", e);
+		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST,e);
 	}
 
 	@ExceptionHandler(FileSizeException.class)
 	protected ResponseEntity<ErrorResponse> handleFileSizeException(FileSizeException e) {
-		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST,"FileSizeException", e);
+		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
+	}
+
+	@ExceptionHandler(UserNotFoundException.class)
+	protected ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException e) {
+		return errorResponseService.getErrorResponse(USER_NOT_FOUND, HttpStatus.NOT_FOUND, e);
 	}
 
 	@ExceptionHandler(FileUploadException.class)
 	protected ResponseEntity<ErrorResponse> handleFileUploadException(FileSizeException e) {
-		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST,"FileSizeException", e);
+		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
 	}
 
 	@ExceptionHandler(JwtException.class)
 	protected ResponseEntity<ErrorResponse> handleJwtException(JwtException e) {
-		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST,"JwtException", e);
+		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
 	}
 
 	@ExceptionHandler(JwtExpiredException.class)
 	protected ResponseEntity<ErrorResponse> handleJwtExpiredException(JwtExpiredException e) {
-		return errorResponseService.getErrorResponse(JWT_TOKEN_EXPIRED, HttpStatus.UNAUTHORIZED,"JwtExpiredException", e);
+		return errorResponseService.getErrorResponse(JWT_TOKEN_EXPIRED, HttpStatus.UNAUTHORIZED, e);
 	}
 
 	@ExceptionHandler(UserExistException.class)
 	protected ResponseEntity<ErrorResponse> handleUserExistException(UserExistException e) {
-		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST,"UserExistException", e);
+		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
 	}
 
 	@ExceptionHandler(NicknameExistException.class)
 	protected ResponseEntity<ErrorResponse> handleNicknameExistException(NicknameExistException e) {
-		return errorResponseService.getErrorResponse(NICKNAME_EXIST, HttpStatus.CONFLICT, "NicknameExistException", e);
+		return errorResponseService.getErrorResponse(NICKNAME_EXIST, HttpStatus.CONFLICT, e);
 	}
 
 	@ExceptionHandler(SurveyCountException.class)
 	protected ResponseEntity<ErrorResponse> handleSurveyCountException(SurveyCountException e) {
-		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST,"SurveyCountException", e);
+		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
 	}
 
 	@ExceptionHandler(UserNeedSurveyException.class)
 	protected ResponseEntity<ErrorResponse> handleUserNeedSurveyException(UserNeedSurveyException e) {
-		return errorResponseService.getErrorResponse(USER_NEED_SURVEY, HttpStatus.FORBIDDEN, "UserNeedSurveyException", e);
+		return errorResponseService.getErrorResponse(USER_NEED_SURVEY, HttpStatus.FORBIDDEN, e);
 	}
 
 	@ExceptionHandler(UserNotCreatedException.class)
 	protected ResponseEntity<ErrorResponse> handleUserNotCreatedException(UserNotCreatedException e) {
-		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST,"UserNotCreatedException", e);
+		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
 	}
 
 	@ExceptionHandler(UserRecipeNotExistException.class)
 	protected ResponseEntity<ErrorResponse> handleUserRecipeNotExistException(UserRecipeNotExistException e) {
-		return errorResponseService.getErrorResponse(USER_RECIPE_NOT_EXIST, HttpStatus.NO_CONTENT, "UserRecipeNotExistException", e );
+		return errorResponseService.getErrorResponse(USER_RECIPE_NOT_EXIST, HttpStatus.NO_CONTENT, e);
+	}
+
+	@ExceptionHandler(RecipeNotFoundException.class)
+	protected ResponseEntity<ErrorResponse> handleRecipeNotFoundException(RecipeNotFoundException e) {
+		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
+	}
+
+	@ExceptionHandler(BookmarkNotFoundException.class)
+	protected ResponseEntity<ErrorResponse> handleBookmarkNotFoundException(BookmarkNotFoundException e) {
+		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
 	}
 
 	/**
@@ -158,6 +178,6 @@ public class GlobalExceptionHandler {
 	//
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<ErrorResponse> handleException(Exception e) {
-		return errorResponseService.getErrorResponse(INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR,"Exception", e);
+		return errorResponseService.getErrorResponse(INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR, e);
 	}
 }

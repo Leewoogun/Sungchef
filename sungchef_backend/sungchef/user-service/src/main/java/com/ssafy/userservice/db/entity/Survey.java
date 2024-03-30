@@ -20,8 +20,8 @@ public class Survey {
   @Column(name = "survey_id")
   private int surveyId;
 
-  @Column(name = "suser_id")
-  private int suserId;
+  @Column(name = "suser_sns_id")
+  private String userSnsId;
 
   @Column(name = "food_id")
   private int foodId;

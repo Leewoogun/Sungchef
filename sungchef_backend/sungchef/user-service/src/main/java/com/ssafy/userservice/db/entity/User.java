@@ -52,4 +52,14 @@ public class User {
 
 	@Column(name = "suser_password", nullable = false)
 	private String userPassword;
+
+	public void updateUserInfo(String userNickName, String userBirthDate, UserGenderType userGenderType) {
+		this.userNickname = userNickName;
+		this.userBirthDate = userBirthDate;
+		this.userGenderType = userGenderType;
+	}
+
+	public void updateUserImage(String userImage) {
+		this.userImage = userImage;
+	}
 }

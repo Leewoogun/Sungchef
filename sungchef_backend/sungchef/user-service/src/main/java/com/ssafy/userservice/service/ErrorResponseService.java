@@ -11,14 +11,15 @@ import com.ssafy.userservice.exception.error.ErrorResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Service
 @Slf4j
+@Service
 public class ErrorResponseService {
+
 	public ResponseEntity<ErrorResponse> getErrorResponse(
-		ErrorCode errorCode, HttpStatus httpStatus, String errorMessage, Exception e
+		ErrorCode errorCode, HttpStatus httpStatus,Exception e
 	) {
-		log.error("handle : " + errorMessage, e);
-		ErrorResponse response = new ErrorResponse(errorCode);
+		log.error("handle : " + e.getMessage(), e);
+		ErrorResponse response = new ErrorResponse(errorCode, e.getMessage());
 		return new ResponseEntity<>(response, httpStatus);
 	}
 }

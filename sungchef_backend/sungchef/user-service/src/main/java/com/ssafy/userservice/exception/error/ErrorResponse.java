@@ -15,4 +15,10 @@ public class ErrorResponse {
 		this.message = errorCode.getMessage();
 		this.code = errorCode.getCode();
 	}
+
+	public ErrorResponse(ErrorCode errorCode, String errorMessage){
+		this.status = errorCode.getStatus();
+		this.message = errorMessage;
+		this.code = errorCode.getCode();
+	}
 }
