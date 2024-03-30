@@ -23,7 +23,6 @@ public interface IngredientServiceClient {
 	@PostMapping("/ingredient/list")
 	ResponseEntity<SingleResult<?>> getIngredientInfoList(List<Integer> ingredientIdList);
 
-
 	@GetMapping("/ingredient/communication")
 	String communicationTest();
 
