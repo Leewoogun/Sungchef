@@ -4,8 +4,11 @@ import com.ssafy.userservice.config.jwt.JwtAuthenticationFilter;
 import com.ssafy.userservice.service.ErrorResponseService;
 
 import lombok.RequiredArgsConstructor;
+
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,7 +29,7 @@ public class SecurityConfig {
 
 		return http.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests((authz) -> authz
-
+				.requestMatchers(new AntPathRequestMatcher("/user/healthcheck", "GET")).permitAll()
 				.requestMatchers(new AntPathRequestMatcher("/user/exist/**", "GET")).permitAll()
 
 				.requestMatchers(new AntPathRequestMatcher("/user/signup", "POST")).permitAll()
