@@ -163,18 +163,17 @@ public class RecommendController {
 
 
 	@GetMapping("/test")
-	public String test() {
-		String res = WebClient.create("http://localhost:8001")
+	public RecommendList test() {
+		RecommendList res = WebClient.create("http://localhost:8001")
 				.get()
 				.uri("/similar/6")
 				.retrieve()
-				.bodyToMono(String.class)
+				.bodyToMono(RecommendList.class)
 				.block();
-		return res;
+		List<Integer> recipeIdList = res.getRecommend_list();
 
-//		BeerGetDto responseBody = restTemplate.getForObject(url, BeerGetDto.class);
-//		return ResponseEntity.ok(responseService.getSuccessSingleResult(recommendRe
-//				s, "추천 목록 조회 성공"));
+
+		return res;
 	}
 
 	@GetMapping("/emptyfridge")
