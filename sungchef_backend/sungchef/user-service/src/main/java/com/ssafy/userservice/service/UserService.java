@@ -10,6 +10,7 @@ import com.ssafy.userservice.dto.response.UserSimpleInfoRes;
 import com.ssafy.userservice.exception.exception.FileUploadException;
 import com.ssafy.userservice.exception.exception.NicknameExistException;
 import com.ssafy.userservice.exception.exception.UserExistException;
+import com.ssafy.userservice.exception.exception.UserNeedSurveyException;
 import com.ssafy.userservice.exception.exception.UserNotCreatedException;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -79,11 +80,7 @@ public class UserService {
 	@Transactional
 	public JwtToken loginUser(LoginReq req) {
 
-		Optional<User> selectUser = userRepository.findByUserSnsId(req.userSnsId());
-
-		if (selectUser.isEmpty()) throw new UserNotFoundException("유저가 존재하지 않음");
-		User user = selectUser.get();
-
+		User user = getUserBySnsId(req.userSnsId());
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUserSnsId(), user.getUserSnsId());
 		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 		return jwtTokenProvider.generateToken(authentication, req.userSnsId());
@@ -96,14 +93,14 @@ public class UserService {
 	public User getUserBySnsId(String userSnsId) {
 		Optional<User> selectUser = userRepository.findByUserSnsId(userSnsId);
 		if (selectUser.isEmpty()) throw new UserNotFoundException("존재하지 않는 유저");
+		User user = selectUser.get();
+		if (!user.isUserIsSurvey()) throw new UserNeedSurveyException("설문이 필요한 유저");
 		return selectUser.get();
 	}
 	@Transactional
 	public void updateUser(String userSnsId, UserInfoReq req) {
 
-		Optional<User> selectUser = userRepository.findByUserSnsId(userSnsId);
-		if (selectUser.isEmpty()) throw new UserNotFoundException("존재하지 않는 유저");
-		User user = selectUser.get();
+		User user = getUserBySnsId(userSnsId);
 
 		if (req.userNickName().equals(user.getUserNickname())) { // 닉네임 변경
 			Optional<User> conflictUser = userRepository.findByUserNickname(req.userNickName());

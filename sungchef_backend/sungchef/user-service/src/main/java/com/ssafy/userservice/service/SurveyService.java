@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.userservice.config.jwt.JwtToken;
 import com.ssafy.userservice.db.entity.Survey;
+import com.ssafy.userservice.db.entity.User;
 import com.ssafy.userservice.db.repository.SurveyRepository;
 import com.ssafy.userservice.dto.request.FoodId;
 import com.ssafy.userservice.dto.request.LoginReq;
@@ -27,6 +28,8 @@ public class SurveyService {
 	@Transactional
 	public JwtToken submitSurvey(String userSnsId, SubmitSurveyReq req) {
 
+		User user = userService.getUserBySnsId(userSnsId);
+
 		List<Survey> updateSurvey = new ArrayList<>();
 		for (FoodId id : req.foodIdList()) {
 			updateSurvey.add(Survey
@@ -35,7 +38,9 @@ public class SurveyService {
 				.foodId(id.foodId())
 				.build());
 		}
+
 		surveyRepository.saveAll(updateSurvey);
+		user.updateUserSurvey(true);
 
 		return userService.loginUser(
 			new LoginReq(userSnsId)

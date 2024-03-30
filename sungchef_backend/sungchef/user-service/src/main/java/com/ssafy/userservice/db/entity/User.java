@@ -62,4 +62,8 @@ public class User {
 	public void updateUserImage(String userImage) {
 		this.userImage = userImage;
 	}
+
+	public void updateUserSurvey(boolean isSurvey) {
+		this.userIsSurvey = isSurvey;
+	}
 }
