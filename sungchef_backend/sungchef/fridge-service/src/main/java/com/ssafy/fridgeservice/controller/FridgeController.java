@@ -37,7 +37,7 @@ public class FridgeController {
 	// private final JwtService jwtService
 	// CheckController 참고
 	private final ResponseService responseService;
-	private final KafkaProducer kafkaProducer;
+	// private final KafkaProducer kafkaProducer;
 	private final UserServiceClient userServiceClient;
 	private final IngredientServiceClient ingredientServiceClient;
 	private final FridgeService fridgeService;
