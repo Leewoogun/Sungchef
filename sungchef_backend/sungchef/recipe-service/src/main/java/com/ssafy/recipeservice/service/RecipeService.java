@@ -7,7 +7,8 @@ import com.ssafy.recipeservice.db.entity.RecipeDetail;
 import com.ssafy.recipeservice.db.repository.FoodRepository;
 import com.ssafy.recipeservice.db.repository.RecipeDetailRepository;
 import com.ssafy.recipeservice.db.repository.RecipeRepository;
-import com.ssafy.recipeservice.dto.request.FoodListReq;
+import com.ssafy.recipeservice.dto.request.FoodIdListReq;
+import com.ssafy.recipeservice.dto.request.RecipeIdListReq;
 import com.ssafy.recipeservice.dto.response.*;
 import com.ssafy.recipeservice.service.client.IngredientServiceClient;
 import com.ssafy.recipeservice.util.result.SingleResult;
@@ -37,7 +38,7 @@ public class RecipeService {
 //
 //    }
 
-    public ResponseEntity<?> getFoodList(FoodListReq req) throws FoodNotFoundException {
+    public ResponseEntity<?> getFoodList(FoodIdListReq req) throws FoodNotFoundException {
         List<RecommendFood> recommendFoodList = new ArrayList<>();
         for (Integer foodId : req.getFoodIdList()) {
             Optional<Food> searchFood =  foodRepository.findFoodByFoodId(foodId);
@@ -52,7 +53,26 @@ public class RecipeService {
         RecommendFoodListRes res = RecommendFoodListRes.builder()
                 .foodList(recommendFoodList)
                 .build();
-        return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "레시피 조회 성공"));
+        return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "음식 리스트 조회 성공"));
+    }
+
+    public ResponseEntity<?> getRecipeList(RecipeIdListReq req) throws FoodNotFoundException {
+        List<RecommendRecipe> recommendRecipeList = new ArrayList<>();
+        for (Integer recipeId : req.getRecipeIdList()) {
+            Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
+            if (!searchRecipe.isPresent()) throw new RecipeNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
+            Recipe recipe = searchRecipe.get();
+            RecommendRecipe recommendRecipe = RecommendRecipe.builder()
+                    .recipeId(recipe.getRecipeId())
+                    .recipeName(recipe.getRecipeName())
+                    .recipeImage(recipe.getRecipeImage())
+                    .build();
+            recommendRecipeList.add(recommendRecipe);
+        }
+        RecommendRecipeListRes res = RecommendRecipeListRes.builder()
+                .recipeList(recommendRecipeList)
+                .build();
+        return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "레시피 리스트 조회 성공"));
     }
 
     public ResponseEntity<?> getRecipeDetail(Integer recipeId) throws RecipeNotFoundException {
