@@ -201,13 +201,12 @@ public class FridgeController {
 
 
 	@PostMapping("")
-	public List<Integer> getIngredientInFridge() {
+	public ResponseEntity<?> getIngredientInFridge() {
 		try {
 		return fridgeService.getIngredientInFridge();
 		} catch (Exception e) {
 			log.error(e.getMessage());
-			List<Integer> error = new ArrayList<>();
-			return error;
+			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
 
