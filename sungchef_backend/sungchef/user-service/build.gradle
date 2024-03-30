@@ -37,8 +37,13 @@ dependencies {
 	// 입력 데이터 체크 @Validation관련
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+	// jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
 	// Kafka
-	implementation 'org.springframework.kafka:spring-kafka'
+//	implementation 'org.springframework.kafka:spring-kafka'
 
 	// Feign Client
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
@@ -49,6 +54,15 @@ dependencies {
 	// JPA
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+	// Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// https://mvnrepository.com/artifact/org.jasypt/jasypt
+	implementation 'org.jasypt:jasypt:1.9.2'
+	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
+
+	// AWS
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 dependencyManagement {

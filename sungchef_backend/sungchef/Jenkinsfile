@@ -41,13 +41,9 @@ pipeline {
             steps {
                 script {
                     def serviceName = env.GIT_BRANCH.split('/')[-1]
-					def DISCOVERY = env.DISCOVERY
-					def DISCOVERY_PORT = env.DISCOVERY_PORT
-					def SERVER_URL = env.SERVER_URL
-					def DB_PORT = env.DB_PORT
-					def DB_USERNAME = env.DB_USERNAME
-					def DB_PASSWORD = env.DB_PASSWORD
-                    deployService(serviceName, DISCOVERY, DISCOVERY_PORT, SERVER_URL, DB_PORT, DB_USERNAME, DB_PASSWORD)
+					def REDIS_PORT = env.REDIS_PORT
+					def JASYPT_PASSWORD = env.JASYPT_PASSWORD
+                    deployService(serviceName, REDIS_PORT, JASYPT_PASSWORD)
                 }
             }
         }
@@ -64,9 +60,10 @@ pipeline {
                         dir('discovery-service') {
                             script{
 								def DISCOVERY_PORT = env.DISCOVERY_PORT
+								def DISCOVERY = env.DISCOVERY
                                 sh 'docker build -t discovery-service .'
                                 sh 'docker rm -f discovery-service'
-                                sh 'docker run --network sungchef-network -d --name discovery-service -e DISCOVERY_PORT=$DISCOVERY_PORT -p $DISCOVERY_PORT:$DISCOVERY_PORT discovery-service'
+                                sh 'docker run --network sungchef-network -d --name $DISCOVERY -e DISCOVERY=$DISCOVERY -e DISCOVERY_PORT=$DISCOVERY_PORT -p $DISCOVERY_PORT:$DISCOVERY_PORT discovery-service'
                             }
                         }
                     }
@@ -85,9 +82,12 @@ pipeline {
                     dir('sungchef'){
                         dir('apigateway-service') {
                             script{
+								def DISCOVERY = env.DISCOVERY
+								def DISCOVERY_PORT = env.DISCOVERY_PORT		
+								def GATEWAY_PORT = env.GATEWAY_PORT
 								sh 'docker build -t apigateway-service .'
                                 sh 'docker rm -f apigateway-service'
-                                sh 'docker run --network sungchef-network -d --name apigateway-service -e GATEWAY_PORT=${env.GATEWAY_PORT} -e DISCOVERY=${env.DISCOVERY} -e DISCOVERY_PORT=${env.DISCOVERY_PORT} -p ${env.GATEWAY_PORT}:${env.GATEWAY_PORT} apigateway-service'
+                                sh 'docker run --network sungchef-network -d --name apigateway-service -e GATEWAY_PORT=$GATEWAY_PORT -e DISCOVERY=$DISCOVERY -e DISCOVERY_PORT=$DISCOVERY_PORT -p $GATEWAY_PORT:$GATEWAY_PORT apigateway-service'
                             }
                         }
                     }
@@ -137,14 +137,14 @@ def buildService(serviceName) {
     }
 }
 
-def deployService(serviceName, DISCOVERY, DISCOVERY_PORT, SERVER_URL, DB_PORT, DB_USERNAME, DB_PASSWORD) {
+def deployService(serviceName, REDIS_PORT, JASYPT_PASSWORD) {
     dir('sungchef_backend'){
         dir('sungchef'){
             dir(serviceName) {
                 script{		
                     sh "docker build -t ${serviceName} ."
                     sh "docker rm -f ${serviceName}"
-                    sh "docker run --network sungchef-network -d --name $serviceName -e DISCOVERY=$DISCOVERY -e DISCOVERY_PORT=$DISCOVERY_PORT -e SERVER_URL=$SERVER_URL -e DB_PORT=$DB_PORT -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD $serviceName"
+                    sh "docker run --network sungchef-network -d --name $serviceName -e REDIS_PORT=$REDIS_PORT -e JASYPT_PASSWORD=$JASYPT_PASSWORD $serviceName"
                 }
             }
         }

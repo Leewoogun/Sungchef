@@ -4,11 +4,16 @@ import com.ssafy.searchservice.dto.response.SearchFood;
 import com.ssafy.searchservice.dto.response.SearchFoodListRes;
 import com.ssafy.searchservice.dto.response.SearchIngredient;
 import com.ssafy.searchservice.dto.response.SearchIngredientListRes;
+import com.ssafy.searchservice.service.JwtService;
 import com.ssafy.searchservice.service.ResponseService;
 import com.ssafy.searchservice.util.exception.FoodNotFoundException;
 import com.ssafy.searchservice.util.exception.IngredientNotFoundException;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,10 +29,10 @@ import java.util.List;
 @RequestMapping("/search")
 public class SearchController {
 	private final ResponseService responseService;
-
+	private final JwtService jwtService;
 	@GetMapping("/ingredient/{ingredientName}")
-	public ResponseEntity<?> searchIngredient(@PathVariable("ingredientName") final String ingredientName) {
-
+	public ResponseEntity<?> searchIngredient(HttpServletRequest request, @PathVariable("ingredientName") final String ingredientName) {
+		log.info(jwtService.getUserSnsId(request));
 		List<SearchIngredient> searchIngredientList = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			searchIngredientList.add(
