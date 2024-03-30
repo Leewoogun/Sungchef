@@ -1,14 +1,31 @@
 package com.ssafy.userservice.dto.request;
 
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.ssafy.userservice.util.sungchefEnum.UserGenderType;
+import com.ssafy.userservice.util.sungchefEnum.UserSnsType;
+import com.ssafy.userservice.vaild.annotation.EnumPattern;
+import com.ssafy.userservice.vaild.annotation.EnumValue;
 
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 
-@Data
-public class UserInfoReq {
-	// TODO userImage multipartfile로 변경
-	public String userNickName;
-	public UserGenderType userGender;
-	public String userImage;
-	public String userBirthdate;
+public record UserInfoReq (
+
+	MultipartFile userImage,
+	@Size(min = 2, max = 10)
+	@NotBlank
+	String userNickName, // 최소 2글자, 최대 10글자, 중복 확인 필요
+	@EnumPattern(regexp = "M|F", message = "M 또는 F만 가능합니다")
+	UserGenderType userGender, // M or F -> 선택지 2개로 제한
+	@Past
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	LocalDate userBirthdate // yyyy-MM-dd 형식
+)
+{
+
 }

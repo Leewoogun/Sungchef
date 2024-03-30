@@ -1,7 +1,8 @@
 package com.ssafy.recipeservice.controller;
 
-import com.ssafy.recipeservice.dto.request.FoodListReq;
+import com.ssafy.recipeservice.dto.request.FoodIdListReq;
 import com.ssafy.recipeservice.dto.request.MakeRecipeReq;
+import com.ssafy.recipeservice.dto.request.RecipeIdListReq;
 import com.ssafy.recipeservice.dto.response.*;
 import com.ssafy.recipeservice.service.RecipeService;
 import com.ssafy.recipeservice.service.ResponseService;
@@ -24,6 +25,9 @@ public class RecipeController {
 
 	private final ResponseService responseService;
 	private final RecipeService recipeService;
+
+	// private final JwtService jwtService;
+	// checkController 참고
 	/**
 	 * 레시피의 모든 정보를 반환
 	 */
@@ -265,10 +269,19 @@ public class RecipeController {
 		}
 	}
 
-	@PostMapping("/foodList")
-	public ResponseEntity<?> getFoodList(@RequestBody final FoodListReq req) {
+	@PostMapping("/foodlist")
+	public ResponseEntity<?> getFoodList(@RequestBody final FoodIdListReq req) {
 		try {
 			return recipeService.getFoodList(req);
+		} catch (FoodNotFoundException e) {
+			return responseService.BAD_REQUEST();
+		}
+	}
+
+	@PostMapping("/recipelist")
+	public ResponseEntity<?> getRecipeList(@RequestBody final RecipeIdListReq req) {
+		try {
+			return recipeService.getRecipeList(req);
 		} catch (FoodNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		}

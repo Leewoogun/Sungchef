@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.ssafy.userservice.util.error.FeignErrorDecoder;
+import com.ssafy.userservice.exception.error.FeignErrorDecoder;
 
 import feign.Logger;
 

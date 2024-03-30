@@ -1,0 +1,8 @@
+server:
+  port: 9090
+eureka:
+  client:
+    service-url:
+      defaultZone: ENC(tmocr2UnE5YoMNNESJAb0LmyjBW4OQu6Qhxzi6bcWQiKpWUEA5VzFA==)
+#      defaultZone: ENC(tlSZUkwtP1vP5UxaUwBzF7j2ybPw6NjPOvOV92ZkP6Muyt9rW2UR2qMFlHXDgn53)
+      # deploy

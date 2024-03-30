@@ -21,8 +21,8 @@ public class Bookmark {
   @Column(name = "bookmark_id")
   private int bookmarkId;
 
-  @Column(name = "suser_id")
-  private int suserId;
+  @Column(name = "suser_sns_id")
+  private String userSnsId;
 
   @Column(name = "recipe_id")
   private int recipeId;

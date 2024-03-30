@@ -201,7 +201,8 @@ public class FridgeController {
 	@PostMapping("")
 	public ResponseEntity<?> getIngredientInFridge() {
 		try {
-		return fridgeService.getIngredientInFridge();
+		FridgeIngredientListRes data = fridgeService.getIngredientInFridge();
+		return ResponseEntity.ok().body(responseService.getSuccessSingleResult(data, "조회 성공"));
 		} catch (Exception e) {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
