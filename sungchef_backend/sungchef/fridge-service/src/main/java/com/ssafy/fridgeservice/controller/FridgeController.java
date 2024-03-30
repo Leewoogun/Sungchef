@@ -200,18 +200,16 @@ public class FridgeController {
 
 
 	@PostMapping("")
-	public ResponseEntity<?> getIngredientInFridge() {
-		log.debug("fridgeController - getIngredientInFridge");
+	public String getIngredientInFridge() {
 		try {
-		FridgeIngredientListRes data = fridgeService.getIngredientInFridge();
-		log.debug("fridgeController - fridgeService 호출 완료");
-		return ResponseEntity.ok().body(responseService.getSuccessSingleResult(data, "조회 성공"));
+		// FridgeIngredientListRes data = fridgeService.getIngredientInFridge();
+		return "fridgeController 에서 재료 조회 가능";
 		} catch (Exception e) {
 			log.error(e.getMessage());
-			return responseService.INTERNAL_SERVER_ERROR();
+			return "fridgeController 에서 에러 발생";
 		}
 	}
 
-	//
+
 
 }

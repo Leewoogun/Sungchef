@@ -30,17 +30,12 @@ public class FridgeService {
 
 	// sUserId 를 받은 다음에 ingredient info 반환해주는 함수 (controller 에서 호출할 용도)
 	public FridgeIngredientListRes getIngredientInFridge() {
-		log.debug("fridgeService - getIngredientInFridge");
 		// userService 에서 sUserId 받아오기
 		Integer sUserId = 7073;
 		// fridge 의 ingredientId 받아오기
 		List<Integer> ingredientIdList = getIngredientIdListFromFridge(sUserId);
-		log.debug("ingredientIdList:{}",ingredientIdList);
 		// ingredientService 에서 getIngredientInfoList 의 .body.data 가져오기
 		ResponseEntity<SingleResult<?>> res = getIngredientInfoList(ingredientIdList);
-		log.debug("res:{}",res);
-		log.debug("res.getBody:{}",res.getBody());
-		log.debug("res.getBody.getData:{}",res.getBody().getData());
 		return (FridgeIngredientListRes)Objects.requireNonNull(res.getBody()).getData();
 	}
 
