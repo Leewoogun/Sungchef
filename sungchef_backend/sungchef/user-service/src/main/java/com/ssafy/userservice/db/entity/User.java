@@ -51,4 +51,6 @@ public class User {
 	@Column(name = "suser_issurvey", nullable = true)
 	private boolean userIsSurvey;
 
+	@Column(name = "suser_password", nullable = false)
+	private String userPassword;
 }

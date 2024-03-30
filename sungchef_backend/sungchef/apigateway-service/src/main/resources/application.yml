@@ -43,22 +43,28 @@ spring:
 
       routes:
         # USER-SERVICE
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user/signup
-            - Method=POST
-          filters:
-            - RemoveRequestHeader=Cookie
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user/signup
+#            - Method=POST
+#          filters:
+#            - RemoveRequestHeader=Cookie
 #            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user/**
-            - Method=GET
           filters:
             - RemoveRequestHeader=Cookie
 #            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user/survey/**
+          filters:
+            - RemoveRequestHeader=Cookie
+        #            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 
         # FRIDGE-SERVICE
         - id: fridge-service

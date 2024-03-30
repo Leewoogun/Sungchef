@@ -10,15 +10,17 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.ssafy.userservice.util.error.ErrorResponse;
+import com.ssafy.userservice.util.exception.JwtExpiredException;
 
 import jakarta.validation.UnexpectedTypeException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 	@ExceptionHandler(UnexpectedTypeException.class)
 	protected ResponseEntity<ErrorResponse> handelUnexpectedTypeException(UnexpectedTypeException e) {
@@ -33,6 +35,7 @@ public class GlobalExceptionHandler {
 		ErrorResponse response = new ErrorResponse(INVALID_INPUT_VALUE);
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
+
 	/**
 	 *  javax.validation.Valid or @Validated 으로 binding error 발생시 발생한다.
 	 *  HttpMessageConverter 에서 등록한 HttpMessageConverter binding 못할경우 발생
@@ -75,6 +78,12 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
 
+	@ExceptionHandler(JwtExpiredException.class)
+	protected ResponseEntity<ErrorResponse> handleJwtExpiredException(JwtExpiredException e) {
+		ErrorResponse response = new ErrorResponse(JWT_TOKEN_EXPIRED);
+		return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+	}
+
 	/**
 	 * Authentication 객체가 필요한 권한을 보유하지 않은 경우 발생합
 	 */
@@ -94,10 +103,10 @@ public class GlobalExceptionHandler {
 	// }
 	//
 	//
-	// @ExceptionHandler(Exception.class)
-	// protected ResponseEntity<ErrorResponse> handleException(Exception e) {
-	// 	log.error("handleEntityNotFoundException", e);
-	// 	final ErrorResponse response = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR);
-	// 	return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-	// }
+	@ExceptionHandler(Exception.class)
+	protected ResponseEntity<ErrorResponse> handleException(Exception e) {
+		log.error("handleEntityNotFoundException", e);
+		final ErrorResponse response = new ErrorResponse(INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 }

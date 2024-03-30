@@ -8,10 +8,12 @@ import java.util.List;
 @Data
 public class RecipeDetailStepRes {
 	int recipeId;
-	List<RecipeDetail> recipeDetailList;
+	String recipeName;
+	List<RecipeStep> recipeDetailList;
 
-	public RecipeDetailStepRes(int _recipeId) {
+	public RecipeDetailStepRes(int _recipeId, String _recipeName) {
 		recipeId = _recipeId;
+		recipeName = _recipeName;
 		recipeDetailList = new ArrayList<>();
 	}
 

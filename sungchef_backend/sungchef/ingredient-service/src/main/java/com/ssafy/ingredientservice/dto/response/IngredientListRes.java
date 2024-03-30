@@ -7,15 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class RecipeIngredientListRes {
-	int recipeId;
-	List<RecipeIngredientInfo> recipeIngredientInfoList;
-	public RecipeIngredientListRes(int recipeId) {
-		this.recipeId = recipeId;
-		recipeIngredientInfoList = new ArrayList<>();
+public class IngredientListRes {
+	List<IngredientInfo> ingredientInfoList;
+	public IngredientListRes() {
+		ingredientInfoList = new ArrayList<>();
 		for (int i = 0; i < IngredientType.values().length; i++) {
-			recipeIngredientInfoList.add(
-				new RecipeIngredientInfo(
+			ingredientInfoList.add(
+				new IngredientInfo(
 					IngredientType.values()[i]
 				)
 			);

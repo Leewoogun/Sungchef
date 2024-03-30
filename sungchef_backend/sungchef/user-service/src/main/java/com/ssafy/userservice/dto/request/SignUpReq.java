@@ -14,11 +14,14 @@ import lombok.Data;
 import com.ssafy.userservice.util.sungchefEnum.UserGenderType;
 import com.ssafy.userservice.util.sungchefEnum.UserSnsType;
 import com.ssafy.userservice.vaild.annotation.EnumPattern;
+import com.ssafy.userservice.vaild.annotation.EnumValue;
 
 @Data
 public class SignUpReq {
 	@NotNull
 	String userSnsId;// sdk 제공 id
+
+	@EnumValue(enumClass = UserSnsType.class, message = "NAVER 또는 KAKAO만 가능합니다")
 	UserSnsType userSnsType; // Naver or Kakao -> String인데, 2개로 제한
 	@Size(min = 2, max = 10)
 	@NotBlank
