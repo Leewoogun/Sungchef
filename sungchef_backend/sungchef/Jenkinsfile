@@ -86,7 +86,7 @@ pipeline {
 								def JASYPT_PASSWORD = env.JASYPT_PASSWORD
 								sh 'docker build -t apigateway-service .'
                                 sh 'docker rm -f apigateway-service'
-                                sh 'docker run --network sungchef-network -d --name apigateway-service -e GATEWAY_PORT=$GATEWAY_PORT JASYPT_PASSWORD=$JASYPT_PASSWORD -p $GATEWAY_PORT:$GATEWAY_PORT apigateway-service'
+                                sh 'docker run --network sungchef-network -d --name apigateway-service -e GATEWAY_PORT=$GATEWAY_PORT -e JASYPT_PASSWORD=$JASYPT_PASSWORD -p $GATEWAY_PORT:$GATEWAY_PORT apigateway-service'
                             }
                         }
                     }
