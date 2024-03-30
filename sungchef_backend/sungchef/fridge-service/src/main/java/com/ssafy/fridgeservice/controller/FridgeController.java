@@ -194,8 +194,7 @@ public class FridgeController {
 	@GetMapping("/communication")
 	public String fridgeIngredientTest() {
 		log.debug("fridgeController - fridgeIngredientTest");
-		String res = ingredientServiceClient.communicationTest();
-		return res;
+		return ingredientServiceClient.communicationTest();
 	}
 
 
