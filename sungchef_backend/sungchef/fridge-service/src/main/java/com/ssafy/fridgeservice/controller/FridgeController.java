@@ -71,20 +71,20 @@ public class FridgeController {
 		}
 	}
 
-	@PostMapping("")
-	public ResponseEntity<?> addIngredients(@RequestBody final FridgeIngredientListReq req) {
-		// TODO
-		try {
-			log.debug("/fridge: {}", Arrays.toString(req.getIngredientIdList().toArray()));
-			return ResponseEntity.ok(
-				responseService.getSuccessMessageResult("재료 등록 성공")
-			);
-		} catch (IngredientNotFoundException e) {
-			return responseService.BAD_REQUEST();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
-	}
+	// @PostMapping("")
+	// public ResponseEntity<?> addIngredients(@RequestBody final FridgeIngredientListReq req) {
+	// 	// TODO
+	// 	try {
+	// 		log.debug("/fridge: {}", Arrays.toString(req.getIngredientIdList().toArray()));
+	// 		return ResponseEntity.ok(
+	// 			responseService.getSuccessMessageResult("재료 등록 성공")
+	// 		);
+	// 	} catch (IngredientNotFoundException e) {
+	// 		return responseService.BAD_REQUEST();
+	// 	} catch (Exception e) {
+	// 		return responseService.INTERNAL_SERVER_ERROR();
+	// 	}
+	// }
 
 	@GetMapping("/need/{recipeId}")
 	public ResponseEntity<?> getIngredientIdToCook(@PathVariable("recipeId") final String recipeId) {
@@ -199,7 +199,7 @@ public class FridgeController {
 	}
 
 
-	@GetMapping("")
+	@PostMapping("")
 	public ResponseEntity<?> getIngredientInFridge() {
 		log.debug("fridgeController - getIngredientInFridge");
 		try {
