@@ -27,6 +27,10 @@ dependencies {
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// https://mvnrepository.com/artifact/org.jasypt/jasypt
+	implementation 'org.jasypt:jasypt:1.9.2'
+	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
 }
 
 dependencyManagement {
