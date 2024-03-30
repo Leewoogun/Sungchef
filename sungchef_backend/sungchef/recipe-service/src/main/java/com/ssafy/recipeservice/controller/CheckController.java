@@ -26,6 +26,6 @@ public class CheckController {
 	public ResponseEntity<?> getSnsId(HttpServletRequest request) {
 		String userSnsId = jwtService.getUserSnsId(request);
 		log.debug(userSnsId);
-		return ResponseEntity.ok().body("recommend/getSnsId :" + userSnsId);
+		return ResponseEntity.ok().body("recipe/getSnsId :" + userSnsId);
 	}
 }
