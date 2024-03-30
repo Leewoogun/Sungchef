@@ -22,6 +22,10 @@ ext {
 dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// https://mvnrepository.com/artifact/org.jasypt/jasypt
+	implementation 'org.jasypt:jasypt:1.9.2'
+	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
 }
 
 dependencyManagement {

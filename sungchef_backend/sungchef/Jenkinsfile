@@ -60,10 +60,10 @@ pipeline {
                         dir('discovery-service') {
                             script{
 								def DISCOVERY_PORT = env.DISCOVERY_PORT
-								def DISCOVERY = env.DISCOVERY
+								def JASYPT_PASSWORD = env.JASYPT_PASSWORD
                                 sh 'docker build -t discovery-service .'
                                 sh 'docker rm -f discovery-service'
-                                sh 'docker run --network sungchef-network -d --name $DISCOVERY -e DISCOVERY=$DISCOVERY -e DISCOVERY_PORT=$DISCOVERY_PORT -p $DISCOVERY_PORT:$DISCOVERY_PORT discovery-service'
+                                sh 'docker run --network sungchef-network -d --name discovery-service -e JASYPT_PASSWORD=$JASYPT_PASSWORD -e DISCOVERY_PORT=$DISCOVERY_PORT -p $DISCOVERY_PORT:$DISCOVERY_PORT discovery-service'
                             }
                         }
                     }
