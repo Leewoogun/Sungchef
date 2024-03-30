@@ -24,6 +24,7 @@ import com.ssafy.userservice.exception.exception.JwtExpiredException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -90,7 +91,7 @@ public class JwtTokenProvider {
 		Claims claims = parseClaims(accessToken);
 
 		if (claims.get("auth") == null) {
-			throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+			throw new JwtException("권한 정보가 없는 토큰입니다.");
 		}
 
 		// 클레임에서 권한 정보 가져오기
