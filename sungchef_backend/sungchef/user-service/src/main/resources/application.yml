@@ -24,12 +24,12 @@ spring:
       max-file-size: 50MB
       max-request-size: 100MB
 
-logging:
-  level:
-    com.ssafy.userservice.controller: DEBUG
-    org.hibernate:
-      type.descriptor.sql: trace #show parameter binding
-      SQL: DEBUG
+#logging:
+#  level:
+#    com.ssafy.userservice.controller: DEBUG
+#    org.hibernate:
+#      type.descriptor.sql: trace #show parameter binding
+#      SQL: DEBUG
 
 eureka:
   instance:
