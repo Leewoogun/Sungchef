@@ -25,6 +25,9 @@ public class RecipeController {
 
 	private final ResponseService responseService;
 	private final RecipeService recipeService;
+
+	// private final JwtService jwtService;
+	// checkController 참고
 	/**
 	 * 레시피의 모든 정보를 반환
 	 */

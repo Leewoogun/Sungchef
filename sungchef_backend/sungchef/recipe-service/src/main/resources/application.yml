@@ -14,9 +14,9 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://${SERVER_URL}:${DB_PORT}/${spring.application.name}?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ENC(8nFxIA38P6UrPdchnttu8TZH1GJuwkOS2aK+ARU/ieMJj/BZC+23nS+rAGHtJt3NuEgAcXch2iia/4F/8TWrQQo0NhailLwIb6nNSsDLorOIDTIDpeiugnwlmG39IO5KZtX2iyIwYTUQZF6BAsuFeQvoYg4ybUQG)
+    username: ENC(TfuU1Hc9zWv8LfvfBAZZBw==)
+    password: ENC(CdQdTRqvHnZXbLGLLzE2X54M10IfeRPDljctYBS3cRI=)
 
 logging:
   level:
@@ -35,5 +35,7 @@ eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
-    service-url:
-      defaultZone: http://${DISCOVERY}:${DISCOVERY_PORT}/eureka
+
+jwt:
+  secret:
+    ENC(iKUwCClHj209CRLCkRSQ21/darPeFv9UjDUG0/+iX+o0cGedBcHKcvSdp5vO1Pza3UiY0S9WpCkNdQ9kr0V91X2DnwPBy6DaNTHE89Y9L9heGIr+LVJ89A==)
