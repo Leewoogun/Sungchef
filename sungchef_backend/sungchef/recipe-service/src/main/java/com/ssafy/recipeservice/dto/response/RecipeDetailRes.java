@@ -16,21 +16,21 @@ public class RecipeDetailRes {
 	String recipeImage;
 	String recipeCookingTime;
 	String recipeVolume;
-	List<RecipeIngredientInfo> recipeIngredientInfoList;
+	RecipeIngredientListRes recipeIngredientInfoList;
 	List<RecipeStep> recipeDetailList;
 
 	/**
 	 * 내부의 리스트들을 초기화하는 함수
 	 */
-	public void initRecipeDetailResList() {
-		recipeIngredientInfoList = new ArrayList<>();
-		for (int i = 0; i < IngredientType.values().length; i++) {
-			recipeIngredientInfoList.add(
-				new RecipeIngredientInfo(
-					IngredientType.values()[i]
-				)
-			);
-		}
-	}
+//	public void initRecipeDetailResList() {
+//		recipeIngredientInfoList = new ArrayList<>();
+//		for (int i = 0; i < IngredientType.values().length; i++) {
+//			recipeIngredientInfoList.add(
+//				new RecipeIngredientInfo(
+//					IngredientType.values()[i]
+//				)
+//			);
+//		}
+//	}
 
 }

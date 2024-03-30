@@ -2,12 +2,12 @@ package com.ssafy.ingredientservice.controller;
 
 import com.ssafy.ingredientservice.dto.request.IngredientListReq;
 import com.ssafy.ingredientservice.dto.response.*;
+import com.ssafy.ingredientservice.exception.exception.IngredientNotFoundException;
 import com.ssafy.ingredientservice.service.IngredientService;
 import com.ssafy.ingredientservice.service.ResponseService;
-import com.ssafy.ingredientservice.util.exception.ConvertOCRException;
-import com.ssafy.ingredientservice.util.exception.HaveAllIngredientInRecipeException;
-import com.ssafy.ingredientservice.util.exception.IngredientNotFoundException;
-import com.ssafy.ingredientservice.util.exception.RecipeNotFoundException;
+import com.ssafy.ingredientservice.exception.exception.ConvertOCRException;
+import com.ssafy.ingredientservice.exception.exception.HaveAllIngredientInRecipeException;
+import com.ssafy.ingredientservice.exception.exception.RecipeNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +23,9 @@ public class IngredientController {
 
 	private final ResponseService responseService;
 	private final IngredientService ingredientService;
+
+	// private final JwtService jwtService;
+	// checkController 참고
 	/**
 	 * MultipartFile 업로드 필요
 	 * 1. 이미지 -> OCR 네이버 API로 변환

@@ -1,15 +1,19 @@
 package com.ssafy.recommendservice.controller;
 
-import com.ssafy.recommendservice.response.*;
+import com.ssafy.recommendservice.service.JwtService;
+import com.ssafy.recommendservice.dto.response.*;
 import com.ssafy.recommendservice.service.ResponseService;
+
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -158,6 +162,22 @@ public class RecommendController {
 		} catch (Exception e) {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
+	}
+
+
+	@GetMapping("/test")
+	public String test() {
+		String res = WebClient.create("http://localhost:8001")
+				.get()
+				.uri("/similar/6")
+				.retrieve()
+				.bodyToMono(String.class)
+				.block();
+		return res;
+
+//		BeerGetDto responseBody = restTemplate.getForObject(url, BeerGetDto.class);
+//		return ResponseEntity.ok(responseService.getSuccessSingleResult(recommendRe
+//				s, "추천 목록 조회 성공"));
 	}
 
 	@GetMapping("/emptyfridge")
