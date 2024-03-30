@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.ssafy.fridgeservice.db.repository.FridgeRepository;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @AllArgsConstructor
+@Service
 public class FridgeService {
 
 	private final ResponseService responseService;
