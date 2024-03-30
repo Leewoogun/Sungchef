@@ -23,6 +23,8 @@ import java.util.List;
 public class RecommendController {
 
 	private final ResponseService responseService;
+	// private final JwtService jwtService
+	// CheckController 참고
 
 	@GetMapping("")
 	public ResponseEntity<?> recommendFoodAndRecipe() {

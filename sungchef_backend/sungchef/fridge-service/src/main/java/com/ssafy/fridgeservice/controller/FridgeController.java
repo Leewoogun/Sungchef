@@ -1,6 +1,5 @@
 package com.ssafy.fridgeservice.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.fridgeservice.db.entity.Fridge;
 import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
 import com.ssafy.fridgeservice.service.client.UserServiceClient;
 import com.ssafy.fridgeservice.dto.request.FridgeIngredientListReq;
@@ -24,8 +22,8 @@ import com.ssafy.fridgeservice.dto.response.IngredientInfo;
 import com.ssafy.fridgeservice.messagequeue.KafkaProducer;
 import com.ssafy.fridgeservice.service.FridgeService;
 import com.ssafy.fridgeservice.service.ResponseService;
-import com.ssafy.fridgeservice.util.exception.IngredientNotFoundException;
-import com.ssafy.fridgeservice.util.exception.RecipeNotFoundException;
+import com.ssafy.fridgeservice.exception.exception.IngredientNotFoundException;
+import com.ssafy.fridgeservice.exception.exception.RecipeNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/fridge")
 public class FridgeController {
 
+	// private final JwtService jwtService
+	// CheckController 참고
 	private final ResponseService responseService;
 	private final KafkaProducer kafkaProducer;
 	private final UserServiceClient userServiceClient;
