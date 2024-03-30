@@ -1,71 +1,140 @@
 package com.ssafy.userservice.service;
 
+import com.ssafy.userservice.config.jwt.JwtToken;
+import com.ssafy.userservice.config.JwtTokenProvider;
 import com.ssafy.userservice.db.entity.User;
 import com.ssafy.userservice.db.repository.UserRepository;
-import com.ssafy.userservice.util.exception.UserNotFoundException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import com.ssafy.userservice.dto.request.LoginReq;
+import com.ssafy.userservice.dto.request.UserInfoReq;
+import com.ssafy.userservice.dto.response.UserSimpleInfoRes;
+import com.ssafy.userservice.exception.exception.FileUploadException;
+import com.ssafy.userservice.exception.exception.NicknameExistException;
+import com.ssafy.userservice.exception.exception.UserExistException;
+import com.ssafy.userservice.exception.exception.UserNotCreatedException;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.userservice.dto.request.SignUpReq;
+import com.ssafy.userservice.exception.exception.UserNotFoundException;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Slf4j
-@Component
+@Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
 
 	// private final FridgeRepository fridgeRepository;
 	private final UserRepository userRepository;
+	private final FileUploadService fileUploadService;
+	private final AuthenticationManagerBuilder authenticationManagerBuilder;
+	private final JwtTokenProvider jwtTokenProvider;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final BookmarkService bookmarkService;
 
-	public boolean userExist(String userSnsId) {
-		Optional<User> user = userRepository.searchUserByUserSnsId(userSnsId);
-		return user.isPresent();
+	public void userExist(String userSnsId) {
+		Optional<User> user = userRepository.findByUserSnsId(userSnsId);
+		if (user.isPresent()) throw new UserExistException("이미 존재하는 유저");
 	}
 
-	public User createUser(SignUpReq req) {
+	public void nicknameExist(String userNickname) {
+		Optional<User> user = userRepository.findByUserNickname(userNickname);
+		if (user.isPresent()) throw new NicknameExistException("이미 존재하는 닉네임");
+	}
+
+	@Transactional
+	public JwtToken createUser(SignUpReq req) {
+
+		userExist(req.userSnsId());
+		nicknameExist(req.userSnsId());
 
 		User user = userRepository.save(User.builder()
 						.userId(-1)
-//						.userSnsId(bCryptPasswordEncoder.encode(req.getUserSnsId()))
-						.userSnsId(req.getUserSnsId())
-						.userGenderType(req.getUserGender())
-						.userSnsType(req.getUserSnsType())
-						.userNickname(req.getUserNickName())
-						.userBirthDate(req.getUserBirthdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+						.userPassword(bCryptPasswordEncoder.encode(req.userSnsId()))
+						.userSnsId(req.userSnsId())
+						.userGenderType(req.userGender())
+						.userSnsType(req.userSnsType())
+						.userNickname(req.userNickName())
+						.userBirthDate(req.userBirthdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
 				.build()
 		);
 
-		if (user.getUserId() == -1) throw new UserNotFoundException(req.toString());
-//		String s = req.getUserSnsId();
-//		String encode = bCryptPasswordEncoder.encode(s);
-//		log.info("encode Id: {}", encode);
-//		log.info("equals : {}", bCryptPasswordEncoder.matches(s, encode));
-		// log.info("userres : {}", passwordEncoder.matches("1234", req.getUserSnsId()));
-		return user;
-		// return userRepository.insertUser(req);
+		if (user.getUserId() == -1) throw new UserNotCreatedException("유저 생성 실패");
+
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(req.userSnsId(), req.userSnsId());
+		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+		return jwtTokenProvider.generateToken(authentication, req.userSnsId());
 	}
 
-	@Override
-	public UserDetails loadUserByUsername(String userNickName) throws UsernameNotFoundException {
-		Optional<User> searchUser =  userRepository.searchUserByUserNickname(userNickName);
+	@Transactional
+	public JwtToken loginUser(LoginReq req) {
 
-		if (!searchUser.isPresent()) throw new UsernameNotFoundException(userNickName);
-		User user = searchUser.get();
-		return new org.springframework.security.core.userdetails.User(user.getUserNickname(), user.getUserSnsId(),
-				true, true, true, true,
-				new ArrayList<>()
+		Optional<User> selectUser = userRepository.findByUserSnsId(req.userSnsId());
+
+		if (selectUser.isEmpty()) throw new UserNotFoundException("유저가 존재하지 않음");
+		User user = selectUser.get();
+
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUserSnsId(), user.getUserSnsId());
+		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+		return jwtTokenProvider.generateToken(authentication, req.userSnsId());
+	}
+
+	public JwtToken reissue(String refreshToken) {
+		return jwtTokenProvider.generateTokenFromRefreshToken(refreshToken.substring(7));
+	}
+
+	public User getUserBySnsId(String userSnsId) {
+		Optional<User> selectUser = userRepository.findByUserSnsId(userSnsId);
+		if (selectUser.isEmpty()) throw new UserNotFoundException("존재하지 않는 유저");
+		return selectUser.get();
+	}
+	@Transactional
+	public void updateUser(String userSnsId, UserInfoReq req) {
+
+		Optional<User> selectUser = userRepository.findByUserSnsId(userSnsId);
+		if (selectUser.isEmpty()) throw new UserNotFoundException("존재하지 않는 유저");
+		User user = selectUser.get();
+
+		if (req.userNickName().equals(user.getUserNickname())) { // 닉네임 변경
+			Optional<User> conflictUser = userRepository.findByUserNickname(req.userNickName());
+			if (conflictUser.isEmpty()) throw new NicknameExistException("이미 존재하는 닉네임");
+		}
+
+		if (req.userImage() != null) {
+			try {
+				String url = fileUploadService.uploadFile(req.userImage());
+				user.updateUserImage(url);
+			} catch (Exception e) {
+				throw new FileUploadException("파일 업로드 실패");
+			}
+		}
+
+		user.updateUserInfo(
+			req.userNickName()
+			, req.userBirthdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+			, req.userGender()
 		);
+	}
+
+	@Transactional
+	public UserSimpleInfoRes getUserSimpleInfo(String userSnsId) {
+		User user = getUserBySnsId(userSnsId);
+		int bookmarkCount = bookmarkService.getUserBookmarkCount(userSnsId);
+		return UserSimpleInfoRes.builder()
+			.userNickname(user.getUserNickname())
+			.userImage(user.getUserImage())
+			.makeRecipeCount(100) // TODO
+			.bookmarkRecipeCount(bookmarkCount)
+			.build();
 	}
 }

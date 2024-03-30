@@ -47,8 +47,19 @@ public class User {
 	@Column(name = "suser_isactive", nullable = true)
 	private boolean userIsActive;
 
-
 	@Column(name = "suser_issurvey", nullable = true)
 	private boolean userIsSurvey;
 
+	@Column(name = "suser_password", nullable = false)
+	private String userPassword;
+
+	public void updateUserInfo(String userNickName, String userBirthDate, UserGenderType userGenderType) {
+		this.userNickname = userNickName;
+		this.userBirthDate = userBirthDate;
+		this.userGenderType = userGenderType;
+	}
+
+	public void updateUserImage(String userImage) {
+		this.userImage = userImage;
+	}
 }
