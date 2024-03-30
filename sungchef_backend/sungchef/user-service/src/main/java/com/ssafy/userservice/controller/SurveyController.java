@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/survey")
+@RequestMapping("/user/survey")
 public class SurveyController {
 	private final ResponseService responseService;
 

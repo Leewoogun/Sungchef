@@ -1,4 +1,4 @@
-package com.ssafy.recommendservice.response;
+package com.ssafy.recommendservice.dto.response;
 
 import com.ssafy.recommendservice.util.sungchefEnum.RecommendFoodType;
 import com.ssafy.recommendservice.util.sungchefEnum.RecommendRecipeType;

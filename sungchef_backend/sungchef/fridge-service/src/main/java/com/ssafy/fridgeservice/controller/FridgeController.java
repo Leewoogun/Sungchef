@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.fridgeservice.db.entity.Fridge;
 import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
 import com.ssafy.fridgeservice.service.client.UserServiceClient;
 import com.ssafy.fridgeservice.dto.request.FridgeIngredientListReq;
@@ -37,7 +38,8 @@ public class FridgeController {
 	private final ResponseService responseService;
 	private final KafkaProducer kafkaProducer;
 	private final UserServiceClient userServiceClient;
-
+	private final IngredientServiceClient ingredientServiceClient;
+	private final FridgeService fridgeService;
 
 	@GetMapping("/user/healthcheck")
 	ResponseEntity<?> getHealthcheck() {
@@ -54,11 +56,6 @@ public class FridgeController {
 		kafkaProducer.send("example-catalog-topic", Ingredient.builder().ingredientId(100).ingredientName("잘 갈까?").build());
 		return ResponseEntity.ok("갔냐?");
 	}
-
-
-
-
-
 
 
 	@DeleteMapping("")
@@ -193,4 +190,25 @@ public class FridgeController {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
+
+	@GetMapping("/communication")
+	public String fridgeIngredientTest() {
+		log.debug("fridgeController - fridgeIngredientTest");
+		String res = ingredientServiceClient.communicationTest();
+		return res;
+	}
+
+
+	@GetMapping("")
+	public ResponseEntity<?> getIngredientInFridge() {
+		try {
+		FridgeIngredientListRes data = fridgeService.getIngredientInFridge();
+		return ResponseEntity.ok().body(responseService.getSuccessSingleResult(data, "조회 성공"));
+		} catch (Exception e) {
+			return responseService.INTERNAL_SERVER_ERROR();
+		}
+	}
+
+
+
 }

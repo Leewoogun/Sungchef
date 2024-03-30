@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class RecipeDetail {
+public class RecipeStep {
 	int recipeDetailStep;
 	String recipeDetailImage;
 	String recipeDetailDescription;
