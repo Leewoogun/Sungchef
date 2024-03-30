@@ -1,6 +1,5 @@
 package com.ssafy.ingredientservice.controller;
 
-import com.ssafy.ingredientservice.db.entity.Ingredient;
 import com.ssafy.ingredientservice.dto.request.IngredientListReq;
 import com.ssafy.ingredientservice.dto.response.*;
 import com.ssafy.ingredientservice.service.IngredientService;
@@ -176,13 +175,13 @@ public class IngredientController {
 
 		for (RecipeIngredientInfo info : recipeIngredientInfoList) {
 
-			List<RecipeIngredientRes> recipeIngredientResList = info.getRecipeIngredientResList();
+			List<RecipeIngredient> recipeIngredientList = info.getRecipeIngredientList();
 
 			switch (info.getRecipeIngredientType()) {
 
 				case FRUIT -> {
-					recipeIngredientResList.add(
-						RecipeIngredientRes.builder()
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
 							.recipeIngredientId(10)
 							.recipeIngredientName("사과")
 							.recipeIngredientVolume("1쪽")
@@ -190,8 +189,8 @@ public class IngredientController {
 					);
 				}
 				case VEGETABLE -> {
-					recipeIngredientResList.add(
-						RecipeIngredientRes.builder()
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
 							.recipeIngredientId(11)
 							.recipeIngredientName("대파")
 							.recipeIngredientVolume("1망")
@@ -199,8 +198,8 @@ public class IngredientController {
 					);
 				}
 				case RICE_GRAIN -> {
-					recipeIngredientResList.add(
-						RecipeIngredientRes.builder()
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
 							.recipeIngredientId(13)
 							.recipeIngredientName("햅쌀")
 							.recipeIngredientVolume("1큰술")
@@ -208,8 +207,8 @@ public class IngredientController {
 					);
 				}
 				case MEAT_EGG -> {
-					recipeIngredientResList.add(
-						RecipeIngredientRes.builder()
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
 							.recipeIngredientId(14)
 							.recipeIngredientName("달걀")
 							.recipeIngredientVolume("흰자")
@@ -217,8 +216,8 @@ public class IngredientController {
 					);
 				}
 				case FISH -> {
-					recipeIngredientResList.add(
-						RecipeIngredientRes.builder()
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
 							.recipeIngredientId(15)
 							.recipeIngredientName("고등어")
 							.recipeIngredientVolume("1마리")
@@ -226,8 +225,8 @@ public class IngredientController {
 					);
 				}
 				case MILK -> {
-					recipeIngredientResList.add(
-						RecipeIngredientRes.builder()
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
 							.recipeIngredientId(16)
 							.recipeIngredientName("체다치즈")
 							.recipeIngredientVolume("1장")
@@ -235,8 +234,8 @@ public class IngredientController {
 					);
 				}
 				case SAUCE -> {
-					recipeIngredientResList.add(
-						RecipeIngredientRes.builder()
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
 							.recipeIngredientId(17)
 							.recipeIngredientName("고추장")
 							.recipeIngredientVolume("1큰술")
@@ -244,8 +243,8 @@ public class IngredientController {
 					);
 				}
 				case ETC -> {
-					recipeIngredientResList.add(
-						RecipeIngredientRes.builder()
+					recipeIngredientList.add(
+						RecipeIngredient.builder()
 							.recipeIngredientId(18)
 							.recipeIngredientName("제육볶음")
 							.recipeIngredientVolume("1팩")
@@ -273,13 +272,18 @@ public class IngredientController {
 		}
 
 	}
-	@GetMapping("/recipe/{recipeId}")
+	@GetMapping("/{recipeId}")
 	public ResponseEntity<?> getUsedIngredientsInRecipe(@PathVariable("recipeId") final String recipeId) {
-		try {
-			return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
-		} catch (RecipeNotFoundException | IngredientNotFoundException e) {
-			return responseService.BAD_REQUEST();
-		}
+		return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
+
+//		try {
+//			return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
+//		} catch (RecipeNotFoundException | IngredientNotFoundException e) {
+//			return responseService.BAD_REQUEST();
+//		}
+
+
+
 //		} catch (HaveAllIngredientInRecipeException e) {
 //			// exception은 아닌거같아서 추후 수정 필요
 //			return responseService.NO_CONTENT();
@@ -291,7 +295,7 @@ public class IngredientController {
 	@GetMapping("/communication")
 	public String communicationTest(){
 		log.debug("comm test in ingredientService");
-		return "ingredientService 입니다.";
+		return "ingredientService 입니다...";
 	}
 
 }

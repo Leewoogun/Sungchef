@@ -50,6 +50,9 @@ dependencies {
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
 }
 
+	// WebClient (HTTP 통신)
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+}
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
