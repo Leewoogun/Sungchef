@@ -1,4 +1,4 @@
-package com.ssafy.recommendservice.response;
+package com.ssafy.recommendservice.dto.response;
 
 import lombok.Builder;
 import lombok.Data;

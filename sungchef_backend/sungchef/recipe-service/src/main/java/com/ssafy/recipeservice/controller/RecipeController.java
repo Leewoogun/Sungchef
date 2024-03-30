@@ -274,12 +274,15 @@ public class RecipeController {
 		}
 	}
 
-	@GetMapping("/test/{recipeId}")
-	public ResponseEntity<?> test(@PathVariable("recipeId") final String recipeId) {
-		try {
-			return recipeService.recipeDetailStep(Integer.parseInt(recipeId));
-		} catch (FoodNotFoundException e) {
-			return responseService.BAD_REQUEST();
-		}
+	@GetMapping("/test")
+	public ResponseEntity<?> test() {
+
+		return recipeService.test();
+
+//		try {
+//			return recipeService.test();
+//		} catch (FoodNotFoundException e) {
+//			return responseService.BAD_REQUEST();
+//		}
 	}
 }

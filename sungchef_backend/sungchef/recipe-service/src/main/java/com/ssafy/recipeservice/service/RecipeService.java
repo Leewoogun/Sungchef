@@ -72,6 +72,9 @@ public class RecipeService {
             recipeSteps.add(recipeStep);
         }
 
+        ResponseEntity<SingleResult<RecipeIngredientListRes>> res = ingredientServiceClient.getUsedIngredientsInRecipe(recipeId.toString());
+        RecipeIngredientListRes recipeIngredientListRes = res.getBody().getData();
+
         RecipeDetailRes recipeDetailRes = RecipeDetailRes.builder()
                 .recipeId(recipeId)
                 .recipeName(recipe.getRecipeName())
@@ -80,108 +83,30 @@ public class RecipeService {
                 .recipeCookingTime(recipe.getRecipeCookingTime())
                 .recipeVolume(recipe.getRecipeVolume())
                 .recipeDetailList(recipeSteps)
+                .recipeIngredientInfoList(recipeIngredientListRes)
                 .build();
 
-        recipeDetailRes.initRecipeDetailResList();
-
-        List<RecipeIngredientInfo> recipeIngredientInfoList = recipeDetailRes.getRecipeIngredientInfoList();
-
-        for (RecipeIngredientInfo recipeIngredientInfo : recipeIngredientInfoList) {
-
-            List<RecipeIngredient> recipeIngredientList = recipeIngredientInfo.getRecipeIngredientList();
-
-            switch (recipeIngredientInfo.getRecipeIngredientType()) {
-
-                case FRUIT -> {
-                    recipeIngredientList.add(
-                            RecipeIngredient.builder()
-                                    .recipeIngredientId(10)
-                                    .recipeIngredientName("사과")
-                                    .recipeIngredientVolume("1쪽")
-                                    .build()
-                    );
-                }
-                case VEGETABLE -> {
-                    recipeIngredientList.add(
-                            RecipeIngredient.builder()
-                                    .recipeIngredientId(11)
-                                    .recipeIngredientName("대파")
-                                    .recipeIngredientVolume("1망")
-                                    .build()
-                    );
-                }
-                case RICE_GRAIN -> {
-                    recipeIngredientList.add(
-                            RecipeIngredient.builder()
-                                    .recipeIngredientId(13)
-                                    .recipeIngredientName("햅쌀")
-                                    .recipeIngredientVolume("1큰술")
-                                    .build()
-                    );
-                }
-                case MEAT_EGG -> {
-                    recipeIngredientList.add(
-                            RecipeIngredient.builder()
-                                    .recipeIngredientId(14)
-                                    .recipeIngredientName("달걀")
-                                    .recipeIngredientVolume("흰자")
-                                    .build()
-                    );
-                }
-                case FISH -> {
-                    recipeIngredientList.add(
-                            RecipeIngredient.builder()
-                                    .recipeIngredientId(15)
-                                    .recipeIngredientName("고등어")
-                                    .recipeIngredientVolume("1마리")
-                                    .build()
-                    );
-                }
-                case MILK -> {
-                    recipeIngredientList.add(
-                            RecipeIngredient.builder()
-                                    .recipeIngredientId(16)
-                                    .recipeIngredientName("체다치즈")
-                                    .recipeIngredientVolume("1장")
-                                    .build()
-                    );
-                }
-                case SAUCE -> {
-                    recipeIngredientList.add(
-                            RecipeIngredient.builder()
-                                    .recipeIngredientId(17)
-                                    .recipeIngredientName("고추장")
-                                    .recipeIngredientVolume("1큰술")
-                                    .build()
-                    );
-                }
-                case ETC -> {
-                    recipeIngredientList.add(
-                            RecipeIngredient.builder()
-                                    .recipeIngredientId(18)
-                                    .recipeIngredientName("제육볶음")
-                                    .recipeIngredientVolume("1팩")
-                                    .build()
-                    );
-                }
-                default -> {
-                    return responseService.INTERNAL_SERVER_ERROR();
-                }
-            }
-        }
 
         return ResponseEntity.ok(responseService.getSuccessSingleResult(
                 recipeDetailRes
                 , "레시피 조회 성공"));
     }
     public ResponseEntity<?> test() {
-        return ingredientServiceClient.getUsedIngredientsInRecipe("6");
+        ResponseEntity<SingleResult<RecipeIngredientListRes>> res = ingredientServiceClient.getUsedIngredientsInRecipe("6");
+        RecipeIngredientListRes recipeIngredientListResTest = res.getBody().getData();
+
+        return ResponseEntity.ok(responseService.getSuccessSingleResult(
+                recipeIngredientListResTest
+                , "레시피 조회 성공"));
     }
 
     public ResponseEntity<?> recipeDetailStep(Integer recipeId) {
+        Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
+        if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
+        Recipe recipe = searchRecipe.get();
         List<RecipeDetail> searchRecipeDetail = recipeDetailRepository.findRecipeDetailsByRecipeIdOrderByRecipeDetailStep(recipeId);
         if(searchRecipeDetail.size() == 0) throw new RecipeNotFoundException("recipeId="+recipeId+"인 레시피가 없습니다.");
-        RecipeDetailStepRes recipeDetailStepRes = new RecipeDetailStepRes(recipeId);
+        RecipeDetailStepRes recipeDetailStepRes = new RecipeDetailStepRes(recipeId, recipe.getRecipeName());
         List<RecipeStep> recipeStepList = recipeDetailStepRes.getRecipeDetailList();
         for (RecipeDetail recipeDetail : searchRecipeDetail) {
             RecipeStep recipeStep = RecipeStep.builder()
