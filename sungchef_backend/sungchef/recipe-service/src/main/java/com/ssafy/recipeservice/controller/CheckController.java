@@ -18,8 +18,14 @@ import lombok.extern.slf4j.Slf4j;
 public class CheckController {
 	private final JwtService jwtService;
 	@GetMapping("/healthcheck")
-	public ResponseEntity<?> signUp(HttpServletRequest request) {
-		log.info(jwtService.getUserSnsId(request));
+	public ResponseEntity<?> healthcheck() {
 		return ResponseEntity.ok().body("recipe");
+	}
+
+	@GetMapping("/getSnsId")
+	public ResponseEntity<?> getSnsId(HttpServletRequest request) {
+		String userSnsId = jwtService.getUserSnsId(request);
+		log.debug(userSnsId);
+		return ResponseEntity.ok().body("recommend/getSnsId :" + userSnsId);
 	}
 }
