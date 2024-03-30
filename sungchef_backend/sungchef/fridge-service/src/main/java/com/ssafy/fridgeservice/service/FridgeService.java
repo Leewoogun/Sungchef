@@ -29,14 +29,16 @@ public class FridgeService {
 	private final IngredientServiceClient ingredientServiceClient;
 
 	// sUserId 를 받은 다음에 ingredient info 반환해주는 함수 (controller 에서 호출할 용도)
-	public FridgeIngredientListRes getIngredientInFridge() {
-		// userService 에서 sUserId 받아오기
+	public List<Integer> getIngredientInFridge() {
+		// header token 까서 snsId String 형태로 받아오기
+		// DB에 유저 식별자 Integer 로 되어 있는데 varchar 로 바꾸기
+		// dummy 값으로 일단 Integer 7073 으로 진행하기
 		Integer sUserId = 7073;
 		// fridge 의 ingredientId 받아오기
-		List<Integer> ingredientIdList = getIngredientIdListFromFridge(sUserId);
+		return getIngredientIdListFromFridge(sUserId);
 		// ingredientService 에서 getIngredientInfoList 의 .body.data 가져오기
-		ResponseEntity<SingleResult<?>> res = getIngredientInfoList(ingredientIdList);
-		return (FridgeIngredientListRes)Objects.requireNonNull(res.getBody()).getData();
+		// ResponseEntity<SingleResult<?>> res = getIngredientInfoList(ingredientIdList);
+		// return (FridgeIngredientListRes)Objects.requireNonNull(res.getBody()).getData();
 	}
 
 

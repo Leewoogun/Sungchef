@@ -1,5 +1,6 @@
 package com.ssafy.fridgeservice.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -200,13 +201,13 @@ public class FridgeController {
 
 
 	@PostMapping("")
-	public String getIngredientInFridge() {
+	public List<Integer> getIngredientInFridge() {
 		try {
-		// FridgeIngredientListRes data = fridgeService.getIngredientInFridge();
-		return "fridgeController 에서 재료 조회 가능";
+		return fridgeService.getIngredientInFridge();
 		} catch (Exception e) {
 			log.error(e.getMessage());
-			return "fridgeController 에서 에러 발생";
+			List<Integer> error = new ArrayList<>();
+			return error;
 		}
 	}
 
