@@ -52,11 +52,11 @@ public class FridgeController {
 		return userServiceClient.signup(req);
 	}
 
-	@GetMapping("/produce")
-	public ResponseEntity<?> produceTest() {
-		kafkaProducer.send("example-catalog-topic", Ingredient.builder().ingredientId(100).ingredientName("잘 갈까?").build());
-		return ResponseEntity.ok("갔냐?");
-	}
+	// @GetMapping("/produce")
+	// public ResponseEntity<?> produceTest() {
+	// 	kafkaProducer.send("example-catalog-topic", Ingredient.builder().ingredientId(100).ingredientName("잘 갈까?").build());
+	// 	return ResponseEntity.ok("갔냐?");
+	// }
 
 
 	@DeleteMapping("")
