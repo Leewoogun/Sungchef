@@ -5,4 +5,4 @@ ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
 
 # 실행 명령어
-ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]6
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
