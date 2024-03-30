@@ -14,10 +14,14 @@ import com.ssafy.fridgeservice.util.result.SingleResult;
 @FeignClient("ingredient-service")
 public interface IngredientServiceClient {
 
-	@PostMapping("/list")
-	ResponseEntity<?> getSingleIngredientInfo(Integer ingredientId);
 
-	@PostMapping("/list")
-	ResponseEntity<?> getIngredientInfoList(List<Integer> ingredientIdList);
+	@PostMapping("/ingredient/list")
+	ResponseEntity<SingleResult<?>> getSingleIngredientInfo(Integer ingredientId);
+
+	@PostMapping("/ingredient/list")
+	ResponseEntity<SingleResult<?>> getIngredientInfoList(List<Integer> ingredientIdList);
+
+	@GetMapping("/ingredient/communication")
+	String communicationTest();
 
 }
