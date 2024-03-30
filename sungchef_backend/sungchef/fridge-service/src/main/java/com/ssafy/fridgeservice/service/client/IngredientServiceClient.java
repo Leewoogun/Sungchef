@@ -17,14 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 @FeignClient("ingredient-service")
 public interface IngredientServiceClient {
 
-	@PostMapping("/list")
+	@PostMapping("/ingredient/list")
 	ResponseEntity<SingleResult<?>> getSingleIngredientInfo(Integer ingredientId);
 
-	@PostMapping("/list")
+	@PostMapping("/ingredient/list")
 	ResponseEntity<SingleResult<?>> getIngredientInfoList(List<Integer> ingredientIdList);
 
 
-	@GetMapping("/communication")
+	@GetMapping("/ingredient/communication")
 	String communicationTest();
 
 }
