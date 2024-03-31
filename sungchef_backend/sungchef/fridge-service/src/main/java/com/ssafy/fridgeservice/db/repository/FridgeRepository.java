@@ -11,10 +11,7 @@ import com.ssafy.fridgeservice.dto.response.Ingredient;
 
 public interface FridgeRepository extends BaseRepository<Fridge, Integer> {
 
-	@Query("SELECT f.ingredientId FROM Fridge f WHERE f.suserId = :suserId")
-	Integer findSingleIngredientIdBySuserId(@Param("suserId") int suserId);
-
-	@Query("SELECT f.ingredientId FROM Fridge f WHERE f.suserId = :suserId")
-	List<Integer> findIngredientIdListBySuserId(@Param("suserId") int suserId);
+	@Query("SELECT f.ingredientId FROM Fridge f WHERE f.userSnsId = :userSnsId")
+	List<Integer> findIngredientIdListByUserSnsId(@Param("userSnsId") String userSnsId);
 
 }

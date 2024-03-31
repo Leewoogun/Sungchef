@@ -18,12 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 public interface IngredientServiceClient {
 
 	@PostMapping("/ingredient/list")
-	ResponseEntity<?> getSingleIngredientInfo(Integer ingredientId);
-
-	@PostMapping("/ingredient/list")
-	ResponseEntity<?> getIngredientInfoList(List<Integer> ingredientIdList);
+	ResponseEntity<?> getIngredientInfoList(List<Integer> ingredientIdList, String token);
 
 	@GetMapping("/ingredient/communication")
-	String communicationTest();
+	String communicationTest(String token);
 
 }

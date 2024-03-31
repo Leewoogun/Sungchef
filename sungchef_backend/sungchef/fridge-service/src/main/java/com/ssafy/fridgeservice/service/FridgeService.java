@@ -28,52 +28,27 @@ public class FridgeService {
 	private final FridgeRepository fridgeRepository;
 	private final IngredientServiceClient ingredientServiceClient;
 
-	// sUserId 를 받은 다음에 ingredient info 반환해주는 함수 (controller 에서 호출할 용도)
-	public ResponseEntity<?> getIngredientInFridge() {
-		// header token 까서 snsId String 형태로 받아오기
-		// DB에 유저 식별자 Integer 로 되어 있는데 varchar 로 바꾸기
-		// dummy 값으로 일단 Integer 7073 으로 진행하기
-		Integer sUserId = 7073;
+
+	// userSnsId 를 받은 다음에 ingredient info 반환해주는 함수 (controller 에서 호출할 용도)
+	public ResponseEntity<?> getIngredientInFridge(String userSnsId, String token) {
 		// fridge 의 ingredientId 받아오기
-		List<Integer> ingredientIdList = getIngredientIdListFromFridge(sUserId);
+		List<Integer> ingredientIdList = getIngredientIdListFromFridge(userSnsId);
 		// ingredientService 에서 getIngredientInfoList 의 .body.data 가져오기
-		return getIngredientInfoList(ingredientIdList);
+		return getIngredientInfoList(ingredientIdList, token);
 	}
 
 
-
-	// fridgeDB 가서 suserId 로 ingredientId 1개 GET
-	public Integer getSingleIngredientIdFromFridge(Integer sUserId) {
+	// fridgeDB 가서 suserId 로 ingredientId GET
+	public List<Integer> getIngredientIdListFromFridge(String userSnsId) {
 		log.debug("냉장고 속 재료 1개 ID 받아오기");
-		return fridgeRepository.findSingleIngredientIdBySuserId(sUserId);
-	}
-
-
-	// fridgeDB 가서 suserId 로 ingredientId 리스트 GET
-	public List<Integer> getIngredientIdListFromFridge(Integer sUserId) {
-		log.debug("냉장고 속 재료 List<Integer> 받아오기");
-		return fridgeRepository.findIngredientIdListBySuserId(sUserId);
-	}
-
-
-	// fridgeDB 가서 suserId 로 ingredientId 1개 DELETE
-	public Integer deleteSingleIngredientIdFromFridge(Integer sUserId) {
-		log.debug("재료 한 개 제거하기");
-		return fridgeRepository.findSingleIngredientIdBySuserId(sUserId);
-	}
-
-
-	// ingredientService 호출해서 ingredientId 넘겨주고 FridgeIngredientListRes 받아오기
-	public ResponseEntity<?> getSingleIngredientInfo(Integer ingredientId) {
-		log.debug("재료 1개 정보 받아오기");
-		return ingredientServiceClient.getSingleIngredientInfo(ingredientId);
+		return fridgeRepository.findIngredientIdListByUserSnsId(userSnsId);
 	}
 
 
 	// ingredientService 호출해서 ingredientIdList 넘겨주고 FridgeIngredientListRes 받아오기
-	public ResponseEntity<?> getIngredientInfoList(List<Integer> ingredientIdList) {
+	public ResponseEntity<?> getIngredientInfoList(List<Integer> ingredientIdList, String token) {
 		log.debug("재료 리스트 정보 받아오기..");
-		return ingredientServiceClient.getIngredientInfoList(ingredientIdList);
+		return ingredientServiceClient.getIngredientInfoList(ingredientIdList, token);
 	}
 
 

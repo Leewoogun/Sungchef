@@ -1,7 +1,8 @@
-package com.ssafy.fridgeservice.db.entity;;
+package com.ssafy.fridgeservice.db.entity;
 
 
 import jakarta.persistence.*;
+import java.sql.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,14 +20,14 @@ public class Fridge {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "fridge_id")
-  private int fridgeId;
+  private Integer fridgeId;
 
-  @Column(name = "suser_id")
-  private int suserId;
+  @Column(name = "suser_sns_id")
+  private String userSnsId;
 
   @Column(name = "ingredient_id")
-  private int ingredientId;
+  private Integer ingredientId;
 
   @Column(name = "fridge_create_date")
-  private java.sql.Date fridgeCreateDate;
+  private Date fridgeCreateDate;
 }
