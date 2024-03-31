@@ -14,6 +14,7 @@ import com.ssafy.recipeservice.util.exception.FoodNotFoundException;
 import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
 import com.ssafy.recipeservice.util.result.SingleResult;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +35,8 @@ public class RecipeController {
 
 	private final ResponseService responseService;
 	private final RecipeService recipeService;
+	private final JwtService jwtService;
+	private final RecipeFeignService recipeFeignService;
 
 	// private final JwtService jwtService;
 	// checkController 참고
