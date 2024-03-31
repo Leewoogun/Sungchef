@@ -75,7 +75,6 @@ public class SurveyController {
 	 */
 	@PutMapping("/submit")
 	public ResponseEntity<?> updateSurvey(HttpServletRequest request, @RequestBody @Valid final SubmitSurveyReq req) {
-		// TODO
 		log.debug("PUT /submit -> foodIdList : {}", Arrays.toString(req.foodIdList().toArray()));
 		String userSnsId = jwtService.getUserSnsId(request);
 		surveyService.updateSurvey(userSnsId, req);

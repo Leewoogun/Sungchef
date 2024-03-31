@@ -11,20 +11,20 @@ import java.sql.Date;
 
 
 @Entity
-@Table(name = "make_recipe_log")
+@Table(name = "recipe_make_log")
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MakeRecipeLog {
+public class RecipeMakeLog {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "recipe_make_log_id")
   private int recipeMakeLogId;
 
-  @Column(name = "suser_id")
-  private int suserId;
+  @Column(name = "suser_sns_id")
+  private int userSnsId;
 
   @Column(name = "recipe_id")
   private int recipeId;

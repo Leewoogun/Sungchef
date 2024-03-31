@@ -199,6 +199,13 @@ public class FridgeController {
 		return res;
 	}
 
+	@GetMapping("/communication/{index}")
+	public String fridgeIngredientTest(@PathVariable("index") final String index) {
+		// log.debug("fridgeController - fridgeIngredientTest");
+		// String res = ingredientServiceClient.communicationTest();
+		return index;
+	}
+
 
 	@PostMapping("")
 	public ResponseEntity<?> getIngredientInFridge() {

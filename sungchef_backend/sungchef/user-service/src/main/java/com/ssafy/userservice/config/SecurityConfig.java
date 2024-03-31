@@ -28,6 +28,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests((authz) -> authz
 
 				.requestMatchers(new AntPathRequestMatcher("/user/exist/**", "GET")).permitAll()
+				.requestMatchers(new AntPathRequestMatcher("/user/survey", "GET")).permitAll()
 
 				.requestMatchers(new AntPathRequestMatcher("/user/signup", "POST")).permitAll()
 				.requestMatchers(new AntPathRequestMatcher("/user/reissue", "POST")).permitAll()
