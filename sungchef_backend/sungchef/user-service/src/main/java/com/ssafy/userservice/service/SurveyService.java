@@ -39,7 +39,7 @@ public class SurveyService {
 
 		surveyRepository.saveAll(submitSurvey);
 
-		User user = userService.getUserBySnsId(userSnsId);
+		User user = userService.getUserBySnsIdSubmitSurvey(userSnsId);
 		user.userSurveySuccess();
 
 		return userService.loginUser(
