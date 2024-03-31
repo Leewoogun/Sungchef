@@ -23,7 +23,7 @@ public class CheckController {
 	}
 
 	@GetMapping("/getSnsId")
-	public ResponseEntity<?> signUp(HttpServletRequest request) {
+	public ResponseEntity<?> getUserSnsId(HttpServletRequest request) {
 		String userSnsId = jwtService.getUserSnsId(request);
 		log.debug(userSnsId);
 		return ResponseEntity.ok().body("recommend/getSnsId :" + userSnsId);

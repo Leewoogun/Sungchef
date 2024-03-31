@@ -73,7 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	// 헤더에서 토큰 추출
 	private String resolveToken(HttpServletRequest request) {
 		String accessToken = request.getHeader("Authorization");
-		String refreshToken = request.getHeader("Refresh");
+		String refreshToken = request.getHeader("ssafy");
 		if (StringUtils.hasText(accessToken) && accessToken.startsWith("Bearer")) {
 			return accessToken.substring(7);
 		}

@@ -1,8 +1,9 @@
-package com.ssafy.userservice.dto.response;
+package com.ssafy.recipeservice.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 public class UserMakeRecipe {
 	String makeRecipeName;
