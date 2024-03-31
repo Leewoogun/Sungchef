@@ -16,12 +16,12 @@ spring:
     username: ENC(TfuU1Hc9zWv8LfvfBAZZBw==)
     password: ENC(CdQdTRqvHnZXbLGLLzE2X54M10IfeRPDljctYBS3cRI=)
 
-logging:
-  level:
-    com.ssafy.userservice.client: DEBUG
-    org.hibernate:
-      type.descriptor.sql: trace #show parameter binding
-      SQL: DEBUG
+#logging:
+#  level:
+#    com.ssafy.userservice.client: DEBUG
+#    org.hibernate:
+#      type.descriptor.sql: trace #show parameter binding
+#      SQL: DEBUG
 
 
 eureka:

@@ -58,8 +58,11 @@ public class User {
 		this.userBirthDate = userBirthDate;
 		this.userGenderType = userGenderType;
 	}
-
 	public void updateUserImage(String userImage) {
 		this.userImage = userImage;
+	}
+
+	public void userSurveySuccess() {
+		this.userIsSurvey = true;
 	}
 }

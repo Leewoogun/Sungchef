@@ -146,7 +146,15 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ErrorResponse> handleUserRecipeNotExistException(UserRecipeNotExistException e) {
 		return errorResponseService.getErrorResponse(USER_RECIPE_NOT_EXIST, HttpStatus.NO_CONTENT, e);
 	}
+	@ExceptionHandler(FeignException.class)
+	protected ResponseEntity<ErrorResponse> handleFeignException(FeignException e) {
+		return errorResponseService.getErrorResponse(FEIGN_CONNECT_ERROR, HttpStatus.INTERNAL_SERVER_ERROR, e);
+	}
 
+	@ExceptionHandler(NoContentException.class)
+	protected ResponseEntity<ErrorResponse> handleNoContentException(NoContentException e) {
+		return errorResponseService.getErrorResponse(END_OF_PAGE, HttpStatus.NO_CONTENT, e);
+	}
 	@ExceptionHandler(RecipeNotFoundException.class)
 	protected ResponseEntity<ErrorResponse> handleRecipeNotFoundException(RecipeNotFoundException e) {
 		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
@@ -155,6 +163,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(BookmarkNotFoundException.class)
 	protected ResponseEntity<ErrorResponse> handleBookmarkNotFoundException(BookmarkNotFoundException e) {
 		return errorResponseService.getErrorResponse(INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST, e);
+	}
+
+	@ExceptionHandler(PageConvertException.class)
+	protected ResponseEntity<ErrorResponse> handlePageConvertException(PageConvertException e) {
+		return errorResponseService.getErrorResponse(PAGE_NOT_INT, HttpStatus.BAD_REQUEST, e);
 	}
 
 	/**
