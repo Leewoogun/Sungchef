@@ -6,6 +6,7 @@ import com.ssafy.recommendservice.service.RecommendService;
 import com.ssafy.recommendservice.service.ResponseService;
 
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class RecommendController {
 	private final ResponseService responseService;
 	// private final JwtService jwtService
 	// CheckController 참고
-
+	private final JwtService jwtService;
 	private final RecommendService recommendService;
 	@GetMapping("")
 	public ResponseEntity<?> recommendFoodAndRecipe() {
@@ -169,8 +170,10 @@ public class RecommendController {
 	}
 
 	@GetMapping("/test")
-	public ResponseEntity<?> test() {
-		return recommendService.test();
+	public ResponseEntity<?> test(HttpServletRequest request) {
+		String userSnsId = jwtService.getUserSnsId(request);
+		String token = request.getHeader("Authorization");
+		return recommendService.test(token);
 	}
 
 //	@GetMapping("/test")

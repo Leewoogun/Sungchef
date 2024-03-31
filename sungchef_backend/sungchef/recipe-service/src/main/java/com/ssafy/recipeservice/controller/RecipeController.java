@@ -4,11 +4,13 @@ import com.ssafy.recipeservice.dto.request.FoodIdListReq;
 import com.ssafy.recipeservice.dto.request.MakeRecipeReq;
 import com.ssafy.recipeservice.dto.request.RecipeIdListReq;
 import com.ssafy.recipeservice.dto.response.*;
+import com.ssafy.recipeservice.service.JwtService;
 import com.ssafy.recipeservice.service.RecipeService;
 import com.ssafy.recipeservice.service.ResponseService;
 import com.ssafy.recipeservice.util.exception.FoodNotFoundException;
 import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ public class RecipeController {
 
 	private final ResponseService responseService;
 	private final RecipeService recipeService;
+	private final JwtService jwtService;
 
 	// private final JwtService jwtService;
 	// checkController 참고
@@ -32,9 +35,11 @@ public class RecipeController {
 	 * 레시피의 모든 정보를 반환
 	 */
 	@GetMapping("/{recipeId}")
-	public ResponseEntity<?> recipeDetail(@PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> recipeDetail(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
+		String userSnsId = jwtService.getUserSnsId(request);
+		String token = request.getHeader("Authorization");
 		try {
-			return recipeService.getRecipeDetail(Integer.parseInt(recipeId));
+			return recipeService.getRecipeDetail(Integer.parseInt(recipeId), token);
 		} catch (FoodNotFoundException | NumberFormatException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {

@@ -75,7 +75,7 @@ public class RecipeService {
         return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "레시피 리스트 조회 성공"));
     }
 
-    public ResponseEntity<?> getRecipeDetail(Integer recipeId) throws RecipeNotFoundException {
+    public ResponseEntity<?> getRecipeDetail(Integer recipeId, String token) throws RecipeNotFoundException {
         Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
         if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         Recipe recipe = searchRecipe.get();
@@ -92,7 +92,7 @@ public class RecipeService {
             recipeSteps.add(recipeStep);
         }
 
-        ResponseEntity<SingleResult<RecipeIngredientListRes>> res = ingredientServiceClient.getUsedIngredientsInRecipe(recipeId.toString());
+        ResponseEntity<SingleResult<RecipeIngredientListRes>> res = ingredientServiceClient.getUsedIngredientsInRecipe(recipeId.toString(), token);
         RecipeIngredientListRes recipeIngredientListRes = res.getBody().getData();
 
         RecipeDetailRes recipeDetailRes = RecipeDetailRes.builder()
@@ -112,7 +112,7 @@ public class RecipeService {
                 , "레시피 조회 성공"));
     }
     public ResponseEntity<?> test() {
-        ResponseEntity<SingleResult<RecipeIngredientListRes>> res = ingredientServiceClient.getUsedIngredientsInRecipe("6");
+        ResponseEntity<SingleResult<RecipeIngredientListRes>> res = ingredientServiceClient.getUsedIngredientsInRecipe("6", "asd");
         RecipeIngredientListRes recipeIngredientListResTest = res.getBody().getData();
 
         return ResponseEntity.ok(responseService.getSuccessSingleResult(

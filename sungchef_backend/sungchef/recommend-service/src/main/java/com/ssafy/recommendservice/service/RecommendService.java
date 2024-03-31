@@ -41,7 +41,7 @@ public class RecommendService {
 				, "레시피 조회 성공"));
 	}
 
-	public ResponseEntity<?> test() {
+	public ResponseEntity<?> test(String token) {
 
 		RecommendList response = WebClient.create("http://localhost:8001")
 				.get()
@@ -54,7 +54,7 @@ public class RecommendService {
 		FoodIdListReq req = FoodIdListReq.builder()
 				.foodIdList(recipeIdList)
 				.build();
-		ResponseEntity<SingleResult<RecommendFoodTest>> res = recipeServiceClient.getFoodList(req);
+		ResponseEntity<SingleResult<RecommendFoodTest>> res = recipeServiceClient.getFoodList(req, token);
 		RecommendFoodTest recommendFoodListRes = res.getBody().getData();
 		return ResponseEntity.ok(responseService.getSuccessSingleResult(
 				recommendFoodListRes
