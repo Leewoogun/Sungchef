@@ -1,6 +1,5 @@
 package com.ssafy.userservice.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.userservice.config.jwt.JwtToken;
 import com.ssafy.userservice.config.JwtTokenProvider;
 import com.ssafy.userservice.db.entity.User;
@@ -113,6 +112,13 @@ public class UserService {
 	}
 
 	public User getUserBySnsId(String userSnsId) {
+		Optional<User> selectUser = userRepository.findByUserSnsId(userSnsId);
+		if (selectUser.isEmpty()) throw new UserNotFoundException("존재하지 않는 유저");
+		User user = selectUser.get();
+		if (!user.isUserIsSurvey()) throw new UserNeedSurveyException("설문이 필요한 유저");
+		return selectUser.get();
+	}
+	public User getUserBySnsIdSubmitSurvey(String userSnsId) {
 		Optional<User> selectUser = userRepository.findByUserSnsId(userSnsId);
 		if (selectUser.isEmpty()) throw new UserNotFoundException("존재하지 않는 유저");
 		return selectUser.get();
