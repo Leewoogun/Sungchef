@@ -1,6 +1,7 @@
 package com.ssafy.recommendservice.controller;
 
 import com.ssafy.recommendservice.dto.response.*;
+import com.ssafy.recommendservice.service.RecommendService;
 import com.ssafy.recommendservice.service.ResponseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ import java.util.List;
 public class RecommendController {
 
 	private final ResponseService responseService;
-
+	private final RecommendService recommendService;
 	@GetMapping("")
 	public ResponseEntity<?> recommendFoodAndRecipe() {
 		String[] arr1 = new String[]{
@@ -161,20 +162,23 @@ public class RecommendController {
 		}
 	}
 
-
 	@GetMapping("/test")
-	public RecommendList test() {
-		RecommendList res = WebClient.create("http://localhost:8001")
-				.get()
-				.uri("/similar/6")
-				.retrieve()
-				.bodyToMono(RecommendList.class)
-				.block();
-		List<Integer> recipeIdList = res.getRecommend_list();
-
-
-		return res;
+	public ResponseEntity<?> test() {
+		return recommendService.test();
 	}
+
+//	@GetMapping("/test")
+//	public RecommendList test() {
+//		RecommendList res = WebClient.create("http://localhost:8001")
+//				.get()
+//				.uri("/similar/6")
+//				.retrieve()
+//				.bodyToMono(RecommendList.class)
+//				.block();
+//		List<Integer> recipeIdList = res.getRecommend_list();
+//
+//		return res;
+//	}
 
 	@GetMapping("/emptyfridge")
 	public ResponseEntity<?> recommendFood() {
@@ -256,5 +260,7 @@ public class RecommendController {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
+
+
 
 }
