@@ -19,10 +19,14 @@ public class CheckController {
 
 	private final JwtService jwtService;
 	@GetMapping("/healthcheck")
-	public ResponseEntity<?> signUp(HttpServletRequest request) {
-		log.info(jwtService.getUserSnsId(request));
+	public ResponseEntity<?> healthcheck() {
 		return ResponseEntity.ok().body("fridge");
 	}
 
-
+	@GetMapping("/getSnsId")
+	public ResponseEntity<?> getUserSnsId(HttpServletRequest request) {
+		String userSnsId = jwtService.getUserSnsId(request);
+		log.debug(userSnsId);
+		return ResponseEntity.ok().body("fridge/getSnsId :" + userSnsId);
+	}
 }

@@ -37,7 +37,7 @@ public class FridgeController {
 	// private final JwtService jwtService
 	// CheckController 참고
 	private final ResponseService responseService;
-	private final KafkaProducer kafkaProducer;
+	// private final KafkaProducer kafkaProducer;
 	private final UserServiceClient userServiceClient;
 	private final IngredientServiceClient ingredientServiceClient;
 	private final FridgeService fridgeService;
@@ -52,11 +52,11 @@ public class FridgeController {
 		return userServiceClient.signup(req);
 	}
 
-	@GetMapping("/produce")
-	public ResponseEntity<?> produceTest() {
-		kafkaProducer.send("example-catalog-topic", Ingredient.builder().ingredientId(100).ingredientName("잘 갈까?").build());
-		return ResponseEntity.ok("갔냐?");
-	}
+	// @GetMapping("/produce")
+	// public ResponseEntity<?> produceTest() {
+	// 	kafkaProducer.send("example-catalog-topic", Ingredient.builder().ingredientId(100).ingredientName("잘 갈까?").build());
+	// 	return ResponseEntity.ok("갔냐?");
+	// }
 
 
 	@DeleteMapping("")
@@ -197,6 +197,13 @@ public class FridgeController {
 		log.debug("fridgeController - fridgeIngredientTest");
 		String res = ingredientServiceClient.communicationTest();
 		return res;
+	}
+
+	@GetMapping("/communication/{index}")
+	public String fridgeIngredientTest(@PathVariable("index") final String index) {
+		// log.debug("fridgeController - fridgeIngredientTest");
+		// String res = ingredientServiceClient.communicationTest();
+		return index;
 	}
 
 

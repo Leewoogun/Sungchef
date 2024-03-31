@@ -13,11 +13,14 @@ public enum ErrorCode {
 	USER_NEED_SURVEY(403, "U003", "User Need Survey"),
 	USER_RECIPE_NOT_EXIST(204, "U004", "User Recipe Not Exist"),
 	USER_NOT_FOUND(400, "U005", "User Not Found"),
+
 	// Common
 	INVALID_INPUT_VALUE(400, "C001", " Invalid Input Value"),
 	HANDLE_ACCESS_DENIED(403, "C002", "Access is Denied"),
 	INVALID_URL(404, "C003", "URL NOT FOUND"),
 	METHOD_NOT_ALLOWED(405, "C004", " Invalid Input Value"),
+
+	PAGE_NOT_INT(400, "C005", "Page Can't Convert to Int"),
 
 	INTERNAL_SERVER_ERROR(500, "S001", "SERVER_ERROR"),
 	SECURITY_ERROR(500, "S002", "SECURITY ERROR"),

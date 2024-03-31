@@ -18,11 +18,11 @@ public class RecipeMake {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "recipe_make_pk")
-  private int recipeMakePk;
+  @Column(name = "recipe_make_id")
+  private int recipeMakeId;
 
-  @Column(name = "suser_id")
-  private int suserId;
+  @Column(name = "suser_sns_id")
+  private String userSnsId;
 
   @Column(name = "recipe_id")
   private int recipeId;

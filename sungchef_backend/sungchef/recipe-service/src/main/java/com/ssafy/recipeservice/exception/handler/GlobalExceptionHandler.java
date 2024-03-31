@@ -15,6 +15,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import com.ssafy.recipeservice.exception.error.ErrorResponse;
 import com.ssafy.recipeservice.exception.exception.JwtException;
 import com.ssafy.recipeservice.exception.exception.JwtExpiredException;
+import com.ssafy.recipeservice.exception.exception.PageConvertException;
 import com.ssafy.recipeservice.service.ErrorResponseService;
 
 import lombok.RequiredArgsConstructor;
@@ -96,6 +97,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(JwtExpiredException.class)
 	protected ResponseEntity<ErrorResponse> handleJwtExpiredException(JwtExpiredException e) {
 		return errorResponseService.getErrorResponse(JWT_TOKEN_EXPIRED, HttpStatus.UNAUTHORIZED, e);
+	}
+
+	@ExceptionHandler(PageConvertException.class)
+	protected ResponseEntity<ErrorResponse> handlePageConvertException(PageConvertException e) {
+		return errorResponseService.getErrorResponse(PAGE_NOT_INT, HttpStatus.BAD_REQUEST, e);
 	}
 
 	/**
