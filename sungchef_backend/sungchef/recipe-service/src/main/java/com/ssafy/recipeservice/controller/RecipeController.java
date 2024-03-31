@@ -14,8 +14,6 @@ import com.ssafy.recipeservice.util.exception.FoodNotFoundException;
 import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
 import com.ssafy.recipeservice.util.result.SingleResult;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,8 +34,8 @@ public class RecipeController {
 
 	private final ResponseService responseService;
 	private final RecipeService recipeService;
-	private final RecipeFeignService recipeFeignService;
-	private final JwtService jwtService;
+
+	// private final JwtService jwtService;
 	// checkController 참고
 	/**
 	 * 레시피의 모든 정보를 반환
@@ -70,9 +68,11 @@ public class RecipeController {
 	// }
 
 	@GetMapping("/{recipeId}")
-	public ResponseEntity<?> recipeDetail(@PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> recipeDetail(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
+		String userSnsId = jwtService.getUserSnsId(request);
+		String token = request.getHeader("Authorization");
 		try {
-			return recipeService.getRecipeDetail(Integer.parseInt(recipeId));
+			return recipeService.getRecipeDetail(Integer.parseInt(recipeId), token);
 		} catch (FoodNotFoundException | NumberFormatException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
