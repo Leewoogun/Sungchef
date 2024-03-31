@@ -2,6 +2,7 @@ package com.ssafy.recommendservice.controller;
 
 import com.ssafy.recommendservice.service.JwtService;
 import com.ssafy.recommendservice.dto.response.*;
+import com.ssafy.recommendservice.service.RecommendService;
 import com.ssafy.recommendservice.service.ResponseService;
 
 import io.jsonwebtoken.Jwts;
@@ -26,6 +27,7 @@ public class RecommendController {
 	// private final JwtService jwtService
 	// CheckController 참고
 
+	private final RecommendService recommendService;
 	@GetMapping("")
 	public ResponseEntity<?> recommendFoodAndRecipe() {
 		String[] arr1 = new String[]{
@@ -166,21 +168,23 @@ public class RecommendController {
 		}
 	}
 
-
 	@GetMapping("/test")
-	public String test() {
-		String res = WebClient.create("http://localhost:8001")
-				.get()
-				.uri("/similar/6")
-				.retrieve()
-				.bodyToMono(String.class)
-				.block();
-		return res;
-
-//		BeerGetDto responseBody = restTemplate.getForObject(url, BeerGetDto.class);
-//		return ResponseEntity.ok(responseService.getSuccessSingleResult(recommendRe
-//				s, "추천 목록 조회 성공"));
+	public ResponseEntity<?> test() {
+		return recommendService.test();
 	}
+
+//	@GetMapping("/test")
+//	public RecommendList test() {
+//		RecommendList res = WebClient.create("http://localhost:8001")
+//				.get()
+//				.uri("/similar/6")
+//				.retrieve()
+//				.bodyToMono(RecommendList.class)
+//				.block();
+//		List<Integer> recipeIdList = res.getRecommend_list();
+//
+//		return res;
+//	}
 
 	@GetMapping("/emptyfridge")
 	public ResponseEntity<?> recommendFood() {
@@ -262,5 +266,7 @@ public class RecommendController {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
+
+
 
 }
