@@ -30,14 +30,13 @@ import com.ssafy.userservice.dto.response.UserBookmarkRecipeRes;
 import com.ssafy.userservice.dto.response.UserInfoRes;
 import com.ssafy.userservice.dto.response.UserMakeRecipe;
 import com.ssafy.userservice.dto.response.UserMakeRecipeRes;
-import com.ssafy.userservice.dto.response.UserSimpleInfoRes;
 import com.ssafy.userservice.service.BookmarkService;
 import com.ssafy.userservice.service.JwtService;
 import com.ssafy.userservice.service.ResponseService;
-import com.ssafy.userservice.service.SurveyService;
 import com.ssafy.userservice.service.UserService;
 import com.ssafy.userservice.exception.exception.UserNotFoundException;
 import com.ssafy.userservice.exception.exception.UserRecipeNotExistException;
+import com.ssafy.userservice.service.client.RecipeServiceClient;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -111,9 +110,10 @@ public class UserController {
 	public ResponseEntity<?> getUserSimpleInfo(HttpServletRequest request) {
 
 		String userSnsId = jwtService.getUserSnsId(request);
+		String token = request.getHeader("Authorization");
 		return ResponseEntity.ok().body(
 			responseService.getSuccessSingleResult(
-				userService.getUserSimpleInfo(userSnsId)
+				userService.getUserSimpleInfo(userSnsId, token)
 				, "유저 요약 정보 호출 성공"
 			)
 		);
@@ -121,75 +121,52 @@ public class UserController {
 
 	@GetMapping("/recipe/{page}")
 	public ResponseEntity<?> getUserRecipe(HttpServletRequest request, @PathVariable("page") final String page) {
-
-		String userSnsId = jwtService.getUserSnsId(request);
-		List<Integer> bookmarkRecipe = bookmarkService.getUserBoomMarkRecipeId(userSnsId);
-		log.debug("/recipe/{page} : {}", Arrays.toString(bookmarkRecipe.toArray()));
-
-		List<UserMakeRecipe> makeRecipeList = new ArrayList<>();
-		for (int i = 0; i < 9; i++) {
-			makeRecipeList.add(UserMakeRecipe.builder()
-				.makeRecipeCreateDate("2024-03-1" + i)
-				.makeRecipeImage(
-					"https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
-				.makeRecipeReview("고양이가 귀여워요")
-				.build());
-		}
-		try {
-			log.debug("/recipe/{page} : {}", page);
-
-			return ResponseEntity.ok().body(
-				responseService.getSuccessSingleResult(
-					UserMakeRecipeRes.builder()
-						.makeRecipeCount(9)
-						.makeRecipeList(makeRecipeList)
-						.build()
-					, "유저가 만든 음식 정보 호출 성공"
-				)
-
-			);
-		} catch (UserRecipeNotExistException e) {
-			return responseService.NO_CONTENT();
-		} catch (UserNotFoundException e) {
-			return responseService.BAD_REQUEST();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
+		// TODO
+		return userService.getUserMakeRecipe(request.getHeader("Authorization"), page);
+		// log.debug("/recipe/{page} : {}", Arrays.toString(makeRecipe.toArray()));
+		//
+		// List<UserMakeRecipe> makeRecipeList = new ArrayList<>();
+		// for (int i = 0; i < 9; i++) {
+		// 	makeRecipeList.add(UserMakeRecipe.builder()
+		// 		.makeRecipeCreateDate("2024-03-1" + i)
+		// 		.makeRecipeImage(
+		// 			"https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
+		// 		.makeRecipeReview("고양이가 귀여워요")
+		// 		.build());
+		// }
+		// try {
+		// 	log.debug("/recipe/{page} : {}", page);
+		//
+		// 	return ResponseEntity.ok().body(
+		// 		responseService.getSuccessSingleResult(
+		// 			UserMakeRecipeRes.builder()
+		// 				.makeRecipeCount(9)
+		// 				.makeRecipeList(makeRecipeList)
+		// 				.build()
+		// 			, "유저가 만든 음식 정보 호출 성공"
+		// 		)
+		//
+		// 	);
+		// } catch (UserRecipeNotExistException e) {
+		// 	return responseService.NO_CONTENT();
+		// } catch (UserNotFoundException e) {
+		// 	return responseService.BAD_REQUEST();
+		// } catch (Exception e) {
+		// 	return responseService.INTERNAL_SERVER_ERROR();
+		// }
 	}
 
 	@GetMapping("/bookmark/{page}")
 	public ResponseEntity<?> userRecipe(HttpServletRequest request, @PathVariable("page") final String page) {
-
+		// TODO
 		String userSnsId = jwtService.getUserSnsId(request);
+		UserBookmarkRecipeRes res = bookmarkService.getUserBoomMarkRecipe(userSnsId, request.getHeader("Authorization"), page);
+		return ResponseEntity.ok().body(
+			responseService.getSuccessSingleResult(
+				res, "유저가 즐겨찾기한 음식 정보 호출 성공"
+			)
 
-		List<UserBookmarkRecipe> bookmarkRecipeList = new ArrayList<>();
-		for (int i = 0; i < 9; i++) {
-			bookmarkRecipeList.add(UserBookmarkRecipe.builder()
-				.recipeId(i)
-				.recipeImage(
-					"https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
-				.build());
-		}
-		try {
-			log.debug("/bookmark/{page} : {}", page);
-
-			return ResponseEntity.ok().body(
-				responseService.getSuccessSingleResult(
-					UserBookmarkRecipeRes.builder()
-						.bookmarkRecipeCount(9)
-						.bookmarkRecipeList(bookmarkRecipeList)
-						.build()
-					, "유저가 즐겨찾기한 음식 정보 호출 성공"
-				)
-
-			);
-		} catch (UserRecipeNotExistException e) {
-			return responseService.NO_CONTENT();
-		} catch (UserNotFoundException e) {
-			return responseService.BAD_REQUEST();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
+		);
 	}
 
 	@GetMapping("")
@@ -237,7 +214,7 @@ public class UserController {
 	public ResponseEntity<?> bookmark(HttpServletRequest request, @RequestBody BookmarkReq req) {
 		log.debug("/bookmark : {}", req);
 		String userSnsId = jwtService.getUserSnsId(request);
-		bookmarkService.bookmarkRecipe(userSnsId, req);
+		bookmarkService.bookmarkRecipe(userSnsId, request.getHeader("Authorization") , req);
 		return ResponseEntity.ok(responseService.getSuccessMessageResult("북마크 성공"));
 	}
 }

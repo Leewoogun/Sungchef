@@ -63,7 +63,7 @@ public class User {
 		this.userImage = userImage;
 	}
 
-	public void updateUserSurvey(boolean isSurvey) {
-		this.userIsSurvey = isSurvey;
+	public void userSurveySuccess() {
+		this.userIsSurvey = true;
 	}
 }

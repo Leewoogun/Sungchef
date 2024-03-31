@@ -32,6 +32,9 @@ public class SecurityConfig {
 				.requestMatchers(new AntPathRequestMatcher("/user/healthcheck", "GET")).permitAll()
 				.requestMatchers(new AntPathRequestMatcher("/user/exist/**", "GET")).permitAll()
 
+				.requestMatchers(new AntPathRequestMatcher("/user/survey", "GET")).permitAll()
+				.requestMatchers(new AntPathRequestMatcher("/user/survey/submit", "POST")).permitAll()
+
 				.requestMatchers(new AntPathRequestMatcher("/user/signup", "POST")).permitAll()
 				.requestMatchers(new AntPathRequestMatcher("/user/reissue", "POST")).permitAll()
 				.requestMatchers(new AntPathRequestMatcher("/user/login", "POST")).permitAll()
