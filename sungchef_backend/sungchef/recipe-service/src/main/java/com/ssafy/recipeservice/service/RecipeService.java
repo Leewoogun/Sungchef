@@ -50,7 +50,6 @@ public class RecipeService {
     private final RecipeMakeLogRepository recipeMakeLogRepository;
     private final RecipeMakeRepository recipeMakeRepository;
     private final FileUploadService fileUploadService;
-
     private final UserServiceClient userServiceClient;
 //    public Recipe getRecipeById(String foodId) throws FoodNotFoundException {
 //        Optional<Food> searchFood =  foodRepository.findFoodByFoodId(foodId);
@@ -238,6 +237,7 @@ public class RecipeService {
                     .recipeCookingTime(recipe.getRecipeCookingTime())
                     .recipeVolume(recipe.getRecipeVolume())
                     .recipeVisitCount(recipe.getRecipeVisitCount())
+                    .recipeBookmarkCount(recipe.getRecipeBookmarkCount())
                     .isBookmark(userBookRecipe.contains(recipe.getRecipeId()))
                     .build()
             ).toList();
@@ -285,6 +285,7 @@ public class RecipeService {
                     .recipeCookingTime(recipe.getRecipeCookingTime())
                     .recipeVolume(recipe.getRecipeVolume())
                     .recipeVisitCount(recipe.getRecipeVisitCount())
+                    .recipeBookmarkCount(recipe.getRecipeBookmarkCount())
                     .isBookmark(userBookRecipe.contains(recipe.getRecipeId()))
                     .build()
             ).toList();
@@ -336,6 +337,7 @@ public class RecipeService {
                     .recipeCookingTime(recipe.getRecipeCookingTime())
                     .recipeVolume(recipe.getRecipeVolume())
                     .recipeVisitCount(recipe.getRecipeVisitCount())
+                    .recipeBookmarkCount(recipe.getRecipeBookmarkCount())
                     .isBookmark(userBookRecipe.contains(recipe.getRecipeId()))
                     .build()
             ).toList();
@@ -387,6 +389,7 @@ public class RecipeService {
                     .recipeCookingTime(recipe.getRecipeCookingTime())
                     .recipeVolume(recipe.getRecipeVolume())
                     .recipeVisitCount(recipe.getRecipeVisitCount())
+                    .recipeBookmarkCount(recipe.getRecipeBookmarkCount())
                     .isBookmark(userBookRecipe.contains(recipe.getRecipeId()))
                     .build()
             ).toList();
