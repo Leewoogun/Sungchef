@@ -2,17 +2,17 @@ package com.ssafy.fridgeservice.db.entity;
 
 
 import jakarta.persistence.*;
-import java.sql.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import lombok.Setter;
 
 @Entity
 @Table(name = "fridge")
 @Getter
 @Builder
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Fridge {
@@ -29,5 +29,5 @@ public class Fridge {
   private int ingredientId;
 
   @Column(name = "fridge_create_date")
-  private Date fridgeCreateDate;
+  private String fridgeCreateDate;
 }

@@ -34,12 +34,12 @@ public class FridgeController {
 	private final FridgeService fridgeService;
 
 
-	@GetMapping("/communication")
-	public String fridgeIngredientTest(HttpServletRequest request) {
-		log.debug("fridgeController - fridgeIngredientTest");
-		String token = request.getHeader("Authorization");
-		return ingredientServiceClient.communicationTest(token);
-	}
+	// @GetMapping("/communication")
+	// public String fridgeIngredientTest(HttpServletRequest request) {
+	// 	log.debug("fridgeController - fridgeIngredientTest");
+	// 	String token = request.getHeader("Authorization");
+	// 	return ingredientServiceClient.communicationTest(token);
+	// }
 
 
 	/* getIngredientInFridge : 냉장고 재료 목록 조회
@@ -50,12 +50,12 @@ public class FridgeController {
 	public ResponseEntity<?> getIngredientInFridge(HttpServletRequest request) {
 		try {
 			String userSnsId = jwtService.getUserSnsId(request);
-			log.info("userSnsId:{}",userSnsId);
+			log.debug("userSnsId:{}",userSnsId);
 			String token = request.getHeader("Authorization");
-			log.info("token:{}",token);
+			log.debug("token:{}",token);
 			return fridgeService.getIngredientInFridge(userSnsId, token);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.info(e.getMessage());
 			return ResponseEntity.status(404).body(responseService.BAD_REQUEST());
 		}
 	}
@@ -71,16 +71,16 @@ public class FridgeController {
 		try {
 			String userSnsId = jwtService.getUserSnsId(request);
 			String token = request.getHeader("Authorization");
-			log.info("userSnsId:{}",userSnsId);
-			log.info("req:{}",req);
+			log.debug("userSnsId:{}",userSnsId);
+			log.debug("req:{}",req);
 			boolean isAllRemoved = fridgeService.removeIngredients(userSnsId, token, req);
-			log.info("isAllRemoved:{}",isAllRemoved);
+			log.debug("isAllRemoved:{}",isAllRemoved);
 			if (isAllRemoved) {
 				return ResponseEntity.status(204).body(responseService.NO_CONTENT());
 			}
 			return ResponseEntity.status(404).body(responseService.BAD_REQUEST());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.info(e.getMessage());
 			return ResponseEntity.status(500).body(responseService.INTERNAL_SERVER_ERROR());
 		}
 	}
@@ -91,10 +91,14 @@ public class FridgeController {
 	 * @return : http status code 200 OK
 	 * */
 	@PostMapping("")
-	public ResponseEntity<?> addIngredients(@RequestBody final IngredientList req) {
-		// TODO
+	public ResponseEntity<?> addIngredients(HttpServletRequest request,
+		@RequestBody final IngredientList req) {
 		try {
-			log.debug("/fridge: {}", Arrays.toString(req.getIngredientIdList().toArray()));
+			String userSnsId = jwtService.getUserSnsId(request);
+			String token = request.getHeader("Authorization");
+			log.debug("userSnsId:{}",userSnsId);
+			log.debug("req:{}",req);
+			boolean isAllAdded = fridgeService.addIngredients(userSnsId, token, req);
 			return ResponseEntity.ok(
 				responseService.getSuccessMessageResult("재료 등록 성공")
 			);
@@ -103,34 +107,6 @@ public class FridgeController {
 		} catch (Exception e) {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
-	}
-
-
-	/* addIngredientsManually : 냉장고 재료 등록
-	 * @param : 유저 정보 (userSnsId, token), 재료 정보 (재료 id 리스트)
-	 * @return : http status code 200 OK
-	 * */
-	@PostMapping("/manual")
-	public ResponseEntity<?> addIngredientsManually(@RequestBody final IngredientList req) {
-		// TODO
-		try {
-			log.debug("/fridge: {}", Arrays.toString(req.getIngredientIdList().toArray()));
-			return ResponseEntity.ok(
-				responseService.getSuccessMessageResult("재료 등록 성공")
-			);
-		} catch (IngredientNotFoundException e) {
-			return responseService.BAD_REQUEST();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
-	}
-
-
-	@GetMapping("/communication/{index}")
-	public String fridgeIngredientTest(@PathVariable("index") final String index) {
-		// log.debug("fridgeController - fridgeIngredientTest");
-		// String res = ingredientServiceClient.communicationTest();
-		return index;
 	}
 
 
