@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.ssafy.userservice.db.entity.Bookmark;
 import org.checkerframework.common.value.qual.IntVal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,6 +49,11 @@ public class UserController {
 	private final UserService userService;
 	private final BookmarkService bookmarkService;
 	private final JwtService jwtService;
+
+	@PostMapping("/feign/userbookmark")
+	public List<Bookmark> getUserBookmark(@RequestBody final List<Integer> req) {
+		return bookmarkService.getUserBookmark(req);
+	}
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> signUp(@Valid @RequestBody final SignUpReq req) {

@@ -1,7 +1,5 @@
 package com.ssafy.recipeservice.controller;
 
-import com.ssafy.recipeservice.db.entity.Recipe;
-import com.ssafy.recipeservice.db.entity.RecipeMake;
 import com.ssafy.recipeservice.dto.request.FoodIdListReq;
 import com.ssafy.recipeservice.dto.request.MakeRecipeReq;
 import com.ssafy.recipeservice.dto.request.RecipeIdListReq;
@@ -12,9 +10,9 @@ import com.ssafy.recipeservice.service.RecipeService;
 import com.ssafy.recipeservice.service.ResponseService;
 import com.ssafy.recipeservice.util.exception.FoodNotFoundException;
 import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
-import com.ssafy.recipeservice.util.result.SingleResult;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,11 +67,9 @@ public class RecipeController {
 	// }
 
 	@GetMapping("/{recipeId}")
-	public ResponseEntity<?> recipeDetail(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
-		String userSnsId = jwtService.getUserSnsId(request);
-		String token = request.getHeader("Authorization");
+	public ResponseEntity<?> recipeDetail(@PathVariable("recipeId") final String recipeId) {
 		try {
-			return recipeService.getRecipeDetail(Integer.parseInt(recipeId), token);
+			return recipeService.getRecipeDetail(Integer.parseInt(recipeId));
 		} catch (FoodNotFoundException | NumberFormatException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
