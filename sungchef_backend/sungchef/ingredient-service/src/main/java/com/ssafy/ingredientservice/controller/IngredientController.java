@@ -301,12 +301,6 @@ public class IngredientController {
 //		}
 	}
 
-	@GetMapping("/communication")
-	public String communicationTest(){
-		log.debug("comm test in ingredientService");
-		return "ingredientService 입니다...";
-	}
-
 
 	@GetMapping("/recipe/{recipeId}")
 	public ResponseEntity<?> removeUsedIngredientsfromFridge(@PathVariable("recipeId") final String recipeId) {
