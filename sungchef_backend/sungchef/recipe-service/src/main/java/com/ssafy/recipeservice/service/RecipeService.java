@@ -4,27 +4,35 @@ package com.ssafy.recipeservice.service;
 import com.ssafy.recipeservice.db.entity.Recipe;
 import com.ssafy.recipeservice.db.entity.Food;
 import com.ssafy.recipeservice.db.entity.RecipeDetail;
+import com.ssafy.recipeservice.db.entity.RecipeMake;
 import com.ssafy.recipeservice.db.repository.FoodRepository;
 import com.ssafy.recipeservice.db.repository.RecipeDetailRepository;
+import com.ssafy.recipeservice.db.repository.RecipeMakeRepository;
 import com.ssafy.recipeservice.db.repository.RecipeRepository;
 import com.ssafy.recipeservice.dto.request.FoodIdListReq;
 import com.ssafy.recipeservice.dto.request.RecipeIdListReq;
 import com.ssafy.recipeservice.dto.response.*;
+import com.ssafy.recipeservice.exception.exception.PageConvertException;
 import com.ssafy.recipeservice.service.client.IngredientServiceClient;
 import com.ssafy.recipeservice.util.result.SingleResult;
 import com.ssafy.recipeservice.util.exception.FoodNotFoundException;
 import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Component
+@Service
 @RequiredArgsConstructor
 public class RecipeService {
     private final FoodRepository foodRepository;
@@ -138,6 +146,7 @@ public class RecipeService {
         }
         return ResponseEntity.ok(responseService.getSuccessSingleResult(recipeDetailStepRes, "레시피 조회 성공"));
     }
+
 }
 
 
