@@ -62,11 +62,9 @@ public class SurveyController {
 	public ResponseEntity<?> submitSurvey(HttpServletRequest request, @RequestBody @Valid final SubmitSurveyReq req) {
 		log.debug("POST /submit -> foodIdList : {}", Arrays.toString(req.foodIdList().toArray()));
 		String userSnsId = jwtService.getUserSnsId(request);
+		surveyService.submitSurvey(userSnsId, req);
 		return ResponseEntity.ok(
-			responseService.getSuccessSingleResult(
-				surveyService.submitSurvey(userSnsId, req)
-				,"설문 제출 성공"
-			)
+			responseService.getSuccessMessageResult("설문 제출 성공")
 		);
 	}
 

@@ -7,6 +7,7 @@ import com.ssafy.userservice.db.repository.UserRepository;
 import com.ssafy.userservice.db.repository.mapping.BookmarkMapping;
 import com.ssafy.userservice.dto.request.LoginReq;
 import com.ssafy.userservice.dto.request.UserInfoReq;
+import com.ssafy.userservice.dto.response.LoginRes;
 import com.ssafy.userservice.dto.response.UserMakeRecipe;
 import com.ssafy.userservice.dto.response.UserMakeRecipeRes;
 import com.ssafy.userservice.dto.response.UserSimpleInfoRes;
@@ -49,14 +50,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-	// private final FridgeRepository fridgeRepository;
 	private final UserRepository userRepository;
 	private final FileUploadService fileUploadService;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final BookmarkService bookmarkService;
-
 	private final RecipeServiceClient recipeServiceClient;
 
 	public void userExist(String userSnsId) {
@@ -94,17 +93,20 @@ public class UserService {
 	}
 
 	@Transactional
-	public JwtToken loginUser(LoginReq req) {
+	public LoginRes loginUser(LoginReq req) {
 
 		Optional<User> selectUser = userRepository.findByUserSnsId(req.userSnsId());
 
 		if (selectUser.isEmpty()) throw new UserNotFoundException("유저가 존재하지 않음");
 		User user = selectUser.get();
-		if (!user.isUserIsSurvey()) throw new UserNeedSurveyException("설문이 필요한 유저");
+		// if (!user.isUserIsSurvey()) throw new UserNeedSurveyException("설문이 필요한 유저");
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUserSnsId(), user.getUserSnsId());
 		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-		return jwtTokenProvider.generateToken(authentication, req.userSnsId());
+		return LoginRes.builder()
+			.jwtToken(jwtTokenProvider.generateToken(authentication, req.userSnsId()))
+			.needSurvey(!user.isUserIsSurvey())
+			.build();
 	}
 
 	public JwtToken reissue(String refreshToken) {
@@ -115,12 +117,7 @@ public class UserService {
 		Optional<User> selectUser = userRepository.findByUserSnsId(userSnsId);
 		if (selectUser.isEmpty()) throw new UserNotFoundException("존재하지 않는 유저");
 		User user = selectUser.get();
-		if (!user.isUserIsSurvey()) throw new UserNeedSurveyException("설문이 필요한 유저");
-		return selectUser.get();
-	}
-	public User getUserBySnsIdSubmitSurvey(String userSnsId) {
-		Optional<User> selectUser = userRepository.findByUserSnsId(userSnsId);
-		if (selectUser.isEmpty()) throw new UserNotFoundException("존재하지 않는 유저");
+		// if (!user.isUserIsSurvey()) throw new UserNeedSurveyException("설문이 필요한 유저");
 		return selectUser.get();
 	}
 	@Transactional
@@ -135,8 +132,12 @@ public class UserService {
 			if (conflictUser.isEmpty()) throw new NicknameExistException("이미 존재하는 닉네임");
 		}
 
-		if (req.userImage() != null) {
+		if (req.userImage() != null
+			&& req.userImage().getSize() != 0
+			&& !req.userImage().isEmpty())
+		{
 			try {
+				log.info("in");
 				String url = fileUploadService.uploadFile(req.userImage());
 				user.updateUserImage(url);
 			} catch (Exception e) {
@@ -149,6 +150,7 @@ public class UserService {
 			, req.userBirthdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 			, req.userGender()
 		);
+		log.info("update");
 	}
 
 	@Transactional
@@ -170,15 +172,11 @@ public class UserService {
 
 	@Transactional
 	public ResponseEntity<?> getUserMakeRecipe(String token, String page) {
-
 		try {
 			int pageNumber = Integer.parseInt(page);
 		} catch (NumberFormatException e) {
 			throw new PageConvertException();
 		}
-
-		// int pageNumber = Integer.parseInt(page);
-		// Pageable pageable = PageRequest.of(pageNumber, 20);
 
 		try {
 			ResponseEntity<SingleResult<UserMakeRecipeRes>> res = recipeServiceClient.getUserMakeRecipe(token, page);
@@ -192,14 +190,5 @@ public class UserService {
 			e.printStackTrace();
 			throw new FeignException("recipeServiceClient.getUserMakeRecipe ERROR");
 		}
-		// Page<BookmarkMapping> bookmarkRecipeMapping = bookmarkRepository.findAllByUserSnsId(userSnsId, pageable);
-		//
-		// if (bookmarkRecipeMapping.isEmpty())
-		// 	throw new NoContentException("유저 레시피의 마지막 페이지");
-		//
-		// List<Integer> bookMarkRecipeList = bookmarkRecipeMapping.getContent()
-		// 	.stream()
-		// 	.map(BookmarkMapping::getRecipeId)
-		// 	.toList();
 	}
 }
