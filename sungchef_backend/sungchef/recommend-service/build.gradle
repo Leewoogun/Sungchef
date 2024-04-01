@@ -51,6 +51,9 @@ dependencies {
 
 	// WebClient (HTTP 통신)
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// Feign Client
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 }
 dependencyManagement {
 	imports {

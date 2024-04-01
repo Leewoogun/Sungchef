@@ -1,7 +1,5 @@
 package com.ssafy.recipeservice.controller;
 
-import com.ssafy.recipeservice.db.entity.Recipe;
-import com.ssafy.recipeservice.db.entity.RecipeMake;
 import com.ssafy.recipeservice.dto.request.FoodIdListReq;
 import com.ssafy.recipeservice.dto.request.MakeRecipeReq;
 import com.ssafy.recipeservice.dto.request.RecipeIdListReq;
@@ -12,7 +10,6 @@ import com.ssafy.recipeservice.service.RecipeService;
 import com.ssafy.recipeservice.service.ResponseService;
 import com.ssafy.recipeservice.util.exception.FoodNotFoundException;
 import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
-import com.ssafy.recipeservice.util.result.SingleResult;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.Path;
@@ -36,39 +33,12 @@ public class RecipeController {
 
 	private final ResponseService responseService;
 	private final RecipeService recipeService;
-	private final RecipeFeignService recipeFeignService;
-	private final JwtService jwtService;
+
+	// private final JwtService jwtService;
 	// checkController 참고
 	/**
 	 * 레시피의 모든 정보를 반환
 	 */
-
-	@GetMapping("/feign/user/{page}")
-	public ResponseEntity<SingleResult<UserMakeRecipeRes>> getUserMakeRecipe(HttpServletRequest request, @PathVariable("page") String page) {
-		String userSnsId = jwtService.getUserSnsId(request);
-		UserMakeRecipeRes res = recipeFeignService.getUserMakeRecipeDetail(userSnsId, page);
-		return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "조회 완료"));
-	}
-	@GetMapping("/feign/exist/{recipeId}")
-	public boolean isRecipeExist(@PathVariable("recipeId") final String recipeId) {
-		return recipeFeignService.isRecipeExist(recipeId);
-	}
-	@GetMapping("/feign/makerecipecount")
-	public int getUserMakeRecipeCount(HttpServletRequest request) {
-		String userSnsId = jwtService.getUserSnsId(request);
-		return recipeFeignService.getUserMakeRecipeCount(userSnsId);
-	}
-
-	@PostMapping("/feign/user/bookmark")
-	List<Recipe> getUserBookmarkRecipe(@RequestBody List<Integer> recipeIdList) {
-		return recipeFeignService.getUserBookmarkRecipe(recipeIdList);
-	}
-	// @GetMapping("/feign/makerecipe/{page}")
-	// public Page<RecipeMake> recipeSimple(HttpServletRequest request, @PathVariable("page") final String page) {
-	// 	String userSnsId = jwtService.getUserSnsId(request);
-	// 	return recipeFeignService.getUserMakeRecipePage(userSnsId, page);
-	// }
-
 	@GetMapping("/{recipeId}")
 	public ResponseEntity<?> recipeDetail(@PathVariable("recipeId") final String recipeId) {
 		try {

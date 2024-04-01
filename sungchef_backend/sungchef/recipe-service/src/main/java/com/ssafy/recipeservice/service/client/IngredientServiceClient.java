@@ -6,12 +6,12 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
+import org.springframework.web.bind.annotation.RequestHeader;
 
 
 @FeignClient("ingredient-service")
 public interface IngredientServiceClient {
 	@GetMapping("/ingredient/{recipeId}")
-	ResponseEntity<SingleResult<RecipeIngredientListRes>> getUsedIngredientsInRecipe(@PathVariable("recipeId") final String recipeId);
+	ResponseEntity<SingleResult<RecipeIngredientListRes>> getUsedIngredientsInRecipe(@PathVariable("recipeId") final String recipeId, @RequestHeader("Authorization") String token);
 
 }
