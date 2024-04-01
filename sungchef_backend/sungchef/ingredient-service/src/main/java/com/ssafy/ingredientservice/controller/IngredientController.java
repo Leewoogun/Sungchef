@@ -9,6 +9,9 @@ import com.ssafy.ingredientservice.service.ResponseService;
 import com.ssafy.ingredientservice.exception.exception.ConvertOCRException;
 import com.ssafy.ingredientservice.exception.exception.HaveAllIngredientInRecipeException;
 import com.ssafy.ingredientservice.exception.exception.RecipeNotFoundException;
+import com.ssafy.ingredientservice.service.JwtService;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +28,7 @@ public class IngredientController {
 
 	private final ResponseService responseService;
 	private final IngredientService ingredientService;
-
-	// private final JwtService jwtService;
+	private final JwtService jwtService;
 	// checkController 참고
 	/**
 	 * MultipartFile 업로드 필요
@@ -35,7 +37,7 @@ public class IngredientController {
 	 */
 	@PostMapping("/convert")
 	//	public ResponseEntity<?> convertImageToIngredients(@RequestBody ConvertImageReq req) {
-	public ResponseEntity<?> convertImageToIngredients(@RequestBody ConvertImageReq req) {
+	public ResponseEntity<?> convertImageToIngredients(HttpServletRequest request, @RequestBody ConvertImageReq req) {
 		// TODO
 		// 네이버 영수증 API 호출해서 가져오기
 		ingredientService.naverReceiptIntoNames(req);
@@ -160,7 +162,7 @@ public class IngredientController {
 
 
 	@PostMapping("/list")
-	public ResponseEntity<?> getIngredientList(@RequestBody final IngredientListReq req) {
+	public ResponseEntity<?> getIngredientList(HttpServletRequest request, @RequestBody final IngredientListReq req) {
 		try {
 
 			return ingredientService.getIngredientList(req);
@@ -177,7 +179,16 @@ public class IngredientController {
 
 
 	@GetMapping("/need/{recipeId}")
-	public ResponseEntity<?> getIngredientIdToCook(@PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> getIngredientIdToCook(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
+		try {
+			String userSnsId = jwtService.getUserSnsId(request);
+
+		} catch (Exception e) {
+			log.info(e.getMessage());
+			return ResponseEntity.status(500).body(responseService.INTERNAL_SERVER_ERROR());
+		}
+
+
 		RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes(1);
 
 		List<RecipeIngredientInfo> recipeIngredientInfoList = recipeIngredientListRes.getRecipeIngredientInfoList();
@@ -282,7 +293,7 @@ public class IngredientController {
 
 	}
 	@GetMapping("/{recipeId}")
-	public ResponseEntity<?> getUsedIngredientsInRecipe(@PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> getUsedIngredientsInRecipe(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
 		return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
 
 //		try {
@@ -303,7 +314,7 @@ public class IngredientController {
 
 
 	@GetMapping("/recipe/{recipeId}")
-	public ResponseEntity<?> removeUsedIngredientsfromFridge(@PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> removeUsedIngredientsfromFridge(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
 		return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
 	}
 
