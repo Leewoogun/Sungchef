@@ -59,6 +59,7 @@ public class UserController {
 	@PostMapping("/signup")
 	public ResponseEntity<?> signUp(@Valid @RequestBody final SignUpReq req) {
 		log.debug("/signup : {}", req);
+		
 		return  ResponseEntity.ok().body(
 			responseService.getSuccessSingleResult(
 				userService.createUser(req)
