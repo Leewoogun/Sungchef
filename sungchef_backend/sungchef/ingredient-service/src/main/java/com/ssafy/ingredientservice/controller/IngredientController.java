@@ -1,5 +1,6 @@
 package com.ssafy.ingredientservice.controller;
 
+import com.ssafy.ingredientservice.dto.request.ConvertImageReq;
 import com.ssafy.ingredientservice.dto.request.IngredientListReq;
 import com.ssafy.ingredientservice.dto.response.*;
 import com.ssafy.ingredientservice.exception.exception.IngredientNotFoundException;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -33,8 +35,11 @@ public class IngredientController {
 	 */
 	@PostMapping("/convert")
 	//	public ResponseEntity<?> convertImageToIngredients(@RequestBody ConvertImageReq req) {
-	public ResponseEntity<?> convertImageToIngredients() {
+	public ResponseEntity<?> convertImageToIngredients(@RequestBody ConvertImageReq req) {
 		// TODO
+		// 네이버 영수증 API 호출해서 가져오기
+		ingredientService.naverReceiptIntoNames(req);
+
 		ConvertProductListRes convertProductListRes = new ConvertProductListRes();
 		List<ConvertProductInfo> convertProductInfoList = convertProductListRes.getConvertProductList();
 
@@ -300,5 +305,12 @@ public class IngredientController {
 		log.debug("comm test in ingredientService");
 		return "ingredientService 입니다...";
 	}
+
+
+	@GetMapping("/recipe/{recipeId}")
+	public ResponseEntity<?> removeUsedIngredientsfromFridge(@PathVariable("recipeId") final String recipeId) {
+		return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
+	}
+
 
 }

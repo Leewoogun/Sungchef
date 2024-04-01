@@ -3,6 +3,7 @@ package com.ssafy.ingredientservice.service;
 import com.ssafy.ingredientservice.db.entity.Ingredient;
 import com.ssafy.ingredientservice.db.repository.IngredientRepository;
 import com.ssafy.ingredientservice.db.repository.RecipeIngredientRepository;
+import com.ssafy.ingredientservice.dto.request.ConvertImageReq;
 import com.ssafy.ingredientservice.dto.request.IngredientListReq;
 import com.ssafy.ingredientservice.dto.response.RecipeIngredientInfo;
 import com.ssafy.ingredientservice.dto.response.IngredientInfo;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -253,4 +255,10 @@ public class IngredientService {
         return ResponseEntity.ok()
                 .body(responseService.getSuccessSingleResult(ingredientListRes, "재료 조회 성공"));
     }
+
+
+    public ResponseEntity<?> naverReceiptIntoNames(@RequestBody ConvertImageReq req){
+        return null;
+    }
+
 }
