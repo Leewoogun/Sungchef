@@ -182,6 +182,7 @@ public class IngredientController {
 	public ResponseEntity<?> getIngredientIdToCook(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
 		try {
 			String userSnsId = jwtService.getUserSnsId(request);
+			String token = request.getHeader("Authorization");
 
 		} catch (Exception e) {
 			log.info(e.getMessage());

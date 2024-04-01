@@ -262,10 +262,12 @@ public class IngredientService {
     }
 
 
-    public getIngredientIdToCook() {
+    public boolean getIngredientIdToCook(String userSnsId, String token) {
         RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes(1);
 
         List<RecipeIngredientInfo> recipeIngredientInfoList = recipeIngredientListRes.getRecipeIngredientInfoList();
+
+
 
         for (RecipeIngredientInfo info : recipeIngredientInfoList) {
 
@@ -345,12 +347,11 @@ public class IngredientService {
                             .build()
                     );
                 }
-                default -> {
-                    return responseService.INTERNAL_SERVER_ERROR();
-                }
+
 
             }
         }
+        return true;
     }
 
 }
