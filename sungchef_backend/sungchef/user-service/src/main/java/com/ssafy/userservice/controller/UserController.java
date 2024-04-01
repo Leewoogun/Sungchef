@@ -51,8 +51,9 @@ public class UserController {
 	private final JwtService jwtService;
 
 	@PostMapping("/feign/userbookmark")
-	public List<Bookmark> getUserBookmark(@RequestBody final List<Integer> req) {
-		return bookmarkService.getUserBookmark(req);
+	public List<Bookmark> getUserBookmark(HttpServletRequest request, @RequestBody final List<Integer> req) {
+		String userSnsId = jwtService.getUserSnsId(request);
+		return bookmarkService.getUserBookmark(userSnsId, req);
 	}
 
 	@PostMapping("/signup")

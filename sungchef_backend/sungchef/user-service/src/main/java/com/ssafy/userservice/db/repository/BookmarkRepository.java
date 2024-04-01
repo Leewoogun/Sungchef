@@ -20,5 +20,5 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Integer> {
 
 	int countAllByUserSnsId(String userSnsId);
 
-	List<Bookmark> findAllByRecipeIdIn(List<Integer> recipeIdList);
+	List<Bookmark> findAllByUserSnsIdAndRecipeIdIn(String userSnsId, List<Integer> recipeIdList);
 }

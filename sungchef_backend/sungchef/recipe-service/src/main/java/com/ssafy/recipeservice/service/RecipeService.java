@@ -198,7 +198,8 @@ public class RecipeService {
         );
     }
 
-    public SearchRecipeListRes getRecipeOrderByBookmark(String userSnsId, String token, String page) {
+    @Transactional
+    public SearchRecipeListRes getRecipeOrderByBookmark(String token, String page) {
         try {
             int convertPage = Integer.parseInt(page);
         } catch (NumberFormatException e) {
@@ -206,7 +207,7 @@ public class RecipeService {
         }
 
         int pageNumber = Integer.parseInt(page);
-        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").ascending());
+        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeBookmarkCount").ascending());
         Page<Recipe> recipePage = recipeRepository.findAll(pageable);
 
         List<Recipe> recipeList = recipePage.toList();
@@ -243,7 +244,8 @@ public class RecipeService {
         return SearchRecipeListRes.builder().recipeList(searchRecipeList).build();
     }
 
-    public SearchRecipeListRes getRecipeOrderByVisit(String userSnsId, String token, String page) {
+    @Transactional
+    public SearchRecipeListRes getRecipeOrderByVisit(String token, String page) {
 
         try {
             int convertPage = Integer.parseInt(page);
@@ -290,7 +292,7 @@ public class RecipeService {
     }
 
     @Transactional
-    public SearchRecipeListRes searchRecipeOrderByVisit(String userSnsId, String token, String foodName, String page) {
+    public SearchRecipeListRes searchRecipeOrderByVisit(String token, String foodName, String page) {
 
         try {
             int convertPage = Integer.parseInt(page);
@@ -340,7 +342,8 @@ public class RecipeService {
         return SearchRecipeListRes.builder().recipeList(searchRecipeList).build();
     }
 
-    public SearchRecipeListRes searchFoodOrderByVisit(String userSnsId, String token, String foodName, String page) {
+    @Transactional
+    public SearchRecipeListRes searchFoodOrderByVisit(String token, String foodName, String page) {
 
         try {
             int convertPage = Integer.parseInt(page);

@@ -1,5 +1,6 @@
 package com.ssafy.recipeservice.controller;
 
+import com.ssafy.recipeservice.db.entity.Recipe;
 import com.ssafy.recipeservice.dto.request.FoodIdListReq;
 import com.ssafy.recipeservice.dto.request.MakeRecipeReq;
 import com.ssafy.recipeservice.dto.request.RecipeIdListReq;
@@ -10,6 +11,7 @@ import com.ssafy.recipeservice.service.RecipeService;
 import com.ssafy.recipeservice.service.ResponseService;
 import com.ssafy.recipeservice.util.exception.FoodNotFoundException;
 import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
+import com.ssafy.recipeservice.util.result.SingleResult;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.Path;
@@ -67,9 +69,9 @@ public class RecipeController {
 	// }
 
 	@GetMapping("/{recipeId}")
-	public ResponseEntity<?> recipeDetail(@PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> recipeDetail(@RequestHeader("Authorization") String token, @PathVariable("recipeId") final String recipeId) {
 		try {
-			return recipeService.getRecipeDetail(Integer.parseInt(recipeId));
+			return recipeService.getRecipeDetail(Integer.parseInt(recipeId), token);
 		} catch (FoodNotFoundException | NumberFormatException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
@@ -98,13 +100,10 @@ public class RecipeController {
 	@GetMapping("/bookmark/{page}")
 	public ResponseEntity<?> recipeOrderByBookmark(HttpServletRequest request, @PathVariable("page") final String page) {
 
-		// TODO
 		log.debug("/bookmark/{page} : {}", page);
 
-		String userSnsId = jwtService.getUserSnsId(request);
 		String token = request.getHeader("Authorization");
-
-		SearchRecipeListRes res = recipeService.getRecipeOrderByBookmark(userSnsId, token, page);
+		SearchRecipeListRes res = recipeService.getRecipeOrderByBookmark(token, page);
 
 		return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "레시피 조회 성공"));
 	}
@@ -115,13 +114,10 @@ public class RecipeController {
 	@GetMapping("/visit/{page}")
 	public ResponseEntity<?> recipeOrderByVisit(HttpServletRequest request, @PathVariable("page") final String page) {
 
-		// TODO
 		log.debug("/visit/{page} : {}", page);
 
-		String userSnsId = jwtService.getUserSnsId(request);
 		String token = request.getHeader("Authorization");
-
-		SearchRecipeListRes res = recipeService.getRecipeOrderByVisit(userSnsId, token, page);
+		SearchRecipeListRes res = recipeService.getRecipeOrderByVisit(token, page);
 
 		return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "레시피 조회 성공"));
 	}
@@ -132,12 +128,10 @@ public class RecipeController {
 		, @PathVariable("foodName") final String foodName
 		, @PathVariable("page") final String page
 	) {
-		// TODO
 		log.debug("/search/bookmark/{foodName}/{page} : {}, {}", foodName, page);
 
-		String userSnsId = jwtService.getUserSnsId(request);
 		String token = request.getHeader("Authorization");
-		SearchRecipeListRes res = recipeService.searchFoodOrderByVisit(userSnsId, token, foodName, page);
+		SearchRecipeListRes res = recipeService.searchFoodOrderByVisit(token, foodName, page);
 
 		return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "레시피 조회 성공"));
 	}
@@ -148,13 +142,9 @@ public class RecipeController {
 		,@PathVariable("foodName") final String foodName
 		, @PathVariable("page") final String page
 	) {
-		// TODO
 		log.debug("/search/visit/{foodName}/{page} : {}, {}", foodName, page);
-
-		String userSnsId = jwtService.getUserSnsId(request);
 		String token = request.getHeader("Authorization");
-		SearchRecipeListRes res = recipeService.searchRecipeOrderByVisit(userSnsId, token, foodName, page);
-
+		SearchRecipeListRes res = recipeService.searchRecipeOrderByVisit(token, foodName, page);
 		return ResponseEntity.ok(
 			responseService.getSuccessSingleResult(
 				res

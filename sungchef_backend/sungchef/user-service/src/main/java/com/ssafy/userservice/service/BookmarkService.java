@@ -99,9 +99,8 @@ public class BookmarkService {
 		return bookmarkRepository.countAllByUserSnsId(userSnsId);
 	}
 
-	public List<Bookmark> getUserBookmark(List<Integer> req){
-		List<Bookmark> bookmarks = bookmarkRepository.findAllByRecipeIdIn(req);
-		return bookmarks;
+	public List<Bookmark> getUserBookmark(String userSnsId, List<Integer> req){
+		return bookmarkRepository.findAllByUserSnsIdAndRecipeIdIn(userSnsId, req);
 	}
 
 
