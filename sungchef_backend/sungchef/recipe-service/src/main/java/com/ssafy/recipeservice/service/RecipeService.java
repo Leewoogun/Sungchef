@@ -207,7 +207,7 @@ public class RecipeService {
         }
 
         int pageNumber = Integer.parseInt(page);
-        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeBookmarkCount").ascending());
+        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeBookmarkCount").descending());
         Page<Recipe> recipePage = recipeRepository.findAll(pageable);
 
         List<Recipe> recipeList = recipePage.toList();
@@ -254,7 +254,7 @@ public class RecipeService {
         }
 
         int pageNumber = Integer.parseInt(page);
-        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").ascending());
+        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").descending());
         Page<Recipe> recipePage = recipeRepository.findAll(pageable);
 
         List<Recipe> recipeList = recipePage.toList();
@@ -305,7 +305,7 @@ public class RecipeService {
 
         Food food = searchFood.get();
         int pageNumber = Integer.parseInt(page);
-        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").ascending());
+        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").descending());
         Page<Recipe> recipePage = recipeRepository.findAllByFoodId(food.getFoodId(), pageable);
 
         List<Recipe> recipeList = recipePage.toList();
@@ -356,7 +356,7 @@ public class RecipeService {
 
         Food food = searchFood.get();
         int pageNumber = Integer.parseInt(page);
-        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").ascending());
+        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").descending());
         Page<Recipe> recipePage = recipeRepository.findAllByFoodId(food.getFoodId(), pageable);
 
         List<Recipe> recipeList = recipePage.toList();
