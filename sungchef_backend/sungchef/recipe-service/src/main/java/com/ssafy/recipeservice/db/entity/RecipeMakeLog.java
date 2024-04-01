@@ -24,7 +24,7 @@ public class RecipeMakeLog {
   private int recipeMakeLogId;
 
   @Column(name = "suser_sns_id")
-  private int userSnsId;
+  private String userSnsId;
 
   @Column(name = "recipe_id")
   private int recipeId;
