@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.ssafy.userservice.dto.request.FoodIdListReq;
+import com.ssafy.userservice.service.client.RecipeServiceClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,10 +35,12 @@ import lombok.extern.slf4j.Slf4j;
 public class SurveyController {
 	private final ResponseService responseService;
 	private final SurveyService surveyService;
+	private final RecipeServiceClient recipeServiceClient;
 	private final JwtService jwtService;
 	@GetMapping("")
 	public ResponseEntity<?> getSurvey() {
 		// TODO
+		FoodIdListReq
 		List<FoodInfo> surveyList = new ArrayList<>();
 		for (int i = 0; i < 9; i++) {
 			surveyList.add(FoodInfo.builder()
