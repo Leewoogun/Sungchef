@@ -94,8 +94,15 @@ public class BookmarkService {
 			.bookmarkRecipeList(userBookmarkRecipeList)
 			.build();
 	}
+
 	public int getUserBookmarkCount(String userSnsId) {
 		return bookmarkRepository.countAllByUserSnsId(userSnsId);
 	}
+
+	public List<Bookmark> getUserBookmark(List<Integer> req){
+		List<Bookmark> bookmarks = bookmarkRepository.findAllByRecipeIdIn(req);
+		return bookmarks;
+	}
+
 
 }
