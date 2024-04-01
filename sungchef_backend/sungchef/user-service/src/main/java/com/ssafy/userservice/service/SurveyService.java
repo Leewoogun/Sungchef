@@ -26,7 +26,7 @@ public class SurveyService {
 	private final UserService userService;
 	private final SurveyRepository surveyRepository;
 	@Transactional
-	public JwtToken submitSurvey(String userSnsId, SubmitSurveyReq req) {
+	public void submitSurvey(String userSnsId, SubmitSurveyReq req) {
 
 		List<Survey> submitSurvey = new ArrayList<>();
 		for (FoodId id : req.foodIdList()) {
@@ -39,17 +39,15 @@ public class SurveyService {
 
 		surveyRepository.saveAll(submitSurvey);
 
-		User user = userService.getUserBySnsIdSubmitSurvey(userSnsId);
-		user.userSurveySuccess();
-
-		return userService.loginUser(
-			new LoginReq(userSnsId)
-		);
+		User user = userService.getUserBySnsId(userSnsId);
+		user.setUserIsSurvey(true);
 	}
 
 	@Transactional
 	public void updateSurvey(String userSnsId, SubmitSurveyReq req) {
 		List<Survey> userSurvey = surveyRepository.findAllByUserSnsId(userSnsId);
+		User user = userService.getUserBySnsId(userSnsId);
+		user.setUserIsSurvey(false);
 		if (userSurvey.size() != 0) surveyRepository.deleteAll(userSurvey);
 		submitSurvey(userSnsId, req);
 	}
