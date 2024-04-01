@@ -1,7 +1,6 @@
 package com.ssafy.fridgeservice.controller;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,17 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.fridgeservice.service.JwtService;
 import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
-import com.ssafy.fridgeservice.service.client.UserServiceClient;
 import com.ssafy.fridgeservice.dto.request.FridgeIngredientListReq;
 import com.ssafy.fridgeservice.dto.request.user.SignUpReq;
-import com.ssafy.fridgeservice.dto.response.FridgeIngredientListRes;
-import com.ssafy.fridgeservice.dto.response.Ingredient;
-import com.ssafy.fridgeservice.dto.response.IngredientInfo;
-import com.ssafy.fridgeservice.messagequeue.KafkaProducer;
 import com.ssafy.fridgeservice.service.FridgeService;
 import com.ssafy.fridgeservice.service.ResponseService;
 import com.ssafy.fridgeservice.exception.exception.IngredientNotFoundException;
-import com.ssafy.fridgeservice.exception.exception.RecipeNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -38,19 +31,8 @@ public class FridgeController {
 
 	private final JwtService jwtService;
 	private final ResponseService responseService;
-	private final UserServiceClient userServiceClient;
 	private final IngredientServiceClient ingredientServiceClient;
 	private final FridgeService fridgeService;
-
-	@GetMapping("/user/healthcheck")
-	ResponseEntity<?> getHealthcheck() {
-		return userServiceClient.getHealthcheck();
-	}
-
-	@PostMapping("/user/signup")
-	ResponseEntity<?> signup(@RequestBody final SignUpReq req) {
-		return userServiceClient.signup(req);
-	}
 
 
 	@GetMapping("/communication")
@@ -69,7 +51,9 @@ public class FridgeController {
 	public ResponseEntity<?> getIngredientInFridge(HttpServletRequest request) {
 		try {
 			String userSnsId = jwtService.getUserSnsId(request);
+			log.debug("userSnsId:{}",userSnsId);
 			String token = request.getHeader("Authorization");
+			log.debug("token:{}",token);
 			return fridgeService.getIngredientInFridge(userSnsId, token);
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -98,7 +82,7 @@ public class FridgeController {
 	}
 
 
-	/* addIngredients : 냉장고 재료 등록
+	/* addIngredientsManually : 냉장고 재료 등록
 	 * @param : 유저 정보 (userSnsId, token), 재료 정보 (재료 id 리스트)
 	 * @return : http status code 200 OK
 	 * */

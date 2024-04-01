@@ -18,9 +18,10 @@ spring:
 logging:
   level:
     com.ssafy.userservice.client: DEBUG
-    org.hibernate:
-      type.descriptor.sql: trace #show parameter binding
-      SQL: DEBUG
+    feign: DEBUG
+#    org.hibernate:
+#      type.descriptor.sql: trace #show parameter binding
+#      SQL: DEBUG
 
 
 eureka:
