@@ -21,6 +21,9 @@ public enum ErrorCode {
 	METHOD_NOT_ALLOWED(405, "C004", " Invalid Input Value"),
 
 	PAGE_NOT_INT(400, "C005", "Page Can't Convert to Int"),
+	END_OF_PAGE(204, "C010", "End of Page"),
+
+	FOOD_NOT_FOUNT(400, "I001", "Food Not Fount"),
 
 	INTERNAL_SERVER_ERROR(500, "S001", "SERVER_ERROR"),
 	SECURITY_ERROR(500, "S002", "SECURITY ERROR"),
@@ -28,7 +31,7 @@ public enum ErrorCode {
 	// JWT
 	UNAUTHORIZED(401, "U004", "TOKEN UNAUTHORIZED"),
 	JWT_ERROR(500, "S003", "JWT ERROR"),
-
+	FEIGN_CONNECT_ERROR(500, "S004", "Feign Connect Error"),
 		;
 	private int status;
 	private final String code;
