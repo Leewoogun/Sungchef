@@ -9,11 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-import com.ssafy.fridgeservice.dto.request.FridgeIngredientListReq;
 import com.ssafy.fridgeservice.dto.request.IngredientListReq;
-import com.ssafy.fridgeservice.dto.request.user.SignUpReq;
-import com.ssafy.fridgeservice.dto.response.IngredientId;
-import com.ssafy.fridgeservice.util.result.SingleResult;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,7 +1,6 @@
 package com.ssafy.fridgeservice.controller;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,11 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.fridgeservice.db.entity.Fridge;
+import com.ssafy.fridgeservice.dto.request.IngredientList;
 import com.ssafy.fridgeservice.service.JwtService;
 import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
-import com.ssafy.fridgeservice.dto.request.FridgeIngredientListReq;
-import com.ssafy.fridgeservice.dto.request.user.SignUpReq;
 import com.ssafy.fridgeservice.service.FridgeService;
 import com.ssafy.fridgeservice.service.ResponseService;
 import com.ssafy.fridgeservice.exception.exception.IngredientNotFoundException;
@@ -59,7 +56,32 @@ public class FridgeController {
 			return fridgeService.getIngredientInFridge(userSnsId, token);
 		} catch (Exception e) {
 			log.error(e.getMessage());
-			return null;
+			return ResponseEntity.status(404).body(responseService.BAD_REQUEST());
+		}
+	}
+
+
+	/* removeIngredients : 냉장고 재료 삭제
+	 * @param : 유저 정보 (userSnsId, token), 재료 정보 (재료 id 리스트)
+	 * @return : http status code 204 NO CONTENT or error
+	 * */
+	@DeleteMapping("")
+	public ResponseEntity<?> removeIngredients(HttpServletRequest request,
+		@RequestBody final IngredientList req) {
+		try {
+			String userSnsId = jwtService.getUserSnsId(request);
+			String token = request.getHeader("Authorization");
+			log.info("userSnsId:{}",userSnsId);
+			log.info("req:{}",req);
+			boolean isAllRemoved = fridgeService.removeIngredients(userSnsId, token, req);
+			log.info("isAllRemoved:{}",isAllRemoved);
+			if (isAllRemoved) {
+				return ResponseEntity.status(204).body(responseService.NO_CONTENT());
+			}
+			return ResponseEntity.status(404).body(responseService.BAD_REQUEST());
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			return ResponseEntity.status(500).body(responseService.INTERNAL_SERVER_ERROR());
 		}
 	}
 
@@ -69,7 +91,7 @@ public class FridgeController {
 	 * @return : http status code 200 OK
 	 * */
 	@PostMapping("")
-	public ResponseEntity<?> addIngredients(@RequestBody final FridgeIngredientListReq req) {
+	public ResponseEntity<?> addIngredients(@RequestBody final IngredientList req) {
 		// TODO
 		try {
 			log.debug("/fridge: {}", Arrays.toString(req.getIngredientIdList().toArray()));
@@ -89,7 +111,7 @@ public class FridgeController {
 	 * @return : http status code 200 OK
 	 * */
 	@PostMapping("/manual")
-	public ResponseEntity<?> addIngredientsManually(@RequestBody final FridgeIngredientListReq req) {
+	public ResponseEntity<?> addIngredientsManually(@RequestBody final IngredientList req) {
 		// TODO
 		try {
 			log.debug("/fridge: {}", Arrays.toString(req.getIngredientIdList().toArray()));
@@ -103,37 +125,6 @@ public class FridgeController {
 		}
 	}
 
-
-	/* removeIngredients : 냉장고 재료 삭제
-	 * @param : 유저 정보 (userSnsId, token), 재료 정보 (재료 id 리스트)
-	 * @return : http status code 204 NO CONTENT or error
-	 * */
-	@DeleteMapping("")
-	public ResponseEntity<?> removeIngredients(@RequestBody final FridgeIngredientListReq req) {
-		// TODO
-		try {
-			log.debug("/fridge: {}", Arrays.toString(req.getIngredientIdList().toArray()));
-			return responseService.NO_CONTENT();
-		} catch (IngredientNotFoundException e) {
-			return responseService.BAD_REQUEST();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
-	}
-
-
-	/* getConvertedResult : OCR 변환된 결과물 내려주기
-	 * @param : 유저 정보 (userSnsId, token), 재료 정보 (재료 id 리스트)
-	 * @return : convertResult 결과물
-	 * */
-	@GetMapping("/fridge/ocr")
-	public ResponseEntity<?> getConvertedResult() {
-		try {
-			return responseService.OK();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
-	}
 
 	@GetMapping("/communication/{index}")
 	public String fridgeIngredientTest(@PathVariable("index") final String index) {
