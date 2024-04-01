@@ -20,13 +20,13 @@ public class Fridge {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "fridge_id")
-  private Integer fridgeId;
+  private int fridgeId;
 
   @Column(name = "suser_sns_id")
   private String userSnsId;
 
   @Column(name = "ingredient_id")
-  private Integer ingredientId;
+  private int ingredientId;
 
   @Column(name = "fridge_create_date")
   private Date fridgeCreateDate;

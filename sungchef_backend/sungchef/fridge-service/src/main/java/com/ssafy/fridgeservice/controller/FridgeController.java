@@ -1,6 +1,7 @@
 package com.ssafy.fridgeservice.controller;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.fridgeservice.db.entity.Fridge;
 import com.ssafy.fridgeservice.service.JwtService;
 import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
 import com.ssafy.fridgeservice.dto.request.FridgeIngredientListReq;
@@ -51,13 +53,13 @@ public class FridgeController {
 	public ResponseEntity<?> getIngredientInFridge(HttpServletRequest request) {
 		try {
 			String userSnsId = jwtService.getUserSnsId(request);
-			log.debug("userSnsId:{}",userSnsId);
+			log.info("userSnsId:{}",userSnsId);
 			String token = request.getHeader("Authorization");
-			log.debug("token:{}",token);
+			log.info("token:{}",token);
 			return fridgeService.getIngredientInFridge(userSnsId, token);
 		} catch (Exception e) {
 			log.error(e.getMessage());
-			return responseService.INTERNAL_SERVER_ERROR();
+			return null;
 		}
 	}
 

@@ -162,6 +162,7 @@ public class IngredientController {
 	@PostMapping("/list")
 	public ResponseEntity<?> getIngredientList(@RequestBody final IngredientListReq req) {
 		try {
+
 			return ingredientService.getIngredientList(req);
 		} catch (IngredientNotFoundException e) {
 			return responseService.BAD_REQUEST();

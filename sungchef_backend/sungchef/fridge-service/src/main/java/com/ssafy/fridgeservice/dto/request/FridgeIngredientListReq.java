@@ -2,6 +2,9 @@ package com.ssafy.fridgeservice.dto.request;
 
 import java.util.List;
 
+import org.hibernate.mapping.Array;
+
+import com.ssafy.fridgeservice.db.entity.Fridge;
 import com.ssafy.fridgeservice.dto.response.IngredientId;
 
 import lombok.AllArgsConstructor;
