@@ -5,7 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.ssafy.userservice.dto.request.FoodIdListReq;
+import com.ssafy.userservice.dto.response.fridge.Food;
+import com.ssafy.userservice.dto.response.fridge.FoodList;
 import com.ssafy.userservice.service.client.RecipeServiceClient;
+import com.ssafy.userservice.util.result.SingleResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,16 +41,22 @@ public class SurveyController {
 	private final RecipeServiceClient recipeServiceClient;
 	private final JwtService jwtService;
 	@GetMapping("")
-	public ResponseEntity<?> getSurvey() {
+	public ResponseEntity<?> getSurvey(HttpServletRequest request) {
+		String token = request.getHeader("Authorization");
+		List<Integer> foodIdList =  Arrays.asList(93,160,102,74,214,82,75,94,238,184,168,90,190,157,88,205,266,19,49,173);
 		// TODO
-		FoodIdListReq
+		FoodIdListReq req = FoodIdListReq.builder()
+				.foodIdList(foodIdList)
+				.build();
+		ResponseEntity<SingleResult<FoodList>> res = recipeServiceClient.getFoodList(req, token);
+		List<Food> FoodListRes = res.getBody().getData().getFoodList();
+
 		List<FoodInfo> surveyList = new ArrayList<>();
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < foodIdList.size(); i++) {
 			surveyList.add(FoodInfo.builder()
-				.foodImage(
-					"https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
-				.foodId(i)
-				.foodName("고양이" + i)
+				.foodImage(FoodListRes.get(i).getFoodImage())
+				.foodId(foodIdList.get(i))
+				.foodName(FoodListRes.get(i).getFoodName())
 				.build());
 		}
 
