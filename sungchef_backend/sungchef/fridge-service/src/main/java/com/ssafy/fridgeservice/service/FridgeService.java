@@ -103,12 +103,17 @@ public class FridgeService {
 	@Transactional
 	public IngredientIdListRes isExistIngredients(String userSnsId, IngredientListReq ingredientIdList) {
 		List<Integer> beforeCheckIngredients = ingredientIdList.getIngredientIdList();
+		log.info("beforeCheckIngredients:{}",beforeCheckIngredients);
 		IngredientIdListRes ingredientIdListRes = new IngredientIdListRes();
+		log.info("ingredientIdListRes:{}",ingredientIdListRes);
 		List<Integer> afterCheckIngredients = new ArrayList<>();
+		log.info("afterCheckIngredients:{}",afterCheckIngredients);
 		Optional<List<Fridge>> optionalFridgeList = fridgeRepository.findAllByUserSnsId(userSnsId);
+		log.info("optionalFridgeList:{}",optionalFridgeList.toString());
 		if (optionalFridgeList.isEmpty()) {
 			// 유저 냉장고에 아무것도 없음 -> 받아온 재료 전부를 부족한 재료로 반환
 			ingredientIdListRes.setIngredientIdList(beforeCheckIngredients);
+			log.info("ingredientIdListRes_emptyCase:{}",ingredientIdListRes);
 			return ingredientIdListRes;
 		} else {
 			// 유저 냉장고에 들어있는 게 있음
