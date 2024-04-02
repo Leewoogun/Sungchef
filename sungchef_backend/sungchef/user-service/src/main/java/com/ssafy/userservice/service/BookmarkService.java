@@ -46,7 +46,9 @@ public class BookmarkService {
 			} catch (Exception e) {
 				throw new FeignException("recipeServiceClient.isRecipeExist ERROR");
 			}
+			Optional<Bookmark> selectBookMark = bookmarkRepository.findByUserSnsIdAndRecipeId(userSnsId, req.recipeId());
 
+			if (selectBookMark.isPresent()) return;
 			LocalDate now = LocalDate.now();
 			bookmarkRepository.save(
 				Bookmark.builder()
