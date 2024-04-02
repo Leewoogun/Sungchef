@@ -17,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 
 @Slf4j
@@ -37,7 +35,7 @@ public class IngredientController {
 	 * 1. 이미지 -> OCR 네이버 API로 변환
 	 * 2. OCR로 나온 재료 -> DB에 있는 재료로 변환
 	 */
-	@PostMapping(value = "/convert", consumes = {"multipart/form-data"})
+	@PostMapping(value = "/convert/ocr", consumes = {"multipart/form-data"})
 	public ResponseEntity<?> convertImageToIngredients(@ModelAttribute("convertImage") ConvertImageReq req) {
 		ConvertProductListRes convertProductListRes = new ConvertProductListRes();
 		if (req.convertImage() == null || req.convertImage().getSize() == 0 || req.convertImage().isEmpty()) {
