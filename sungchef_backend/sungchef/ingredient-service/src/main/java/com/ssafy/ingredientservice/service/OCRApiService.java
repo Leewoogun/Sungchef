@@ -79,6 +79,7 @@ public class OCRApiService {
 			OCRResult result =  mapper.readValue(response.toString(), OCRResult.class);
 			return result;
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ConvertOCRException("CONVERT OCR ERROR");
 		}
 	}

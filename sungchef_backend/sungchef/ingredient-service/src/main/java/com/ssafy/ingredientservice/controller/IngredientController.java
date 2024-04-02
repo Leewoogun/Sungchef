@@ -78,99 +78,102 @@ public class IngredientController {
 	}
 
 
-	// 부족한 재료 조회 - dummy
+	// 부족한 재료 조회
 	@GetMapping("/need/{recipeId}")
-	public ResponseEntity<?> getIngredientIdToCook(@PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> getIngredientIdToCook(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
 		RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes(1);
 		List<RecipeIngredientInfo> recipeIngredientInfoList = recipeIngredientListRes.getRecipeIngredientInfoList();
 		try {
-		for (RecipeIngredientInfo info : recipeIngredientInfoList) {
-			List<RecipeIngredientDTO> recipeIngredientDTOList = info.getRecipeIngredientDTOList();
-			switch (info.getRecipeIngredientType()) {
-				case FRUIT -> {
-					recipeIngredientDTOList.add(
-						RecipeIngredientDTO.builder()
-							.recipeIngredientId(10)
-							.recipeIngredientName("사과")
-							.recipeIngredientVolume("1쪽")
-							.build()
-					);
-				}
-				case VEGETABLE -> {
-					recipeIngredientDTOList.add(
-						RecipeIngredientDTO.builder()
-							.recipeIngredientId(11)
-							.recipeIngredientName("대파")
-							.recipeIngredientVolume("1망")
-							.build()
-					);
-				}
-				case RICE_GRAIN -> {
-					recipeIngredientDTOList.add(
-						RecipeIngredientDTO.builder()
-							.recipeIngredientId(13)
-							.recipeIngredientName("햅쌀")
-							.recipeIngredientVolume("1큰술")
-							.build()
-					);
-				}
-				case MEAT_EGG -> {
-					recipeIngredientDTOList.add(
-						RecipeIngredientDTO.builder()
-							.recipeIngredientId(14)
-							.recipeIngredientName("달걀")
-							.recipeIngredientVolume("흰자")
-							.build()
-					);
-				}
-				case FISH -> {
-					recipeIngredientDTOList.add(
-						RecipeIngredientDTO.builder()
-							.recipeIngredientId(15)
-							.recipeIngredientName("고등어")
-							.recipeIngredientVolume("1마리")
-							.build()
-					);
-				}
-				case MILK -> {
-					recipeIngredientDTOList.add(
-						RecipeIngredientDTO.builder()
-							.recipeIngredientId(16)
-							.recipeIngredientName("체다치즈")
-							.recipeIngredientVolume("1장")
-							.build()
-					);
-				}
-				case SAUCE -> {
-					recipeIngredientDTOList.add(
-						RecipeIngredientDTO.builder()
-							.recipeIngredientId(17)
-							.recipeIngredientName("고추장")
-							.recipeIngredientVolume("1큰술")
-							.build()
-					);
-				}
-				case ETC -> {
-					recipeIngredientDTOList.add(
-						RecipeIngredientDTO.builder()
-							.recipeIngredientId(18)
-							.recipeIngredientName("제육볶음")
-							.recipeIngredientVolume("1팩")
-							.build()
-					);
-				}
-				default -> {
-					return responseService.INTERNAL_SERVER_ERROR();
-				}
+			for (RecipeIngredientInfo info : recipeIngredientInfoList) {
+				List<RecipeIngredientDTO> recipeIngredientDTOList = info.getRecipeIngredientDTOList();
+				switch (info.getRecipeIngredientType()) {
+					case FRUIT -> {
+						recipeIngredientDTOList.add(
+							RecipeIngredientDTO.builder()
+								.recipeIngredientId(10)
+								.recipeIngredientName("사과")
+								.recipeIngredientVolume("1쪽")
+								.build()
+						);
+					}
+					case VEGETABLE -> {
+						recipeIngredientDTOList.add(
+							RecipeIngredientDTO.builder()
+								.recipeIngredientId(11)
+								.recipeIngredientName("대파")
+								.recipeIngredientVolume("1망")
+								.build()
+						);
+					}
+					case RICE_GRAIN -> {
+						recipeIngredientDTOList.add(
+							RecipeIngredientDTO.builder()
+								.recipeIngredientId(13)
+								.recipeIngredientName("햅쌀")
+								.recipeIngredientVolume("1큰술")
+								.build()
+						);
+					}
+					case MEAT_EGG -> {
+						recipeIngredientDTOList.add(
+							RecipeIngredientDTO.builder()
+								.recipeIngredientId(14)
+								.recipeIngredientName("달걀")
+								.recipeIngredientVolume("흰자")
+								.build()
+						);
+					}
+					case FISH -> {
+						recipeIngredientDTOList.add(
+							RecipeIngredientDTO.builder()
+								.recipeIngredientId(15)
+								.recipeIngredientName("고등어")
+								.recipeIngredientVolume("1마리")
+								.build()
+						);
+					}
+					case MILK -> {
+						recipeIngredientDTOList.add(
+							RecipeIngredientDTO.builder()
+								.recipeIngredientId(16)
+								.recipeIngredientName("체다치즈")
+								.recipeIngredientVolume("1장")
+								.build()
+						);
+					}
+					case SAUCE -> {
+						recipeIngredientDTOList.add(
+							RecipeIngredientDTO.builder()
+								.recipeIngredientId(17)
+								.recipeIngredientName("고추장")
+								.recipeIngredientVolume("1큰술")
+								.build()
+						);
+					}
+					case ETC -> {
+						recipeIngredientDTOList.add(
+							RecipeIngredientDTO.builder()
+								.recipeIngredientId(18)
+								.recipeIngredientName("제육볶음")
+								.recipeIngredientVolume("1팩")
+								.build()
+						);
+					}
+					default -> {
+						return responseService.INTERNAL_SERVER_ERROR();
+					}
 
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
-
 		try {
-			log.debug("/need/ingredient/{recipeId} : {}", recipeId);
-			return ResponseEntity.ok()
-				.body(responseService.getSuccessSingleResult(recipeIngredientListRes, "부족한 재료 목록 조회 성공"));
+			String token = request.getHeader("Authorization");
+			String userSnsId = jwtService.getUserSnsId(request);
+			log.info("/need/ingredient/{recipeId} : {}", recipeId);
+			String fridgeCommResult = ingredientService.getIngredientIdToCook(userSnsId, token, recipeId);
+			return ResponseEntity.ok().body(fridgeCommResult);
 		} catch (HaveAllIngredientInRecipeException e) {
 			// exception은 아닌거같아서 추후 수정 필요
 			return responseService.NO_CONTENT();
@@ -224,17 +227,6 @@ public class IngredientController {
 		return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
 	}
 
-
-	// 부족한 재료 조회 - 개발중
-	@GetMapping("/test/need/{recipeId}")
-	public ResponseEntity<?> getIngredientIdToCookTest(
-		HttpServletRequest request,
-		@PathVariable("recipeId") final String recipeIdStr
-	) {
-		String userSnsId = jwtService.getUserSnsId(request);
-		String token = request.getHeader("Authorization");
-		return ingredientService.getIngredientIdToCook(userSnsId, token, recipeIdStr);
-	}
 
 
 

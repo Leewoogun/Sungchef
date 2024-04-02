@@ -1,8 +1,6 @@
 package com.ssafy.ingredientservice.service;
 
 
-import static org.springframework.web.client.RestClientUtils.*;
-
 import com.ssafy.ingredientservice.db.entity.RecipeIngredient;
 import com.ssafy.ingredientservice.db.entity.Ingredient;
 import com.ssafy.ingredientservice.db.entity.IngredientOCR;
@@ -40,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -78,7 +77,7 @@ public class IngredientService {
                     case FRUIT -> {
                         if (ingredient.getIngredientTypeId()==0) {
                             recipeIngredientList.add(
-                                    RecipeIngredient.builder()
+                                RecipeIngredientDTO.builder()
                                             .recipeIngredientId(recipeIngredient.getRecipeIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
@@ -362,22 +361,24 @@ public class IngredientService {
     * @param : String recipeId
     * @return : RecipeIngredientListRes (레시피id, 필요한 재료 정보 (재료 타입, (재료id, 재료이름, 재료양 )))
     * */
-    public ResponseEntity<?> getIngredientIdToCook(String userSnsId, String token, String recipeIdStr) {
+    public String getIngredientIdToCook(String userSnsId, String token, String recipeIdStr) {
 
         Integer recipeId = Integer.valueOf(recipeIdStr);
-
-
+        
         // DB에서 필요한 ingredientId 정보 가져오기
         List<RecipeIngredient> recipeIngredient = recipeIngredientRepository.findRecipeIngredientsByRecipeId(recipeId);
+        IngredientListReq isExistReq = new IngredientListReq();
+        List<Integer> ingredientIdList = new ArrayList<>();
         for (RecipeIngredient ingredient : recipeIngredient) {
-            ingredient.getIngredientId();
+            Integer ingredientId = (Integer) ingredient.getIngredientId();
+            ingredientIdList.add(ingredientId);
         }
+        isExistReq.setIngredientIdList(ingredientIdList);
 
-        // fridgeClient 통신해서 유저가 가지고 있는 ingredientId 정보 가져오기
-        ResponseEntity<?> resFridge = fridgeServiceClient.getFridgeIngredients(token);
+        // fridgeClient 통신해서 부족한 ingredientId 정보 가져오기
+        ResponseEntity<?> resFridge = fridgeServiceClient.getFridgeIngredients(token, isExistReq);
         log.info("resFridge:{}",resFridge);
-
-
+        return Objects.requireNonNull(resFridge.getBody()).toString();
 
         // recipe 에 있으면서 fridge 에 없는 재료 도출하고 반환해주기
 
