@@ -5,6 +5,9 @@ import com.ssafy.ingredientservice.db.repository.IngredientRepository;
 import com.ssafy.ingredientservice.db.repository.RecipeIngredientRepository;
 import com.ssafy.ingredientservice.dto.request.ConvertImageReq;
 import com.ssafy.ingredientservice.dto.request.IngredientListReq;
+import com.ssafy.ingredientservice.dto.response.ConvertProduct;
+import com.ssafy.ingredientservice.dto.response.ConvertProductInfo;
+import com.ssafy.ingredientservice.dto.response.ConvertProductListRes;
 import com.ssafy.ingredientservice.dto.response.RecipeIngredientInfo;
 import com.ssafy.ingredientservice.dto.response.IngredientInfo;
 import com.ssafy.ingredientservice.dto.response.RecipeIngredient;
@@ -16,10 +19,14 @@ import com.ssafy.ingredientservice.exception.exception.RecipeNotFoundException;
 import com.ssafy.ingredientservice.service.client.RecipeServiceClient;
 
 import lombok.AllArgsConstructor;
+import com.ssafy.ingredientservice.util.sungchefEnum.ConvertIngredientType;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -260,6 +267,75 @@ public class IngredientService {
         }
         return ResponseEntity.ok()
                 .body(responseService.getSuccessSingleResult(ingredientListRes, "재료 조회 성공"));
+    }
+
+    public String setOCRData(MultipartFile file) {
+        OCRResult ocrResult = convertOCR(file);
+        return insertOCR(ocrResult);
+    }
+
+    public OCRResult convertOCR(MultipartFile file) {
+        return ocrApiService.convertOCR(file);
+    }
+
+    @Transactional
+    public String insertOCR(OCRResult ocrResult) {
+        String uuid = UUID.randomUUID().toString();
+
+        List<IngredientOCR> convertIngredient = ocrResult
+            .images()
+            .get(0)
+            .receipt()
+            .result()
+            .subResults()
+            .get(0).items().stream()
+            .map(
+                item -> IngredientOCR.builder()
+                    .ingredientOCRId(-1)
+                    .ingredientOCRUUID(uuid)
+                    .ingredientOCRText(item.name().text())
+                    .build()
+            )
+            .toList();
+        ingredientOCRRepository.saveAll(convertIngredient);
+        return uuid;
+    }
+
+    @Transactional
+    public ConvertProductListRes findConvertImage(String uuid) {
+
+        List<IngredientOCR> ingredientOCRList = ingredientOCRRepository.findAllByIngredientOCRUUID(uuid);
+        List<String> ocrTestList = ingredientOCRList
+            .stream().map(IngredientOCR::getIngredientOCRText).toList();
+
+        ConvertProductListRes res = new ConvertProductListRes();
+
+        List<ConvertProductInfo> convertProductInfoList = res.getConvertProductList();
+
+        for (String ocrText : ocrTestList) {
+            Optional<Ingredient> selectIngredient = ingredientRepository.findIngredientByOCR(ocrText);
+            if (selectIngredient.isEmpty()) {
+                convertProductInfoList
+                    .get(ConvertIngredientType.NOT_CONVERTED.getCode())
+                    .getConvertProductList().add(ConvertProduct
+                        .builder()
+                        .ingredientId(-1)
+                        .convertedName(ocrText)
+                        .isConverted(false)
+                        .build());
+            } else {
+                Ingredient ingredient = selectIngredient.get();
+                convertProductInfoList
+                    .get(ingredient.getIngredientTypeId())
+                    .getConvertProductList().add(ConvertProduct
+                        .builder()
+                        .ingredientId(ingredient.getIngredientId())
+                        .convertedName(ingredient.getIngredientName())
+                        .isConverted(true)
+                        .build());
+            }
+        }
+        return res;
     }
 
 
