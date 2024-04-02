@@ -110,8 +110,7 @@ public class RecommendService {
 				.recommendRecipeList(recommendRecipeList)
 				.recommendFoodList(recommendFoodList)
 				.build();
-
-
+		
 		RecommendFoodTest recommendFoodListRes = foodRes.getBody().getData();
 		return ResponseEntity.ok(responseService.getSuccessSingleResult(
 				res
