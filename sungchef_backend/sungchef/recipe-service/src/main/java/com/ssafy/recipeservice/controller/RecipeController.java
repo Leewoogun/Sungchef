@@ -33,6 +33,8 @@ public class RecipeController {
 
 	private final ResponseService responseService;
 	private final RecipeService recipeService;
+	private final JwtService jwtService;
+	private final RecipeFeignService recipeFeignService;
 
 	// private final JwtService jwtService;
 	// checkController 참고
@@ -247,14 +249,16 @@ public class RecipeController {
 		}
 	}
 
-	@PostMapping("/makerecipe")
-	public ResponseEntity<?> uploadUserMakeRecipe(@RequestBody final MakeRecipeReq req) {
+	@PostMapping(value ="/makerecipe", consumes = {"multipart/form-data"})
+	public ResponseEntity<?> uploadUserMakeRecipe(@ModelAttribute("makeRecipeImage") final MakeRecipeReq req, HttpServletRequest request) {
 		// TODO
 		try {
+			String userSnsId = jwtService.getUserSnsId(request);
 			log.debug("/makerecipe : {}", req);
-			return ResponseEntity.ok(
-				responseService.getSuccessMessageResult("레시피 업로드 완료")
-			);
+			return recipeService.addUserMakeRecipe(req, userSnsId);
+//			return ResponseEntity.ok(
+//				responseService.getSuccessMessageResult("레시피 업로드 완료")
+//			);
 		} catch (RecipeNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
@@ -263,13 +267,12 @@ public class RecipeController {
 	}
 
 	@GetMapping("makerecipe/{recipeId}")
-	public ResponseEntity<?> addLogUserMakeRecipe(@PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> addLogUserMakeRecipe(@PathVariable("recipeId") final String recipeId, HttpServletRequest request) {
 		// TODO
 		try {
+			String userSnsId = jwtService.getUserSnsId(request);
 			log.debug("/makerecipe/{recipeId} : {}", recipeId);
-			return ResponseEntity.ok(
-				responseService.getSuccessMessageResult("로그 등록 완료")
-			);
+			return recipeService.addLogUserMakeRecipe(Integer.parseInt(recipeId), userSnsId);
 		} catch (RecipeNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {

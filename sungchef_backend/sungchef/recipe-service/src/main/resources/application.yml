@@ -34,6 +34,20 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
 
+cloud:
+  aws:
+    s3:
+      bucket: ENC(IGvX0mQjeL6VPtabLU/B3kXnXHsHP9PH)
+      base-url: ENC(+kQveyb+VuBLX/CiN6H50l0XtLAHSJv1OzzgTxXJepojkzHq3O3iZRVkEBczjMJeeUb2ddrNxPSh/g+OHoKy2w==)
+    credentials:
+      access-key: ENC(gcdGAqZv8WsDcz1N6Jo8gdyUVPKcj/tjuKDkDd81CJc=)
+      secret-key:  ENC(mzMqMH1luvmBderKnGu4xLA4CNU41hcCMyNZJFsHQIdeATLp5NmC5L5DI4VYbQAAV3h/uEOvulk=)
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
 jwt:
   secret:
     ENC(iKUwCClHj209CRLCkRSQ21/darPeFv9UjDUG0/+iX+o0cGedBcHKcvSdp5vO1Pza3UiY0S9WpCkNdQ9kr0V91X2DnwPBy6DaNTHE89Y9L9heGIr+LVJ89A==)

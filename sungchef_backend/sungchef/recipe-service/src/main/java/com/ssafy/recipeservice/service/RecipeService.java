@@ -1,17 +1,13 @@
 package com.ssafy.recipeservice.service;
 
 
-import com.ssafy.recipeservice.db.entity.Recipe;
-import com.ssafy.recipeservice.db.entity.Food;
-import com.ssafy.recipeservice.db.entity.RecipeDetail;
-import com.ssafy.recipeservice.db.entity.RecipeMake;
-import com.ssafy.recipeservice.db.repository.FoodRepository;
-import com.ssafy.recipeservice.db.repository.RecipeDetailRepository;
-import com.ssafy.recipeservice.db.repository.RecipeMakeRepository;
-import com.ssafy.recipeservice.db.repository.RecipeRepository;
+import com.ssafy.recipeservice.db.entity.*;
+import com.ssafy.recipeservice.db.repository.*;
 import com.ssafy.recipeservice.dto.request.FoodIdListReq;
+import com.ssafy.recipeservice.dto.request.MakeRecipeReq;
 import com.ssafy.recipeservice.dto.request.RecipeIdListReq;
 import com.ssafy.recipeservice.dto.response.*;
+import com.ssafy.recipeservice.exception.exception.LogNotCreatedException;
 import com.ssafy.recipeservice.exception.exception.PageConvertException;
 import com.ssafy.recipeservice.service.client.IngredientServiceClient;
 import com.ssafy.recipeservice.util.result.SingleResult;
@@ -19,14 +15,19 @@ import com.ssafy.recipeservice.util.exception.FoodNotFoundException;
 import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
 
 import jakarta.transaction.Transactional;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.commons.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,10 @@ public class RecipeService {
     private final RecipeDetailRepository recipeDetailRepository;
     private final IngredientServiceClient ingredientServiceClient;
     private final ResponseService responseService;
+    private final RecipeMakeLogRepository recipeMakeLogRepository;
+    private final RecipeMakeRepository recipeMakeRepository;
+    private final FileUploadService fileUploadService;
+
 //    public Recipe getRecipeById(String foodId) throws FoodNotFoundException {
 //        Optional<Food> searchFood =  foodRepository.findFoodByFoodId(foodId);
 //        if (!searchFood.isPresent()) throw new FoodNotFoundException(foodId);
@@ -146,6 +151,46 @@ public class RecipeService {
         }
         return ResponseEntity.ok(responseService.getSuccessSingleResult(recipeDetailStepRes, "레시피 조회 성공"));
     }
+
+    public ResponseEntity<?> addLogUserMakeRecipe (Integer recipeId, String userSnsId) {
+        RecipeMakeLog log = recipeMakeLogRepository.save(RecipeMakeLog.builder()
+                        .recipeMakeLogId(-1)
+                        .userSnsId(userSnsId)
+                        .recipeId(recipeId)
+                        .recipeMakeLogCreateDate(Date.valueOf(LocalDate.now()))
+                        .build()
+        );
+
+        if (log.getRecipeMakeLogId() == -1) throw new LogNotCreatedException("로그 생성 실패");
+
+        return ResponseEntity.ok(
+                responseService.getSuccessMessageResult("로그 생성 완료")
+        );
+    }
+    @Transactional
+    public ResponseEntity<?> addUserMakeRecipe (MakeRecipeReq req, String userSnsId) throws FileUploadException {
+        try {
+            String url = fileUploadService.uploadFile(req.getMakeRecipeImage());
+            RecipeMake log = recipeMakeRepository.save(RecipeMake.builder()
+                            .recipeMakeId(-1)
+                            .userSnsId(userSnsId)
+                            .recipeId(req.getRecipeId())
+                            .recipeMakeImage(url)
+                            .recipeMakeReview(req.getMakeRecipeReview())
+                            .recipeMakeCreateDate(Date.valueOf(LocalDate.now()).toString())
+                            .build()
+            );
+            if (log.getRecipeMakeId() == -1) throw new LogNotCreatedException("기록 생성 실패");
+
+        } catch (Exception e) {
+            throw new FileUploadException("파일 업로드 실패");
+        }
+
+        return ResponseEntity.ok(
+                responseService.getSuccessMessageResult("기록 업로드 완료")
+        );
+    }
+
 
 }
 

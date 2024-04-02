@@ -35,3 +35,7 @@ eureka:
 jwt:
   secret:
     ENC(iKUwCClHj209CRLCkRSQ21/darPeFv9UjDUG0/+iX+o0cGedBcHKcvSdp5vO1Pza3UiY0S9WpCkNdQ9kr0V91X2DnwPBy6DaNTHE89Y9L9heGIr+LVJ89A==)
+
+django:
+  url:
+    ENC(8pP+kLdrHKUAGzmajX4HGhYMFwpTL7ZfPIvuQ2ubgl/L8guVmqHAmC/TCkGVjV/V)
