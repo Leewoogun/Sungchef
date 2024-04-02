@@ -48,6 +48,8 @@ public class FridgeService {
 			req.setIngredientIdList(ingredientIdList);
 			return ingredientServiceClient.getIngredientInfoList(token, req);
 		} else {
+			// 냉장고에 아무것도 없는 유저라면 204 가 가도록 이렇게 return 문을 만들었는데
+			// 왜 200 이 나온다고 할까 .. ㅠㅠ
 			return responseService.NO_CONTENT();
 		}
 	}
@@ -91,5 +93,12 @@ public class FridgeService {
 		}
 		return false;
 	}
+
+
+	// 유저 냉장고 속에 재료가 있는지 없는지 확인해보기
+
+
+
+
 
 }

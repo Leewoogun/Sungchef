@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @FeignClient("recipe-service")
 public interface RecipeServiceClient {
 
-	@GetMapping("/recipe/{recipeId}")
+	@GetMapping("/recipe/test/{recipeId}")
 	ResponseEntity<?> getRecipeIngredients(
 		@PathVariable("recipeId") String recipeId,
 		@RequestHeader("Authorization") String token
@@ -17,5 +17,5 @@ public interface RecipeServiceClient {
 
 
 	@GetMapping("/recipe/communication")
-	ResponseEntity<?> communication(@RequestHeader("Authorization") String token);
+	String communication(@RequestHeader("Authorization") String token);
 }

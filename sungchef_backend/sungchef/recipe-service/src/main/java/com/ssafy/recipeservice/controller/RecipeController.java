@@ -70,9 +70,10 @@ public class RecipeController {
 	// }
 
 	@GetMapping("/{recipeId}")
-	public ResponseEntity<?> recipeDetail(@PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> recipeDetail(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
 		try {
-			return recipeService.getRecipeDetail(Integer.parseInt(recipeId));
+			String token = request.getHeader("Authorization");
+			return recipeService.getRecipeDetail(recipeId);
 		} catch (FoodNotFoundException | NumberFormatException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
@@ -336,4 +337,28 @@ public class RecipeController {
 //			return responseService.BAD_REQUEST();
 //		}
 	}
+
+
+	@GetMapping("/communication")
+	public String communicationTest() {
+		return "recipeService 입니다.";
+	}
+
+
+	@GetMapping("/test/{recipeId}")
+	public ResponseEntity<?> getIngredientInRecipe(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
+		try {
+			String token = request.getHeader("Authorization");
+			RecipeIngredientListRes data = recipeService.getIngredientInRecipe(recipeId);
+			return ResponseEntity
+				.ok()
+				.body(responseService.getSuccessSingleResult(data, "부족한 재료 목록 조회 성공"));
+		} catch (FoodNotFoundException | NumberFormatException e) {
+			return responseService.BAD_REQUEST();
+		} catch (Exception e) {
+			return responseService.INTERNAL_SERVER_ERROR();
+		}
+	}
+
+
 }

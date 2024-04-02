@@ -110,4 +110,13 @@ public class FridgeController {
 	}
 
 
+	/* isExist : 재료id 받아서 유저 냉장고에 있는지 없는지 반환
+	* @param : IngredientListReq
+	* @return : 있는 재료 id 리스트만 반환 , 없으면 반환 안하기
+	* */
+	@PostMapping("/isExist")
+
+
+
+
 }
