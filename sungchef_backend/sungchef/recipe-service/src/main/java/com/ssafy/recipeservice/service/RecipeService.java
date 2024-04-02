@@ -50,7 +50,6 @@ public class RecipeService {
     private final RecipeMakeLogRepository recipeMakeLogRepository;
     private final RecipeMakeRepository recipeMakeRepository;
     private final FileUploadService fileUploadService;
-
     private final UserServiceClient userServiceClient;
 //    public Recipe getRecipeById(String foodId) throws FoodNotFoundException {
 //        Optional<Food> searchFood =  foodRepository.findFoodByFoodId(foodId);
@@ -60,6 +59,8 @@ public class RecipeService {
 
     public ResponseEntity<?> getFoodList(FoodIdListReq req) throws FoodNotFoundException {
         List<RecommendFood> recommendFoodList = new ArrayList<>();
+        System.out.println(req.getFoodIdList().toString());
+        System.out.println("#########################################");
         for (Integer foodId : req.getFoodIdList()) {
             Optional<Food> searchFood =  foodRepository.findFoodByFoodId(foodId);
             if (!searchFood.isPresent()) throw new FoodNotFoundException("foodId="+foodId+"인 음식이 없습니다.");
@@ -94,12 +95,20 @@ public class RecipeService {
                 .build();
         return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "레시피 리스트 조회 성공"));
     }
-
-    public ResponseEntity<?> getRecipeDetail(Integer recipeId, String token) throws RecipeNotFoundException {
+    
+    public ResponseEntity<?> getRecipeDetail(Integer recipeId, String token, String userSnsId) throws RecipeNotFoundException {
+        recipeMakeLogRepository.save(RecipeMakeLog.builder()
+                .recipeMakeLogId(-1)
+                .userSnsId(userSnsId)
+                .recipeId(recipeId)
+                .recipeMakeLogCreateDate(Date.valueOf(LocalDate.now()))
+                .build()
+        );
         Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
         if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         Recipe recipe = searchRecipe.get();
-
+        recipe.setRecipeVisitCount(recipe.getRecipeVisitCount()+1);
+        recipeRepository.save(recipe);
         List<RecipeDetail> searchRecipeDetail = recipeDetailRepository.findRecipeDetailsByRecipeIdOrderByRecipeDetailStep(recipeId);
         if(searchRecipeDetail.size() == 0) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         List<RecipeStep> recipeSteps = new ArrayList<>();
@@ -140,7 +149,7 @@ public class RecipeService {
                 , "레시피 조회 성공"));
     }
 
-    public ResponseEntity<?> recipeDetailStep(Integer recipeId) {
+    public ResponseEntity<?> recipeDetailStep(Integer recipeId, String userSnsId) {
         Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
         if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         Recipe recipe = searchRecipe.get();
@@ -207,7 +216,7 @@ public class RecipeService {
         }
 
         int pageNumber = Integer.parseInt(page);
-        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeBookmarkCount").ascending());
+        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeBookmarkCount").descending());
         Page<Recipe> recipePage = recipeRepository.findAll(pageable);
 
         List<Recipe> recipeList = recipePage.toList();
@@ -238,6 +247,7 @@ public class RecipeService {
                     .recipeCookingTime(recipe.getRecipeCookingTime())
                     .recipeVolume(recipe.getRecipeVolume())
                     .recipeVisitCount(recipe.getRecipeVisitCount())
+                    .recipeBookmarkCount(recipe.getRecipeBookmarkCount())
                     .isBookmark(userBookRecipe.contains(recipe.getRecipeId()))
                     .build()
             ).toList();
@@ -254,7 +264,7 @@ public class RecipeService {
         }
 
         int pageNumber = Integer.parseInt(page);
-        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").ascending());
+        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").descending());
         Page<Recipe> recipePage = recipeRepository.findAll(pageable);
 
         List<Recipe> recipeList = recipePage.toList();
@@ -285,6 +295,7 @@ public class RecipeService {
                     .recipeCookingTime(recipe.getRecipeCookingTime())
                     .recipeVolume(recipe.getRecipeVolume())
                     .recipeVisitCount(recipe.getRecipeVisitCount())
+                    .recipeBookmarkCount(recipe.getRecipeBookmarkCount())
                     .isBookmark(userBookRecipe.contains(recipe.getRecipeId()))
                     .build()
             ).toList();
@@ -305,7 +316,7 @@ public class RecipeService {
 
         Food food = searchFood.get();
         int pageNumber = Integer.parseInt(page);
-        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").ascending());
+        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").descending());
         Page<Recipe> recipePage = recipeRepository.findAllByFoodId(food.getFoodId(), pageable);
 
         List<Recipe> recipeList = recipePage.toList();
@@ -336,6 +347,7 @@ public class RecipeService {
                     .recipeCookingTime(recipe.getRecipeCookingTime())
                     .recipeVolume(recipe.getRecipeVolume())
                     .recipeVisitCount(recipe.getRecipeVisitCount())
+                    .recipeBookmarkCount(recipe.getRecipeBookmarkCount())
                     .isBookmark(userBookRecipe.contains(recipe.getRecipeId()))
                     .build()
             ).toList();
@@ -356,7 +368,7 @@ public class RecipeService {
 
         Food food = searchFood.get();
         int pageNumber = Integer.parseInt(page);
-        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").ascending());
+        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").descending());
         Page<Recipe> recipePage = recipeRepository.findAllByFoodId(food.getFoodId(), pageable);
 
         List<Recipe> recipeList = recipePage.toList();
@@ -387,11 +399,14 @@ public class RecipeService {
                     .recipeCookingTime(recipe.getRecipeCookingTime())
                     .recipeVolume(recipe.getRecipeVolume())
                     .recipeVisitCount(recipe.getRecipeVisitCount())
+                    .recipeBookmarkCount(recipe.getRecipeBookmarkCount())
                     .isBookmark(userBookRecipe.contains(recipe.getRecipeId()))
                     .build()
             ).toList();
         return SearchRecipeListRes.builder().recipeList(searchRecipeList).build();
     }
+
+
 }
 
 

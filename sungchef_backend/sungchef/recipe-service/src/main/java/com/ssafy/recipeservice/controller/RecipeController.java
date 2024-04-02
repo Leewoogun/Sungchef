@@ -48,6 +48,17 @@ public class RecipeController {
 		UserMakeRecipeRes res = recipeFeignService.getUserMakeRecipeDetail(userSnsId, page);
 		return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "조회 완료"));
 	}
+
+	@GetMapping("/feign/updatebookmark/{recipeId}/{nowBookmark}")
+	public String updateBookmark(@PathVariable("recipeId") String recipeId, @PathVariable("nowBookmark") String nowBookmark) {
+		return recipeFeignService.updateBookmarkCount(recipeId, nowBookmark);
+	}
+
+	@GetMapping("/feign/getrecent/{userSnsId}")
+	public Integer getRecentRecipe(@PathVariable("userSnsId") String userSnsId) {
+		return recipeFeignService.getRecentRecipe(userSnsId);
+	}
+
 	@GetMapping("/feign/exist/{recipeId}")
 	public boolean isRecipeExist(@PathVariable("recipeId") final String recipeId) {
 		return recipeFeignService.isRecipeExist(recipeId);
@@ -69,9 +80,10 @@ public class RecipeController {
 	// }
 
 	@GetMapping("/{recipeId}")
-	public ResponseEntity<?> recipeDetail(@RequestHeader("Authorization") String token, @PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> recipeDetail(HttpServletRequest request, @RequestHeader("Authorization") String token, @PathVariable("recipeId") final String recipeId) {
+		String userSnsId = jwtService.getUserSnsId(request);
 		try {
-			return recipeService.getRecipeDetail(Integer.parseInt(recipeId), token);
+			return recipeService.getRecipeDetail(Integer.parseInt(recipeId), token, userSnsId);
 		} catch (FoodNotFoundException | NumberFormatException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
@@ -84,9 +96,10 @@ public class RecipeController {
 	 * 하나의 레시피의 모든 단계 정보를 반환 (안드로이드 요청)
 	 */
 	@GetMapping("/detail/{recipeId}")
-	public ResponseEntity<?> recipeDetailStep(@PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> recipeDetailStep(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
+		String userSnsId = jwtService.getUserSnsId(request);
 		try {
-			return recipeService.recipeDetailStep(Integer.parseInt(recipeId));
+			return recipeService.recipeDetailStep(Integer.parseInt(recipeId),userSnsId);
 		} catch (FoodNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
@@ -179,7 +192,6 @@ public class RecipeController {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
-
 
 	@PostMapping("/foodlist")
 	public ResponseEntity<?> getFoodList(@RequestBody final FoodIdListReq req) {
