@@ -35,3 +35,9 @@ eureka:
 jwt:
   secret:
     ENC(iKUwCClHj209CRLCkRSQ21/darPeFv9UjDUG0/+iX+o0cGedBcHKcvSdp5vO1Pza3UiY0S9WpCkNdQ9kr0V91X2DnwPBy6DaNTHE89Y9L9heGIr+LVJ89A==)
+
+ocr:
+  key:
+      ENC(vQZ19XtifbzplooeKQxOhb6hybLqn1VeVllgVNhPHENhsTaGNCkKc/60mRi6+sKW0fpC6rqxhPc=)
+  requestUrl:
+    https://pxtg86f41t.apigw.ntruss.com/custom/v1/29168/d1c66fa007971ac3c967c59189f670c707db0e2b6c3f04de724aa37ec6ae8e80/document/receipt

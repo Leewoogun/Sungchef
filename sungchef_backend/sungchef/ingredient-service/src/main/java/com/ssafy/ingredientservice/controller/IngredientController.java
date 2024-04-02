@@ -6,7 +6,6 @@ import com.ssafy.ingredientservice.dto.response.*;
 import com.ssafy.ingredientservice.exception.exception.IngredientNotFoundException;
 import com.ssafy.ingredientservice.service.IngredientService;
 import com.ssafy.ingredientservice.service.ResponseService;
-import com.ssafy.ingredientservice.exception.exception.ConvertOCRException;
 import com.ssafy.ingredientservice.exception.exception.HaveAllIngredientInRecipeException;
 import com.ssafy.ingredientservice.exception.exception.RecipeNotFoundException;
 import com.ssafy.ingredientservice.service.JwtService;
@@ -15,6 +14,7 @@ import com.ssafy.ingredientservice.service.client.RecipeServiceClient;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,137 +28,35 @@ public class IngredientController {
 
 	private final ResponseService responseService;
 	private final IngredientService ingredientService;
-	private final JwtService jwtService;
 	private final RecipeServiceClient recipeServiceClient;
-
+	private final JwtService jwtService;
 	// checkController 참고
 	/**
 	 * MultipartFile 업로드 필요
 	 * 1. 이미지 -> OCR 네이버 API로 변환
 	 * 2. OCR로 나온 재료 -> DB에 있는 재료로 변환
 	 */
-	@PostMapping("/convert")
-	//	public ResponseEntity<?> convertImageToIngredients(@RequestBody ConvertImageReq req) {
-	public ResponseEntity<?> convertImageToIngredients(HttpServletRequest request, @RequestBody ConvertImageReq req) {
-		// TODO
-		// 네이버 영수증 API 호출해서 가져오기
-		ingredientService.naverReceiptIntoNames(req);
-
+	@PostMapping(value = "/convert/ocr", consumes = {"multipart/form-data"})
+	public ResponseEntity<?> convertImageToIngredients(@ModelAttribute("convertImage") ConvertImageReq req) {
 		ConvertProductListRes convertProductListRes = new ConvertProductListRes();
-		List<ConvertProductInfo> convertProductInfoList = convertProductListRes.getConvertProductList();
-
-		for (ConvertProductInfo info : convertProductInfoList) {
-
-			List<ConvertProduct> convertProductList = info.getConvertProductList();
-
-			switch (info.getIngredientType()) {
-
-				case FRUIT -> {
-					log.debug("과일 : {}", info.getIngredientType().name());
-					convertProductList.add(
-						ConvertProduct.builder()
-							.ingredientId(10)
-							.isConverted(true)
-							.convertedName("사과")
-							.build()
-					);
-				}
-				case VEGETABLE -> {
-					log.debug("채소 : {}", info.getIngredientType().name());
-					convertProductList.add(
-						ConvertProduct.builder()
-							.ingredientId(11)
-							.isConverted(true)
-							.convertedName("사과")
-							.build()
-					);
-				}
-				case RICE_GRAIN -> {
-					log.debug("쌀/곡물 : {}", info.getIngredientType().name());
-					convertProductList.add(
-						ConvertProduct.builder()
-							.ingredientId(12)
-							.isConverted(true)
-							.convertedName("사과")
-							.build()
-					);
-				}
-				case MEAT_EGG -> {
-					log.debug("정육/계란 : {}", info.getIngredientType().name());
-					convertProductList.add(
-						ConvertProduct.builder()
-							.ingredientId(13)
-							.isConverted(true)
-							.convertedName("사과")
-							.build()
-					);
-				}
-				case FISH -> {
-					log.debug("수산 : {}", info.getIngredientType().name());
-					convertProductList.add(
-						ConvertProduct.builder()
-							.ingredientId(14)
-							.isConverted(true)
-							.convertedName("사과")
-							.build()
-					);
-				}
-				case MILK -> {
-					log.debug("유제품 : {}", info.getIngredientType().name());
-					convertProductList.add(
-						ConvertProduct.builder()
-							.ingredientId(15)
-							.isConverted(true)
-							.convertedName("사과")
-							.build()
-					);
-				}
-				case SAUCE -> {
-					log.debug("소스/양념/조미료 : {}", info.getIngredientType().name());
-					convertProductList.add(
-						ConvertProduct.builder()
-							.ingredientId(16)
-							.isConverted(true)
-							.convertedName("사과")
-							.build()
-					);
-				}
-				case ETC -> {
-					log.debug("기타 : {}", info.getIngredientType().name());
-					convertProductList.add(
-						ConvertProduct.builder()
-							.ingredientId(17)
-							.isConverted(true)
-							.convertedName("사과")
-							.build()
-					);
-				}
-				case NOT_CONVERTED -> {
-					log.debug("기타 : {}", info.getIngredientType().name());
-					convertProductList.add(
-						ConvertProduct.builder()
-							.isConverted(false)
-							.convertedName("맛없는 떡볶이")
-							.build()
-					);
-				}
-
-				default -> {
-					return responseService.INTERNAL_SERVER_ERROR();
-				}
-			}
-		}
-
-		try {
-			return ResponseEntity.ok(
-				responseService.getSuccessSingleResult(convertProductListRes, "OCR 변환 완료"
-				)
-			);
-		} catch (ConvertOCRException e) {
+		if (req.convertImage() == null || req.convertImage().getSize() == 0 || req.convertImage().isEmpty()) {
 			return responseService.BAD_REQUEST();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
 		}
+		return ResponseEntity.ok(responseService.getSuccessSingleResult(
+			ingredientService.setOCRData(req.convertImage())
+			, "OCR 변환 완료"
+			)
+		);
+	}
+
+	@GetMapping("/ocr/{convertOCRKey}")
+	public ResponseEntity<?> getConvertOCR(@PathVariable("convertOCRKey") final String convertOCRKey) {
+		return ResponseEntity.ok(
+			responseService.getSuccessSingleResult(
+				ingredientService.findConvertImage(convertOCRKey)
+				,"조회 완료"
+			)
+		);
 	}
 
 
@@ -264,9 +162,12 @@ public class IngredientController {
 				default -> {
 					return responseService.INTERNAL_SERVER_ERROR();
 				}
+
 			}
 		}
 
+
+		try {
 			log.debug("/need/ingredient/{recipeId} : {}", recipeId);
 			return ResponseEntity.ok()
 				.body(responseService.getSuccessSingleResult(recipeIngredientListRes, "부족한 재료 목록 조회 성공"));

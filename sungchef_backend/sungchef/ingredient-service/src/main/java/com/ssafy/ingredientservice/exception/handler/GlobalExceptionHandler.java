@@ -13,6 +13,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.ssafy.ingredientservice.exception.error.ErrorResponse;
+import com.ssafy.ingredientservice.exception.exception.ConvertOCRException;
 import com.ssafy.ingredientservice.exception.exception.JwtException;
 import com.ssafy.ingredientservice.exception.exception.JwtExpiredException;
 import com.ssafy.ingredientservice.service.ErrorResponseService;
@@ -96,6 +97,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(JwtExpiredException.class)
 	protected ResponseEntity<ErrorResponse> handleJwtExpiredException(JwtExpiredException e) {
 		return errorResponseService.getErrorResponse(JWT_TOKEN_EXPIRED, HttpStatus.UNAUTHORIZED, e);
+	}
+
+	@ExceptionHandler(ConvertOCRException.class)
+	protected ResponseEntity<ErrorResponse> handleConvertOCRException(ConvertOCRException e) {
+		return errorResponseService.getErrorResponse(INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR, e);
 	}
 
 	/**
