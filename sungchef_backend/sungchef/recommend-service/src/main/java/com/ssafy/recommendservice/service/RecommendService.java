@@ -72,7 +72,7 @@ public class RecommendService {
 
 		ResponseEntity<SingleResult<RecommendFoodTest>> foodRes = recipeServiceClient.getFoodList(foodIdListReq, token);
 		ResponseEntity<SingleResult<RecommendRecipeTest>> recipeRes = recipeServiceClient.getRecipeList(recipeIdListReq, token);
-		
+
 		RecommendRecipe fridgeRecommendList = RecommendRecipe.builder()
 				.recommendRecipeType("FRIDGE")
 				.recipeList(recipeRes.getBody().getData().getRecipeList())
@@ -80,12 +80,12 @@ public class RecommendService {
 
 		RecommendFood sungRecommendList = RecommendFood.builder()
 				.recommendFoodType("SUNG")
-				.foodList(foodRes.getBody().getData().getFoodList().subList(10,20))
+				.foodList(foodRes.getBody().getData().getFoodList().subList(0,10))
 				.build();
 
 		RecommendFood userRecommendList = RecommendFood.builder()
 				.recommendFoodType("SIMILAR_USER")
-				.foodList(foodRes.getBody().getData().getFoodList().subList(0,10))
+				.foodList(foodRes.getBody().getData().getFoodList().subList(10,20))
 				.build();
 
 		RecommendFood genderRecommendList = RecommendFood.builder()
