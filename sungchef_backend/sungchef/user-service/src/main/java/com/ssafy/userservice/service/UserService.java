@@ -20,6 +20,7 @@ import com.ssafy.userservice.exception.exception.UserExistException;
 import com.ssafy.userservice.exception.exception.UserNeedSurveyException;
 import com.ssafy.userservice.exception.exception.UserNotCreatedException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -58,6 +59,9 @@ public class UserService {
 	private final BookmarkService bookmarkService;
 	private final RecipeServiceClient recipeServiceClient;
 
+	@Value("${user.default.image}")
+	String userDefaultImage;
+
 	public void userExist(String userSnsId) {
 		Optional<User> user = userRepository.findByUserSnsId(userSnsId);
 		if (user.isPresent()) throw new UserExistException("이미 존재하는 유저");
@@ -81,6 +85,7 @@ public class UserService {
 						.userGenderType(req.userGender())
 						.userSnsType(req.userSnsType())
 						.userNickname(req.userNickName())
+						.userImage(userDefaultImage)
 						.userBirthDate(req.userBirthdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
 				.build()
 		);
