@@ -48,9 +48,12 @@ public class RecommendService {
 
 	public ResponseEntity<?> test(String token, String userSnsId) {
 
+		Integer recentRecipeId =  recipeServiceClient.getRecentRecipe(userSnsId, token);
+
+
 		RecommendIdList response = WebClient.create(djangoUrl)
 				.get()
-				.uri("/item/"+userSnsId+"/2666")
+				.uri("/item/"+userSnsId+"/"+recentRecipeId)
 				.retrieve()
 				.bodyToMono(RecommendIdList.class)
 				.block();
@@ -74,14 +77,14 @@ public class RecommendService {
 				.recipeList(recipeRes.getBody().getData().getRecipeList())
 				.build();
 
-		RecommendFood sungRecommendList = RecommendFood.builder()
+		RecommendFood userRecommendList = RecommendFood.builder()
 				.recommendFoodType("SUNG")
-				.foodList(foodRes.getBody().getData().getFoodList().subList(0,10))
+				.foodList(foodRes.getBody().getData().getFoodList().subList(10,20))
 				.build();
 
-		RecommendFood userRecommendList = RecommendFood.builder()
+		RecommendFood sungRecommendList = RecommendFood.builder()
 				.recommendFoodType("SIMILAR_USER")
-				.foodList(foodRes.getBody().getData().getFoodList().subList(10,20))
+				.foodList(foodRes.getBody().getData().getFoodList().subList(0,10))
 				.build();
 
 		RecommendFood genderRecommendList = RecommendFood.builder()
