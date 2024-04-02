@@ -1,6 +1,10 @@
 package com.ssafy.ingredientservice.service;
 
 
+import static com.ssafy.ingredientservice.util.sungchefEnum.IngredientType.*;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.ingredientservice.db.entity.RecipeIngredient;
 import com.ssafy.ingredientservice.db.entity.Ingredient;
 import com.ssafy.ingredientservice.db.entity.IngredientOCR;
@@ -26,19 +30,18 @@ import com.ssafy.ingredientservice.service.client.RecipeServiceClient;
 
 import lombok.AllArgsConstructor;
 import com.ssafy.ingredientservice.util.sungchefEnum.ConvertIngredientType;
+import com.ssafy.ingredientservice.util.sungchefEnum.IngredientType;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,7 +72,7 @@ public class IngredientService {
 
 			List<RecipeIngredientDTO> recipeIngredientList = info.getRecipeIngredientDTOList();
 
-            for (com.ssafy.ingredientservice.db.entity.RecipeIngredient recipeIngredient : searchRecipeIngredients){
+            for (RecipeIngredient recipeIngredient : searchRecipeIngredients){
                 Optional<Ingredient> searchIngredient = ingredientRepository.findIngredientByIngredientId(recipeIngredient.getIngredientId());
                 if (!searchIngredient.isPresent()) throw new IngredientNotFoundException("IngredientId="+recipeIngredient.getIngredientId()+"인 재료가 없습니다.");
                 Ingredient ingredient = searchIngredient.get();
@@ -357,20 +360,21 @@ public class IngredientService {
     }
 
 
-    /* getIngredientIdToCook :
+    /* getIngredientIdToCook : 냉장고에서 부족한 재료 조회하기
     * @param : String recipeId
     * @return : RecipeIngredientListRes (레시피id, 필요한 재료 정보 (재료 타입, (재료id, 재료이름, 재료양 )))
     * */
-    public String getIngredientIdToCook(String userSnsId, String token, String recipeIdStr) {
+    public RecipeIngredientListRes getIngredientIdToCook(String userSnsId, String token, String recipeIdStr) throws
+        JsonProcessingException {
 
         Integer recipeId = Integer.valueOf(recipeIdStr);
         
         // DB에서 필요한 ingredientId 정보 가져오기
-        List<RecipeIngredient> recipeIngredient = recipeIngredientRepository.findRecipeIngredientsByRecipeId(recipeId);
+        List<RecipeIngredient> totalRecipeIngredients = recipeIngredientRepository.findRecipeIngredientsByRecipeId(recipeId);
         IngredientListReq isExistReq = new IngredientListReq();
         List<Integer> ingredientIdList = new ArrayList<>();
-        for (RecipeIngredient ingredient : recipeIngredient) {
-            Integer ingredientId = (Integer) ingredient.getIngredientId();
+        for (RecipeIngredient totalRecipeIngredient : totalRecipeIngredients) {
+            Integer ingredientId = (Integer) totalRecipeIngredient.getIngredientId();
             ingredientIdList.add(ingredientId);
         }
         isExistReq.setIngredientIdList(ingredientIdList);
@@ -378,97 +382,57 @@ public class IngredientService {
         // fridgeClient 통신해서 부족한 ingredientId 정보 가져오기
         ResponseEntity<?> resFridge = fridgeServiceClient.getFridgeIngredients(token, isExistReq);
         log.info("resFridge:{}",resFridge);
-        return Objects.requireNonNull(resFridge.getBody()).toString();
-
-        // recipe 에 있으면서 fridge 에 없는 재료 도출하고 반환해주기
-
 
         // 반환할 응답 만들기 (response)
-        // RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes(1);
-        //
-        // List<RecipeIngredientInfo> recipeIngredientInfoList = recipeIngredientListRes.getRecipeIngredientInfoList();
-        //
-        //
-        // for (RecipeIngredientInfo info : recipeIngredientInfoList) {
-        //
-        //     List<RecipeIngredient> recipeIngredientList = info.getRecipeIngredientList();
-        //
-        //     switch (info.getRecipeIngredientType()) {
-        //
-        //         case FRUIT -> {
-        //             recipeIngredientList.add(
-        //                 RecipeIngredient.builder()
-        //                     .recipeIngredientId(10)
-        //                     .recipeIngredientName("사과")
-        //                     .recipeIngredientVolume("1쪽")
-        //                     .build()
-        //             );
-        //         }
-        //         case VEGETABLE -> {
-        //             recipeIngredientList.add(
-        //                 RecipeIngredient.builder()
-        //                     .recipeIngredientId(11)
-        //                     .recipeIngredientName("대파")
-        //                     .recipeIngredientVolume("1망")
-        //                     .build()
-        //             );
-        //         }
-        //         case RICE_GRAIN -> {
-        //             recipeIngredientList.add(
-        //                 RecipeIngredient.builder()
-        //                     .recipeIngredientId(13)
-        //                     .recipeIngredientName("햅쌀")
-        //                     .recipeIngredientVolume("1큰술")
-        //                     .build()
-        //             );
-        //         }
-        //         case MEAT_EGG -> recipeIngredientList.add(
-		// 			RecipeIngredient.builder()
-		// 				.recipeIngredientId(14)
-		// 				.recipeIngredientName("달걀")
-		// 				.recipeIngredientVolume("흰자")
-		// 				.build()
-		// 		);
-        //         case FISH -> {
-        //             recipeIngredientList.add(
-        //                 RecipeIngredient.builder()
-        //                     .recipeIngredientId(15)
-        //                     .recipeIngredientName("고등어")
-        //                     .recipeIngredientVolume("1마리")
-        //                     .build()
-        //             );
-        //         }
-        //         case MILK -> {
-        //             recipeIngredientList.add(
-        //                 RecipeIngredient.builder()
-        //                     .recipeIngredientId(16)
-        //                     .recipeIngredientName("체다치즈")
-        //                     .recipeIngredientVolume("1장")
-        //                     .build()
-        //             );
-        //         }
-        //         case SAUCE -> {
-        //             recipeIngredientList.add(
-        //                 RecipeIngredient.builder()
-        //                     .recipeIngredientId(17)
-        //                     .recipeIngredientName("고추장")
-        //                     .recipeIngredientVolume("1큰술")
-        //                     .build()
-        //             );
-        //         }
-        //         case ETC -> {
-        //             recipeIngredientList.add(
-        //                 RecipeIngredient.builder()
-        //                     .recipeIngredientId(18)
-        //                     .recipeIngredientName("제육볶음")
-        //                     .recipeIngredientVolume("1팩")
-        //                     .build()
-        //             );
-        //         }
-        //
-        //
-        //     }
-        // }
+        // 1. recipeIngredient table 에서 조회해 올 ingredientIdList 얻기
+        String ingredientIdListString = resFridge.getBody().toString();
+        ObjectMapper lackingIngredientIdListParser = new ObjectMapper();
+        IngredientListReq ingredientListReq = lackingIngredientIdListParser.readValue(ingredientIdListString,
+            IngredientListReq.class);
+
+        // 2. 재료 id List 로 재료 상세 정보 얻어오기
+        ResponseEntity<?> resIngredientDetail = getIngredientList(ingredientListReq);
+
+        // 3. 가져온 상세 정보 parsing 하기 (JSON -> IngredientListRes)
+        String ingredientInfoListString = resIngredientDetail.getBody().toString();
+        ObjectMapper ingredientInfoListParser = new ObjectMapper();
+        IngredientListRes ingredientInfoList = ingredientInfoListParser.readValue(ingredientInfoListString, IngredientListRes.class);
+        
+        // 4. 응답 객체 생성하기
+        RecipeIngredientListRes res = new RecipeIngredientListRes(recipeId); // 최종 반환할 응답 객체 형태
+
+        List<RecipeIngredient> allRecipeIngredients = recipeIngredientRepository.findRecipeIngredientsByRecipeId(recipeId);
+
+        for (IngredientInfo ingredientInfo : ingredientInfoList.getIngredientInfoList()) {
+            IngredientType ingredientType = ingredientInfo.getIngredientType();
+
+            for (RecipeIngredientInfo recipeIngredientInfo : res.getRecipeIngredientInfoList()) {
+                if (recipeIngredientInfo.getRecipeIngredientType().equals(ingredientType)) {
+                    for (IngredientRes ingredientRes : ingredientInfo.getIngredientResList()) {
+                        String volume = "양 없음"; // 기본값 설정
+                        // 이제 for 문을 사용하여 recipeIngredientVolume을 찾습니다.
+                        for (RecipeIngredient recipeIngredient : allRecipeIngredients) {
+                            if (recipeIngredient.getIngredientId() == ingredientRes.getIngredientId()) {
+                                volume = recipeIngredient.getRecipeIngredientVolume();
+                                break; // 일치하는 첫 번째 레코드를 찾으면 반복을 중단합니다.
+                            }
+                        }
+
+                        RecipeIngredientDTO recipeIngredientDTO = RecipeIngredientDTO.builder()
+                            .recipeIngredientId(ingredientRes.getIngredientId())
+                            .recipeIngredientName(ingredientRes.getIngredientName())
+                            .recipeIngredientVolume(volume)
+                            .build();
+                        recipeIngredientInfo.getRecipeIngredientDTOList().add(recipeIngredientDTO);
+                    }
+                    break; // 해당 타입에 대한 정보를 모두 추가했으므로 다음 타입으로 넘어갑니다.
+                }
+            }
+        }
+
+        // 최종적으로 구성된 RecipeIngredientListRes 객체를 반환합니다.
+        return res;
     }
+
 
 }
