@@ -117,7 +117,6 @@ public class RecipeFeignService {
 
 	public Integer getRecentRecipe(String userSnsId){
 		Optional<RecipeMakeLog> recentRecipeLog = recipeMakeLogRepository.findFirstByUserSnsIdOrderByRecipeMakeLogIdDesc(userSnsId);
-		if (!recentRecipeLog.isPresent()) return 1;
 		return recentRecipeLog.get().getRecipeId();
 	}
 

@@ -192,7 +192,6 @@ public class RecipeController {
 		}
 	}
 
-
 	@PostMapping("/foodlist")
 	public ResponseEntity<?> getFoodList(@RequestBody final FoodIdListReq req) {
 		try {
