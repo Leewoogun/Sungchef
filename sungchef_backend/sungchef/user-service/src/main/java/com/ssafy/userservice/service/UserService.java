@@ -114,6 +114,15 @@ public class UserService {
 			.build();
 	}
 
+	public boolean autoLoginUser(String userSnsId) {
+
+		Optional<User> selectUser = userRepository.findByUserSnsId(userSnsId);
+		if (selectUser.isEmpty()) throw new UserNotFoundException("유저가 존재하지 않음");
+		User user = selectUser.get();
+		if (!user.isUserIsSurvey()) throw new UserNeedSurveyException("설문이 필요한 유저");
+		return !user.isUserIsSurvey();
+	}
+
 	public JwtToken reissue(String refreshToken) {
 		return jwtTokenProvider.generateTokenFromRefreshToken(refreshToken.substring(7));
 	}

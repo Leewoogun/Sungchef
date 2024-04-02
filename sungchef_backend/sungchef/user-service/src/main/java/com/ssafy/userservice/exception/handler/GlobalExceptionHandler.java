@@ -134,7 +134,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(UserNeedSurveyException.class)
 	protected ResponseEntity<ErrorResponse> handleUserNeedSurveyException(UserNeedSurveyException e) {
-		return errorResponseService.getErrorResponse(USER_NEED_SURVEY, HttpStatus.FORBIDDEN, e);
+		return errorResponseService.getErrorResponse(USER_NEED_SURVEY, HttpStatus.NO_CONTENT, e);
 	}
 
 	@ExceptionHandler(UserNotCreatedException.class)
