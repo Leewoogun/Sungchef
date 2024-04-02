@@ -59,6 +59,9 @@ public class RecommendService {
 				.block();
 		RecommendIdList recommendIdList = response;
 
+		System.out.println(recommendIdList.getFoodIdList().toString());
+		System.out.println("###################################################");
+
 		FoodIdListReq foodIdListReq = FoodIdListReq.builder()
 				.foodIdList(recommendIdList.getFoodIdList())
 				.build();

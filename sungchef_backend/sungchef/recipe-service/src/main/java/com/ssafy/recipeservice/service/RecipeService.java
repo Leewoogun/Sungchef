@@ -59,6 +59,8 @@ public class RecipeService {
 
     public ResponseEntity<?> getFoodList(FoodIdListReq req) throws FoodNotFoundException {
         List<RecommendFood> recommendFoodList = new ArrayList<>();
+        System.out.println(req.getFoodIdList().toString());
+        System.out.println("#########################################");
         for (Integer foodId : req.getFoodIdList()) {
             Optional<Food> searchFood =  foodRepository.findFoodByFoodId(foodId);
             if (!searchFood.isPresent()) throw new FoodNotFoundException("foodId="+foodId+"인 음식이 없습니다.");
