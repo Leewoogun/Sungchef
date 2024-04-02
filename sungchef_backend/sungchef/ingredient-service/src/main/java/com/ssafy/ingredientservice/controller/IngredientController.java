@@ -10,6 +10,7 @@ import com.ssafy.ingredientservice.exception.exception.ConvertOCRException;
 import com.ssafy.ingredientservice.exception.exception.HaveAllIngredientInRecipeException;
 import com.ssafy.ingredientservice.exception.exception.RecipeNotFoundException;
 import com.ssafy.ingredientservice.service.JwtService;
+import com.ssafy.ingredientservice.service.client.RecipeServiceClient;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,8 @@ public class IngredientController {
 	private final ResponseService responseService;
 	private final IngredientService ingredientService;
 	private final JwtService jwtService;
+	private final RecipeServiceClient recipeServiceClient;
+
 	// checkController 참고
 	/**
 	 * MultipartFile 업로드 필요
@@ -178,121 +181,26 @@ public class IngredientController {
 	}
 
 
+	// 조리를 위해 부족한 재료 채우기
 	@GetMapping("/need/{recipeId}")
-	public ResponseEntity<?> getIngredientIdToCook(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
-		try {
+	public boolean getIngredientIdToCook(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
+		// try {
 			String userSnsId = jwtService.getUserSnsId(request);
 			String token = request.getHeader("Authorization");
+		return ingredientService.getIngredientIdToCook(userSnsId, token, recipeId);
 
-		} catch (Exception e) {
-			log.info(e.getMessage());
-			return ResponseEntity.status(500).body(responseService.INTERNAL_SERVER_ERROR());
-		}
-
-
-		RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes(1);
-
-		List<RecipeIngredientInfo> recipeIngredientInfoList = recipeIngredientListRes.getRecipeIngredientInfoList();
-
-		for (RecipeIngredientInfo info : recipeIngredientInfoList) {
-
-			List<RecipeIngredient> recipeIngredientList = info.getRecipeIngredientList();
-
-			switch (info.getRecipeIngredientType()) {
-
-				case FRUIT -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(10)
-							.recipeIngredientName("사과")
-							.recipeIngredientVolume("1쪽")
-							.build()
-					);
-				}
-				case VEGETABLE -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(11)
-							.recipeIngredientName("대파")
-							.recipeIngredientVolume("1망")
-							.build()
-					);
-				}
-				case RICE_GRAIN -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(13)
-							.recipeIngredientName("햅쌀")
-							.recipeIngredientVolume("1큰술")
-							.build()
-					);
-				}
-				case MEAT_EGG -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(14)
-							.recipeIngredientName("달걀")
-							.recipeIngredientVolume("흰자")
-							.build()
-					);
-				}
-				case FISH -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(15)
-							.recipeIngredientName("고등어")
-							.recipeIngredientVolume("1마리")
-							.build()
-					);
-				}
-				case MILK -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(16)
-							.recipeIngredientName("체다치즈")
-							.recipeIngredientVolume("1장")
-							.build()
-					);
-				}
-				case SAUCE -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(17)
-							.recipeIngredientName("고추장")
-							.recipeIngredientVolume("1큰술")
-							.build()
-					);
-				}
-				case ETC -> {
-					recipeIngredientList.add(
-						RecipeIngredient.builder()
-							.recipeIngredientId(18)
-							.recipeIngredientName("제육볶음")
-							.recipeIngredientVolume("1팩")
-							.build()
-					);
-				}
-				default -> {
-					return responseService.INTERNAL_SERVER_ERROR();
-				}
-
-			}
-		}
-
-		try {
-			log.debug("/need/ingredient/{recipeId} : {}", recipeId);
-			return ResponseEntity.ok()
-				.body(responseService.getSuccessSingleResult(recipeIngredientListRes, "부족한 재료 목록 조회 성공"));
-		} catch (HaveAllIngredientInRecipeException e) {
-			// exception은 아닌거같아서 추후 수정 필요
-			return responseService.NO_CONTENT();
-		} catch (RecipeNotFoundException e) {
-			return responseService.BAD_REQUEST();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
-
+		// } catch (HaveAllIngredientInRecipeException e) {
+		// 	// exception은 아닌거같아서 추후 수정 필요
+		// 	return responseService.NO_CONTENT();
+		// } catch (RecipeNotFoundException e) {
+		// 	return responseService.BAD_REQUEST();
+		// } catch (Exception e) {
+		// 	log.info(e.getMessage());
+		// 	return ResponseEntity.status(500).body(responseService.INTERNAL_SERVER_ERROR());
+		// }
 	}
+
+
 	@GetMapping("/{recipeId}")
 	public ResponseEntity<?> getUsedIngredientsInRecipe(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
 		return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
@@ -317,6 +225,13 @@ public class IngredientController {
 	public String communicationTest(){
 		log.debug("comm test in ingredientService");
 		return "ingredientService 입니다...";
+	}
+
+
+	@GetMapping("/comm/recipe")
+	public ResponseEntity<?> communicationWithRecipe(HttpServletRequest request){
+		String token = request.getHeader("Authorization");
+		return recipeServiceClient.communication(token);
 	}
 
 

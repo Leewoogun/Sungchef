@@ -13,10 +13,14 @@ import com.ssafy.ingredientservice.dto.response.RecipeIngredientListRes;;
 import com.ssafy.ingredientservice.dto.response.IngredientListRes;
 import com.ssafy.ingredientservice.exception.exception.IngredientNotFoundException;
 import com.ssafy.ingredientservice.exception.exception.RecipeNotFoundException;
+import com.ssafy.ingredientservice.service.client.RecipeServiceClient;
+
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
@@ -24,12 +28,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Component
-@RequiredArgsConstructor
+@Service
+@AllArgsConstructor
 public class IngredientService {
+
     private final ResponseService responseService;
     private final RecipeIngredientRepository recipeIngredientRepository;
     private final IngredientRepository ingredientRepository;
+    private final RecipeServiceClient recipeServiceClient;
 
     public ResponseEntity<?> getUsedIngredientsInRecipe(Integer recipeId) throws IngredientNotFoundException, RecipeNotFoundException {
         List<com.ssafy.ingredientservice.db.entity.RecipeIngredient> searchRecipeIngredients = recipeIngredientRepository.findRecipeIngredientsByRecipeId(recipeId);
@@ -262,11 +268,23 @@ public class IngredientService {
     }
 
 
-    public boolean getIngredientIdToCook(String userSnsId, String token) {
+
+    // 조리를 위해 부족한 재료 채우기
+    // 백엔드에서 recipe_ingredient → ingredient → fridge 확인 필요
+    // 냉장고에 부족한 재료 추가하기
+    public boolean getIngredientIdToCook(String userSnsId, String token, String recipeId) {
+
+
+        // recipeClient 통신해서 필요한 ingredientId 정보 가져오기
+        ResponseEntity<?> res = recipeServiceClient.getRecipeIngredients(recipeId, token);
+        // res.getBody().getData();
+        // fridgeClient 통신해서 유저가 가지고 있는 ingredientId 정보 가져오기
+        // recipe 에 있으면서 fridge 에 없는 재료 도출하고 반환해주기
+        // fridgeClient 통신해서 냉장고에 부족한 재료 추가하기
+
         RecipeIngredientListRes recipeIngredientListRes = new RecipeIngredientListRes(1);
 
         List<RecipeIngredientInfo> recipeIngredientInfoList = recipeIngredientListRes.getRecipeIngredientInfoList();
-
 
 
         for (RecipeIngredientInfo info : recipeIngredientInfoList) {
