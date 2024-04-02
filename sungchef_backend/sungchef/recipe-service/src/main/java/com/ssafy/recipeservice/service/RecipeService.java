@@ -98,7 +98,8 @@ public class RecipeService {
         Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
         if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         Recipe recipe = searchRecipe.get();
-
+        recipe.setRecipeVisitCount(recipe.getRecipeVisitCount()+1);
+        recipeRepository.save(recipe);
         List<RecipeDetail> searchRecipeDetail = recipeDetailRepository.findRecipeDetailsByRecipeIdOrderByRecipeDetailStep(recipeId);
         if(searchRecipeDetail.size() == 0) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         List<RecipeStep> recipeSteps = new ArrayList<>();
@@ -139,8 +140,15 @@ public class RecipeService {
                 , "레시피 조회 성공"));
     }
 
-    public ResponseEntity<?> recipeDetailStep(Integer recipeId) {
+    public ResponseEntity<?> recipeDetailStep(Integer recipeId, String userSnsId) {
         Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
+        recipeMakeLogRepository.save(RecipeMakeLog.builder()
+                .recipeMakeLogId(-1)
+                .userSnsId(userSnsId)
+                .recipeId(recipeId)
+                .recipeMakeLogCreateDate(Date.valueOf(LocalDate.now()))
+                .build()
+        );
         if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         Recipe recipe = searchRecipe.get();
         List<RecipeDetail> searchRecipeDetail = recipeDetailRepository.findRecipeDetailsByRecipeIdOrderByRecipeDetailStep(recipeId);
@@ -395,6 +403,8 @@ public class RecipeService {
             ).toList();
         return SearchRecipeListRes.builder().recipeList(searchRecipeList).build();
     }
+
+
 }
 
 
