@@ -72,7 +72,7 @@ public class BookmarkService {
 			throw new PageConvertException();
 		}
 		int pageNumber = Integer.parseInt(page);
-		Pageable pageable = PageRequest.of(pageNumber, 20);
+		Pageable pageable = PageRequest.of(pageNumber, 9);
 		Page<BookmarkMapping> bookmarkRecipeMapping = bookmarkRepository.findAllByUserSnsId(userSnsId, pageable);
 		List<Integer> bookMarkRecipeList = bookmarkRecipeMapping.getContent()
 			.stream()
