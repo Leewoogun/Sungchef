@@ -72,8 +72,7 @@ public class RecommendService {
 
 		ResponseEntity<SingleResult<RecommendFoodTest>> foodRes = recipeServiceClient.getFoodList(foodIdListReq, token);
 		ResponseEntity<SingleResult<RecommendRecipeTest>> recipeRes = recipeServiceClient.getRecipeList(recipeIdListReq, token);
-
-
+		
 		RecommendRecipe fridgeRecommendList = RecommendRecipe.builder()
 				.recommendRecipeType("FRIDGE")
 				.recipeList(recipeRes.getBody().getData().getRecipeList())
