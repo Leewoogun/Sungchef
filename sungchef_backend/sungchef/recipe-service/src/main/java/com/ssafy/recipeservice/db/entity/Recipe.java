@@ -57,4 +57,12 @@ public class Recipe {
 
   @Column(name = "food_id")
   private int foodId;
+
+  public void setBookmarkCount(boolean isBookmark) {
+    if (isBookmark) {
+      recipeBookmarkCount++;
+    } else {
+      recipeBookmarkCount--;
+    }
+  }
 }

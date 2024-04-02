@@ -14,18 +14,11 @@ import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
 import com.ssafy.recipeservice.util.result.SingleResult;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -49,9 +42,12 @@ public class RecipeController {
 		return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "조회 완료"));
 	}
 
-	@GetMapping("/feign/updatebookmark/{recipeId}/{nowBookmark}")
-	public String updateBookmark(@PathVariable("recipeId") String recipeId, @PathVariable("nowBookmark") String nowBookmark) {
-		return recipeFeignService.updateBookmarkCount(recipeId, nowBookmark);
+	@GetMapping("/feign/updatebookmark/{recipeId}/{isBookmark}")
+	public ResponseEntity<?> updateBookmark(@PathVariable("recipeId") final String recipeId
+			, @PathVariable("isBookmark") final boolean isBookmark
+	) {
+		recipeFeignService.updateBookmarkCount(recipeId, isBookmark);
+		return responseService.OK();
 	}
 
 	@GetMapping("/feign/getrecent/{userSnsId}")
@@ -68,7 +64,6 @@ public class RecipeController {
 		String userSnsId = jwtService.getUserSnsId(request);
 		return recipeFeignService.getUserMakeRecipeCount(userSnsId);
 	}
-
 	@PostMapping("/feign/user/bookmark")
 	List<Recipe> getUserBookmarkRecipe(@RequestBody List<Integer> recipeIdList) {
 		return recipeFeignService.getUserBookmarkRecipe(recipeIdList);
@@ -167,7 +162,6 @@ public class RecipeController {
 
 	@PostMapping(value ="/makerecipe", consumes = {"multipart/form-data"})
 	public ResponseEntity<?> uploadUserMakeRecipe(@ModelAttribute("makeRecipeImage") final MakeRecipeReq req, HttpServletRequest request) {
-		// TODO
 		try {
 			String userSnsId = jwtService.getUserSnsId(request);
 			log.debug("/makerecipe : {}", req);
