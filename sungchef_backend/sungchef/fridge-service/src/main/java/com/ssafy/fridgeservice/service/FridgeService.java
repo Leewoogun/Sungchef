@@ -16,6 +16,7 @@ import com.ssafy.fridgeservice.db.repository.FridgeRepository;
 import com.ssafy.fridgeservice.dto.request.IngredientList;
 import com.ssafy.fridgeservice.dto.request.IngredientListReq;
 import com.ssafy.fridgeservice.dto.response.IngredientId;
+import com.ssafy.fridgeservice.dto.response.IngredientIdListRes;
 import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
 
 import jakarta.transaction.Transactional;
@@ -32,8 +33,11 @@ public class FridgeService {
 	private final IngredientServiceClient ingredientServiceClient;
 
 
-	// userSnsId 를 받은 다음에 ingredient info 반환해주는 함수 (controller 에서 호출할 용도)
-	// 리팩토링 - 재사용 가능하도록 함수 분리하기
+	/* getIngredientInFridge : 유저 냉장고 재료 정보 조회
+	 * @param : String userSnsId, String token
+	 * @return : ResponseEntity
+	 * */
+	// 재사용 가능하도록 코드 분리하기
 	@Transactional
 	public ResponseEntity<?> getIngredientInFridge(String userSnsId, String token) {
 		Optional<List<Fridge>> fridgeList = fridgeRepository.findAllByUserSnsId(userSnsId);
@@ -48,6 +52,8 @@ public class FridgeService {
 			req.setIngredientIdList(ingredientIdList);
 			return ingredientServiceClient.getIngredientInfoList(token, req);
 		} else {
+			// 냉장고에 아무것도 없는 유저라면 204 가 가도록 이렇게 return 문을 만들었는데
+			// 왜 200 이 나온다고 할까 .. ㅠㅠ
 			return responseService.NO_CONTENT();
 		}
 	}
@@ -92,4 +98,35 @@ public class FridgeService {
 		return false;
 	}
 
+
+	// 유저 냉장고 속에 재료가 있는지 없는지 확인해보기
+	@Transactional
+	public IngredientIdListRes isExistIngredients(String userSnsId, IngredientListReq ingredientIdList) {
+		List<Integer> beforeCheckIngredients = ingredientIdList.getIngredientIdList();
+		IngredientIdListRes ingredientIdListRes = new IngredientIdListRes();
+		List<Integer> afterCheckIngredients = new ArrayList<>();
+		Optional<List<Fridge>> optionalFridgeList = fridgeRepository.findAllByUserSnsId(userSnsId);
+		if (optionalFridgeList.isEmpty()) {
+			// 유저 냉장고에 아무것도 없음 -> 받아온 재료 전부를 부족한 재료로 반환
+			ingredientIdListRes.setIngredientIdList(beforeCheckIngredients);
+			return ingredientIdListRes;
+		} else {
+			// 유저 냉장고에 들어있는 게 있음
+			List<Fridge> fridgeList = optionalFridgeList.get();
+			ArrayList<Integer> fridgeIngredientList = new ArrayList<>();
+			// 냉장고 속 재료와 레시피 재료 id 비교하기
+			for (Fridge fridge : fridgeList) {
+				Integer ingredientId = (Integer) fridge.getIngredientId();
+				fridgeIngredientList.add(ingredientId);
+			}
+			// 냉장고에 없는 경우 afterCheckIngredients 에 담기
+			for (Integer beforeCheckIngredient : beforeCheckIngredients) {
+				if (!fridgeIngredientList.contains(beforeCheckIngredient)) {
+					afterCheckIngredients.add(beforeCheckIngredient);
+				}
+			}
+			ingredientIdListRes.setIngredientIdList(afterCheckIngredients);
+			return ingredientIdListRes;
+		}
+	}
 }

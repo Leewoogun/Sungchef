@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.fridgeservice.dto.request.IngredientList;
+import com.ssafy.fridgeservice.dto.request.IngredientListReq;
+import com.ssafy.fridgeservice.dto.response.IngredientIdListRes;
 import com.ssafy.fridgeservice.service.JwtService;
 import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
 import com.ssafy.fridgeservice.service.FridgeService;
@@ -108,6 +110,32 @@ public class FridgeController {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
+
+
+	/* isExist : 레시피에 포함된 IngredientIdList 받아서 유저 냉장고에 있는지 없는지 반환
+	 * @param : IngredientListReq
+	 * @return : 부족한 재료 id 리스트 반환
+	 * */
+	@PostMapping("/isExist")
+	public ResponseEntity<?> isExistIngredients(HttpServletRequest request,
+		@RequestBody IngredientListReq ingredientIdList) {
+		try {
+			String userSnsId = jwtService.getUserSnsId(request);
+			// 서비스 호출
+			IngredientIdListRes ingredientIdListRes = fridgeService.isExistIngredients(userSnsId, ingredientIdList);
+			// ingredientIdListRes 가 비어 있는 경우 ( = 모든 재료를 가지고 있음 )
+			if (ingredientIdListRes.getIngredientIdList().size() == 0) {
+				return responseService.NO_CONTENT();
+			} else {
+				return ResponseEntity.ok().body(ingredientIdListRes);
+			}
+		} catch (Exception e) {
+			log.error(Arrays.toString(e.getStackTrace()));
+			return responseService.INTERNAL_SERVER_ERROR();
+		}
+	}
+
+
 
 
 }
