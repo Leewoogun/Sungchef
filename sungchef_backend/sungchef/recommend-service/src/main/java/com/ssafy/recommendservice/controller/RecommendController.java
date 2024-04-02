@@ -169,7 +169,7 @@ public class RecommendController {
 //		}
 //	}
 
-	@GetMapping("/test")
+	@GetMapping("")
 	public ResponseEntity<?> test(HttpServletRequest request) {
 		String userSnsId = jwtService.getUserSnsId(request);
 		String token = request.getHeader("Authorization");
