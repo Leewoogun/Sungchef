@@ -1,15 +1,18 @@
 package com.ssafy.recipeservice.service;
 
 
+import com.ssafy.recipeservice.db.client.Bookmark;
 import com.ssafy.recipeservice.db.entity.*;
 import com.ssafy.recipeservice.db.repository.*;
 import com.ssafy.recipeservice.dto.request.FoodIdListReq;
 import com.ssafy.recipeservice.dto.request.MakeRecipeReq;
 import com.ssafy.recipeservice.dto.request.RecipeIdListReq;
 import com.ssafy.recipeservice.dto.response.*;
+import com.ssafy.recipeservice.exception.exception.FeignException;
 import com.ssafy.recipeservice.exception.exception.LogNotCreatedException;
 import com.ssafy.recipeservice.exception.exception.PageConvertException;
 import com.ssafy.recipeservice.service.client.IngredientServiceClient;
+import com.ssafy.recipeservice.service.client.UserServiceClient;
 import com.ssafy.recipeservice.util.result.SingleResult;
 import com.ssafy.recipeservice.util.exception.FoodNotFoundException;
 import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
@@ -21,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -44,7 +50,7 @@ public class RecipeService {
     private final RecipeMakeLogRepository recipeMakeLogRepository;
     private final RecipeMakeRepository recipeMakeRepository;
     private final FileUploadService fileUploadService;
-
+    private final UserServiceClient userServiceClient;
 //    public Recipe getRecipeById(String foodId) throws FoodNotFoundException {
 //        Optional<Food> searchFood =  foodRepository.findFoodByFoodId(foodId);
 //        if (!searchFood.isPresent()) throw new FoodNotFoundException(foodId);
@@ -92,7 +98,8 @@ public class RecipeService {
         Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
         if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         Recipe recipe = searchRecipe.get();
-
+        recipe.setRecipeVisitCount(recipe.getRecipeVisitCount()+1);
+        recipeRepository.save(recipe);
         List<RecipeDetail> searchRecipeDetail = recipeDetailRepository.findRecipeDetailsByRecipeIdOrderByRecipeDetailStep(recipeId);
         if(searchRecipeDetail.size() == 0) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         List<RecipeStep> recipeSteps = new ArrayList<>();
@@ -133,8 +140,15 @@ public class RecipeService {
                 , "레시피 조회 성공"));
     }
 
-    public ResponseEntity<?> recipeDetailStep(Integer recipeId) {
+    public ResponseEntity<?> recipeDetailStep(Integer recipeId, String userSnsId) {
         Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
+        recipeMakeLogRepository.save(RecipeMakeLog.builder()
+                .recipeMakeLogId(-1)
+                .userSnsId(userSnsId)
+                .recipeId(recipeId)
+                .recipeMakeLogCreateDate(Date.valueOf(LocalDate.now()))
+                .build()
+        );
         if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         Recipe recipe = searchRecipe.get();
         List<RecipeDetail> searchRecipeDetail = recipeDetailRepository.findRecipeDetailsByRecipeIdOrderByRecipeDetailStep(recipeId);
@@ -189,6 +203,205 @@ public class RecipeService {
         return ResponseEntity.ok(
                 responseService.getSuccessMessageResult("기록 업로드 완료")
         );
+    }
+
+    @Transactional
+    public SearchRecipeListRes getRecipeOrderByBookmark(String token, String page) {
+        try {
+            int convertPage = Integer.parseInt(page);
+        } catch (NumberFormatException e) {
+            throw new PageConvertException("getRecipeOrderByBookmark page convert 실패");
+        }
+
+        int pageNumber = Integer.parseInt(page);
+        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeBookmarkCount").descending());
+        Page<Recipe> recipePage = recipeRepository.findAll(pageable);
+
+        List<Recipe> recipeList = recipePage.toList();
+        if (recipeList.isEmpty()) throw new RecipeNotFoundException("getRecipeOrderByVisit Error");
+
+        List<Integer> recipeIdList = recipePage.toList().stream()
+            .map(Recipe::getRecipeId)
+            .toList();
+
+        List<Integer> userBookRecipe = new ArrayList<>();
+
+        try {
+            userBookRecipe.addAll(userServiceClient
+                .getUserBookmark(token, recipeIdList)
+                .stream()
+                .map(Bookmark::recipeId)
+                .toList());
+        } catch (Exception e) {
+            throw new FeignException("userServiceClient.getUserBookmark ERROR");
+        }
+
+        List<SearchRecipe> searchRecipeList = recipeList.stream()
+            .map(
+                recipe -> SearchRecipe.builder()
+                    .recipeId(recipe.getRecipeId())
+                    .recipeName(recipe.getRecipeName())
+                    .recipeImage(recipe.getRecipeImage())
+                    .recipeCookingTime(recipe.getRecipeCookingTime())
+                    .recipeVolume(recipe.getRecipeVolume())
+                    .recipeVisitCount(recipe.getRecipeVisitCount())
+                    .recipeBookmarkCount(recipe.getRecipeBookmarkCount())
+                    .isBookmark(userBookRecipe.contains(recipe.getRecipeId()))
+                    .build()
+            ).toList();
+        return SearchRecipeListRes.builder().recipeList(searchRecipeList).build();
+    }
+
+    @Transactional
+    public SearchRecipeListRes getRecipeOrderByVisit(String token, String page) {
+
+        try {
+            int convertPage = Integer.parseInt(page);
+        } catch (NumberFormatException e) {
+            throw new PageConvertException("getRecipeOrderByBookmark page convert 실패");
+        }
+
+        int pageNumber = Integer.parseInt(page);
+        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").descending());
+        Page<Recipe> recipePage = recipeRepository.findAll(pageable);
+
+        List<Recipe> recipeList = recipePage.toList();
+        if (recipeList.isEmpty()) throw new RecipeNotFoundException("getRecipeOrderByVisit Error");
+
+        List<Integer> recipeIdList = recipePage.toList().stream()
+            .map(Recipe::getRecipeId)
+            .toList();
+
+        List<Integer> userBookRecipe = new ArrayList<>();
+
+        try {
+            userBookRecipe.addAll(userServiceClient
+                .getUserBookmark(token, recipeIdList)
+                .stream()
+                .map(Bookmark::recipeId)
+                .toList());
+        } catch (Exception e) {
+            throw new FeignException("userServiceClient.getUserBookmark ERROR");
+        }
+
+        List<SearchRecipe> searchRecipeList = recipeList.stream()
+            .map(
+                recipe -> SearchRecipe.builder()
+                    .recipeId(recipe.getRecipeId())
+                    .recipeName(recipe.getRecipeName())
+                    .recipeImage(recipe.getRecipeImage())
+                    .recipeCookingTime(recipe.getRecipeCookingTime())
+                    .recipeVolume(recipe.getRecipeVolume())
+                    .recipeVisitCount(recipe.getRecipeVisitCount())
+                    .recipeBookmarkCount(recipe.getRecipeBookmarkCount())
+                    .isBookmark(userBookRecipe.contains(recipe.getRecipeId()))
+                    .build()
+            ).toList();
+        return SearchRecipeListRes.builder().recipeList(searchRecipeList).build();
+    }
+
+    @Transactional
+    public SearchRecipeListRes searchRecipeOrderByVisit(String token, String foodName, String page) {
+
+        try {
+            int convertPage = Integer.parseInt(page);
+        } catch (NumberFormatException e) {
+            throw new PageConvertException("getRecipeOrderByBookmark page convert 실패");
+        }
+
+        Optional<Food> searchFood =  foodRepository.findFoodByFoodName(foodName);
+        if (searchFood.isEmpty()) throw new FoodNotFoundException("foodName" + foodName + "인 음식이 없습니다.");
+
+        Food food = searchFood.get();
+        int pageNumber = Integer.parseInt(page);
+        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").descending());
+        Page<Recipe> recipePage = recipeRepository.findAllByFoodId(food.getFoodId(), pageable);
+
+        List<Recipe> recipeList = recipePage.toList();
+        if (recipeList.isEmpty()) throw new RecipeNotFoundException("getRecipeOrderByVisit Error");
+
+        List<Integer> recipeIdList = recipePage.toList().stream()
+            .map(Recipe::getRecipeId)
+            .toList();
+
+        List<Integer> userBookRecipe = new ArrayList<>();
+
+        try {
+            userBookRecipe.addAll(userServiceClient
+                .getUserBookmark(token, recipeIdList)
+                .stream()
+                .map(Bookmark::recipeId)
+                .toList());
+        } catch (Exception e) {
+            throw new FeignException("userServiceClient.getUserBookmark ERROR");
+        }
+
+        List<SearchRecipe> searchRecipeList = recipeList.stream()
+            .map(
+                recipe -> SearchRecipe.builder()
+                    .recipeId(recipe.getRecipeId())
+                    .recipeName(recipe.getRecipeName())
+                    .recipeImage(recipe.getRecipeImage())
+                    .recipeCookingTime(recipe.getRecipeCookingTime())
+                    .recipeVolume(recipe.getRecipeVolume())
+                    .recipeVisitCount(recipe.getRecipeVisitCount())
+                    .recipeBookmarkCount(recipe.getRecipeBookmarkCount())
+                    .isBookmark(userBookRecipe.contains(recipe.getRecipeId()))
+                    .build()
+            ).toList();
+        return SearchRecipeListRes.builder().recipeList(searchRecipeList).build();
+    }
+
+    @Transactional
+    public SearchRecipeListRes searchFoodOrderByVisit(String token, String foodName, String page) {
+
+        try {
+            int convertPage = Integer.parseInt(page);
+        } catch (NumberFormatException e) {
+            throw new PageConvertException("getRecipeOrderByBookmark page convert 실패");
+        }
+
+        Optional<Food> searchFood =  foodRepository.findFoodByFoodName(foodName);
+        if (searchFood.isEmpty()) throw new FoodNotFoundException("foodName" + foodName + "인 음식이 없습니다.");
+
+        Food food = searchFood.get();
+        int pageNumber = Integer.parseInt(page);
+        Pageable pageable = PageRequest.of(pageNumber, 20, Sort.by("recipeVisitCount").descending());
+        Page<Recipe> recipePage = recipeRepository.findAllByFoodId(food.getFoodId(), pageable);
+
+        List<Recipe> recipeList = recipePage.toList();
+        if (recipeList.isEmpty()) throw new RecipeNotFoundException("getRecipeOrderByVisit Error");
+
+        List<Integer> recipeIdList = recipePage.toList().stream()
+            .map(Recipe::getRecipeId)
+            .toList();
+
+        List<Integer> userBookRecipe = new ArrayList<>();
+
+        try {
+            userBookRecipe.addAll(userServiceClient
+                .getUserBookmark(token, recipeIdList)
+                .stream()
+                .map(Bookmark::recipeId)
+                .toList());
+        } catch (Exception e) {
+            throw new FeignException("userServiceClient.getUserBookmark ERROR");
+        }
+
+        List<SearchRecipe> searchRecipeList = recipeList.stream()
+            .map(
+                recipe -> SearchRecipe.builder()
+                    .recipeId(recipe.getRecipeId())
+                    .recipeName(recipe.getRecipeName())
+                    .recipeImage(recipe.getRecipeImage())
+                    .recipeCookingTime(recipe.getRecipeCookingTime())
+                    .recipeVolume(recipe.getRecipeVolume())
+                    .recipeVisitCount(recipe.getRecipeVisitCount())
+                    .recipeBookmarkCount(recipe.getRecipeBookmarkCount())
+                    .isBookmark(userBookRecipe.contains(recipe.getRecipeId()))
+                    .build()
+            ).toList();
+        return SearchRecipeListRes.builder().recipeList(searchRecipeList).build();
     }
 
 

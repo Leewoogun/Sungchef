@@ -2,6 +2,8 @@ package com.ssafy.userservice.service.client;
 
 import java.util.List;
 
+import com.ssafy.userservice.dto.request.FoodIdListReq;
+import com.ssafy.userservice.dto.response.fridge.FoodList;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -41,4 +43,9 @@ public interface RecipeServiceClient {
 	List<Recipe> getUserBookmarkRecipe(@RequestHeader("Authorization") String token, @RequestBody List<Integer> recipeIdList);
 	// @GetMapping("/recipe/feign/makerecipe/{page}")
 	// Page<RecipeMake> recipeSimple(HttpServletRequest request, @PathVariable("page") final String page);
+
+	@PostMapping("/recipe/foodlist")
+	ResponseEntity<SingleResult<FoodList>> getFoodList(@RequestBody final FoodIdListReq req, @RequestHeader("Authorization") String token);
+
+
 }

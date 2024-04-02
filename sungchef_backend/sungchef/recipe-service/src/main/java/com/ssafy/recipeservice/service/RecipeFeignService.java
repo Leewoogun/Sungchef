@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import com.ssafy.recipeservice.db.entity.RecipeMakeLog;
+import com.ssafy.recipeservice.db.repository.RecipeMakeLogRepository;
+import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class RecipeFeignService {
 	private final RecipeMakeRepository recipeMakeRepository;
+	private final RecipeMakeLogRepository recipeMakeLogRepository;
 	private final RecipeRepository recipeRepository;
 
 	public boolean isRecipeExist(String recipeId) {
@@ -97,4 +101,23 @@ public class RecipeFeignService {
 	public List<Recipe> getUserBookmarkRecipe(List<Integer> recipeIdList) {
 		return recipeRepository.findRecipeByRecipeIdIn(recipeIdList);
 	}
+
+	public String updateBookmarkCount(String recipeId,String nowBookmark){
+		Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(Integer.parseInt(recipeId));
+		if (!searchRecipe.isPresent()) return "recipeId = "+recipeId+"인 레시피가 없습니다.";
+		Recipe recipe = searchRecipe.get();
+		if (Integer.parseInt(nowBookmark) == 1) {
+			recipe.setRecipeBookmarkCount(recipe.getRecipeBookmarkCount()+1);
+		} else  {
+			recipe.setRecipeBookmarkCount(recipe.getRecipeBookmarkCount()-1);
+		}
+		recipeRepository.save(recipe);
+		return "업데이트 성공"+ recipe.getRecipeBookmarkCount();
+	}
+
+	public Integer getRecentRecipe(String userSnsId){
+		Optional<RecipeMakeLog> recentRecipeLog = recipeMakeLogRepository.findFirstByUserSnsIdOrderByRecipeMakeLogIdDesc(userSnsId);
+		return recentRecipeLog.get().getRecipeId();
+	}
+
 }
