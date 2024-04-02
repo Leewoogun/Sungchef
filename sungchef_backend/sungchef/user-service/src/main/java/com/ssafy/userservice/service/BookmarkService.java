@@ -46,6 +46,7 @@ public class BookmarkService {
 			} catch (Exception e) {
 				throw new FeignException("recipeServiceClient.isRecipeExist ERROR");
 			}
+
 			Optional<Bookmark> selectBookMark = bookmarkRepository.findByUserSnsIdAndRecipeId(userSnsId, req.recipeId());
 
 			if (selectBookMark.isPresent()) return;
@@ -58,11 +59,13 @@ public class BookmarkService {
 					.bookmarkCreateDate(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
 					.build()
 			);
+			recipeServiceClient.updateBookmark(token, String.valueOf(req.recipeId()), true);
 		} else {
 			Optional<Bookmark> selectBookMark = bookmarkRepository.findByUserSnsIdAndRecipeId(userSnsId, req.recipeId());
 			if (selectBookMark.isEmpty()) throw new BookmarkNotFoundException("해당하는 즐겨찾기가 존재하지 않음");
 			Bookmark bookmark = selectBookMark.get();
 			bookmarkRepository.delete(bookmark);
+			recipeServiceClient.updateBookmark(token, String.valueOf(req.recipeId()), false);
 		}
 	}
 
