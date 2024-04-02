@@ -134,10 +134,18 @@ public class IngredientController {
 
 
 	@GetMapping("/recipe/{recipeId}")
-	public ResponseEntity<?> removeUsedIngredientsfromFridge(
+	public ResponseEntity<?> getUsedIngredientsFromFridge(
 		HttpServletRequest request, @PathVariable("recipeId") final String recipeId
 	) {
-		return ingredientService.getUsedIngredientsInRecipe(Integer.parseInt(recipeId));
+		try {
+			String userSnsId = jwtService.getUserSnsId(request);
+			String token = request.getHeader("Authorization");
+			RecipeIngredientListRes data = ingredientService.getIngredientIdToCook(userSnsId, token, recipeId);
+			return ResponseEntity.ok().body(responseService.getSingleResult(data, "레시피 재료 조회 성공", 200));
+		} catch (Exception e) {
+			log.debug(e.getMessage());
+			return responseService.INTERNAL_SERVER_ERROR();
+		}
 	}
 
 
