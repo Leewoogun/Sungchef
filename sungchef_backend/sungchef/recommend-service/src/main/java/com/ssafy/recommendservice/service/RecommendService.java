@@ -59,7 +59,6 @@ public class RecommendService {
 				.block();
 		RecommendIdList recommendIdList = response;
 
-
 		FoodIdListReq foodIdListReq = FoodIdListReq.builder()
 				.foodIdList(recommendIdList.getFoodIdList())
 				.build();
