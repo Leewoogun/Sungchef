@@ -29,43 +29,25 @@ public class IngredientController {
 
 	private final ResponseService responseService;
 	private final IngredientService ingredientService;
-
-	// private final JwtService jwtService;
+	private final RecipeServiceClient recipeServiceClient;
+	private final JwtService jwtService;
 	// checkController 참고
 	/**
 	 * MultipartFile 업로드 필요
 	 * 1. 이미지 -> OCR 네이버 API로 변환
 	 * 2. OCR로 나온 재료 -> DB에 있는 재료로 변환
 	 */
-	@PostMapping("/convert")
-	//	public ResponseEntity<?> convertImageToIngredients(@RequestBody ConvertImageReq req) {
-	public ResponseEntity<?> convertImageToIngredients() {
-		// TODO
+	@PostMapping(value = "/convert", consumes = {"multipart/form-data"})
+	public ResponseEntity<?> convertImageToIngredients(@ModelAttribute("convertImage") ConvertImageReq req) {
 		ConvertProductListRes convertProductListRes = new ConvertProductListRes();
-		List<ConvertProductInfo> convertProductInfoList = convertProductListRes.getConvertProductList();
-
-		for (ConvertProductInfo info : convertProductInfoList) {
-
 		if (req.convertImage() == null || req.convertImage().getSize() == 0 || req.convertImage().isEmpty()) {
 			return responseService.BAD_REQUEST();
-		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
 		}
 		return ResponseEntity.ok(responseService.getSuccessSingleResult(
 			ingredientService.setOCRData(req.convertImage())
 			, "OCR 변환 완료"
-		));
-		//
-		// try {
-		// 	return ResponseEntity.ok(
-		// 		responseService.getSuccessResult("OCR 변환 완료"
-		// 		)
-		// 	);
-		// } catch (ConvertOCRException e) {
-		// 	return responseService.BAD_REQUEST();
-		// } catch (Exception e) {
-		// 	return responseService.INTERNAL_SERVER_ERROR();
-		// }
+			)
+		);
 	}
 
 	@GetMapping("/ocr/{convertOCRKey}")
@@ -76,7 +58,6 @@ public class IngredientController {
 				,"조회 완료"
 			)
 		);
-		// return ResponseEntity.ok().build();
 	}
 
 

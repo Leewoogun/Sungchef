@@ -58,10 +58,10 @@ public class OCRApiService {
 			con.connect();
 			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
 			long start = System.currentTimeMillis();
-
-			writeMultiPart(wr, postParams, multipartFileToFile(multipartImageFile), boundary);
+			File file = multipartFileToFile(multipartImageFile);
+			writeMultiPart(wr, postParams, file, boundary);
 			wr.close();
-
+			file.delete();
 			int responseCode = con.getResponseCode();
 			BufferedReader br;
 			if (responseCode == 200) {

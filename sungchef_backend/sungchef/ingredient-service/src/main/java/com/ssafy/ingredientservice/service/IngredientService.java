@@ -1,6 +1,9 @@
 package com.ssafy.ingredientservice.service;
 
 import com.ssafy.ingredientservice.db.entity.Ingredient;
+import com.ssafy.ingredientservice.db.entity.IngredientOCR;
+import com.ssafy.ingredientservice.db.entity.OCRResult;
+import com.ssafy.ingredientservice.db.repository.IngredientOCRRepository;
 import com.ssafy.ingredientservice.db.repository.IngredientRepository;
 import com.ssafy.ingredientservice.db.repository.RecipeIngredientRepository;
 import com.ssafy.ingredientservice.dto.request.ConvertImageReq;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -43,6 +47,8 @@ public class IngredientService {
     private final RecipeIngredientRepository recipeIngredientRepository;
     private final IngredientRepository ingredientRepository;
     private final RecipeServiceClient recipeServiceClient;
+    private final IngredientOCRRepository ingredientOCRRepository;
+    private final OCRApiService ocrApiService;
 
     public ResponseEntity<?> getUsedIngredientsInRecipe(Integer recipeId) throws IngredientNotFoundException, RecipeNotFoundException {
         List<com.ssafy.ingredientservice.db.entity.RecipeIngredient> searchRecipeIngredients = recipeIngredientRepository.findRecipeIngredientsByRecipeId(recipeId);
