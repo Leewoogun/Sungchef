@@ -16,7 +16,7 @@ import java.util.List;
 @FeignClient("recipe-service")
 public interface RecipeServiceClient {
 	@PostMapping("/recipe/recipelist")
-	ResponseEntity<SingleResult<RecommendRecipeTest>> getRecipeList(@RequestBody final RecipeIdListReq req);
+	ResponseEntity<SingleResult<RecommendRecipeTest>> getRecipeList(@RequestBody final RecipeIdListReq req, @RequestHeader("Authorization") String token);
 
 	@PostMapping("/recipe/foodlist")
 	ResponseEntity<SingleResult<RecommendFoodTest>> getFoodList(@RequestBody final FoodIdListReq req, @RequestHeader("Authorization") String token);
