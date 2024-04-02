@@ -79,12 +79,12 @@ public class RecommendService {
 				.recipeList(recipeRes.getBody().getData().getRecipeList())
 				.build();
 
-		RecommendFood userRecommendList = RecommendFood.builder()
+		RecommendFood sungRecommendList = RecommendFood.builder()
 				.recommendFoodType("SUNG")
 				.foodList(foodRes.getBody().getData().getFoodList().subList(10,20))
 				.build();
 
-		RecommendFood sungRecommendList = RecommendFood.builder()
+		RecommendFood userRecommendList = RecommendFood.builder()
 				.recommendFoodType("SIMILAR_USER")
 				.foodList(foodRes.getBody().getData().getFoodList().subList(0,10))
 				.build();
