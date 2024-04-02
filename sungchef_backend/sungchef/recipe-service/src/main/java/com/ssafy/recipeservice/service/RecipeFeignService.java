@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import com.ssafy.recipeservice.db.entity.RecipeMakeLog;
 import com.ssafy.recipeservice.db.repository.RecipeMakeLogRepository;
+import com.ssafy.recipeservice.exception.exception.FeignException;
 import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -102,17 +103,18 @@ public class RecipeFeignService {
 		return recipeRepository.findRecipeByRecipeIdIn(recipeIdList);
 	}
 
-	public String updateBookmarkCount(String recipeId,String nowBookmark){
-		Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(Integer.parseInt(recipeId));
-		if (!searchRecipe.isPresent()) return "recipeId = "+recipeId+"인 레시피가 없습니다.";
-		Recipe recipe = searchRecipe.get();
-		if (Integer.parseInt(nowBookmark) == 1) {
-			recipe.setRecipeBookmarkCount(recipe.getRecipeBookmarkCount()+1);
-		} else  {
-			recipe.setRecipeBookmarkCount(recipe.getRecipeBookmarkCount()-1);
+	@Transactional
+	public void updateBookmarkCount(String recipeId, boolean isBookmark){
+		try {
+			int recipeIdNum = Integer.parseInt(recipeId);
+		} catch (NumberFormatException e) {
+			throw new FeignException("updateBookmarkCount Exception");
 		}
-		recipeRepository.save(recipe);
-		return "업데이트 성공"+ recipe.getRecipeBookmarkCount();
+		Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(Integer.parseInt(recipeId));
+		if (searchRecipe.isEmpty()) throw new FeignException("updateBookmarkCount recipe not found");
+
+		Recipe recipe = searchRecipe.get();
+		recipe.setBookmarkCount(isBookmark);
 	}
 
 	public Integer getRecentRecipe(String userSnsId){
