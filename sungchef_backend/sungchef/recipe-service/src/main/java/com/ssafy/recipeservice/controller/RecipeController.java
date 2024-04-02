@@ -80,9 +80,10 @@ public class RecipeController {
 	// }
 
 	@GetMapping("/{recipeId}")
-	public ResponseEntity<?> recipeDetail(@RequestHeader("Authorization") String token, @PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> recipeDetail(HttpServletRequest request, @RequestHeader("Authorization") String token, @PathVariable("recipeId") final String recipeId) {
+		String userSnsId = jwtService.getUserSnsId(request);
 		try {
-			return recipeService.getRecipeDetail(Integer.parseInt(recipeId), token);
+			return recipeService.getRecipeDetail(Integer.parseInt(recipeId), token, userSnsId);
 		} catch (FoodNotFoundException | NumberFormatException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {

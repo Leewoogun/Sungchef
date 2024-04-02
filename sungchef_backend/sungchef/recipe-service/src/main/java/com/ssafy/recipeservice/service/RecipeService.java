@@ -59,6 +59,8 @@ public class RecipeService {
 
     public ResponseEntity<?> getFoodList(FoodIdListReq req) throws FoodNotFoundException {
         List<RecommendFood> recommendFoodList = new ArrayList<>();
+        System.out.println(req.getFoodIdList().toString());
+        System.out.println("#########################################");
         for (Integer foodId : req.getFoodIdList()) {
             Optional<Food> searchFood =  foodRepository.findFoodByFoodId(foodId);
             if (!searchFood.isPresent()) throw new FoodNotFoundException("foodId="+foodId+"인 음식이 없습니다.");
@@ -93,8 +95,15 @@ public class RecipeService {
                 .build();
         return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "레시피 리스트 조회 성공"));
     }
-
-    public ResponseEntity<?> getRecipeDetail(Integer recipeId, String token) throws RecipeNotFoundException {
+    
+    public ResponseEntity<?> getRecipeDetail(Integer recipeId, String token, String userSnsId) throws RecipeNotFoundException {
+        recipeMakeLogRepository.save(RecipeMakeLog.builder()
+                .recipeMakeLogId(-1)
+                .userSnsId(userSnsId)
+                .recipeId(recipeId)
+                .recipeMakeLogCreateDate(Date.valueOf(LocalDate.now()))
+                .build()
+        );
         Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
         if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         Recipe recipe = searchRecipe.get();
@@ -141,14 +150,6 @@ public class RecipeService {
     }
 
     public ResponseEntity<?> recipeDetailStep(Integer recipeId, String userSnsId) {
-        Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
-        recipeMakeLogRepository.save(RecipeMakeLog.builder()
-                .recipeMakeLogId(-1)
-                .userSnsId(userSnsId)
-                .recipeId(recipeId)
-                .recipeMakeLogCreateDate(Date.valueOf(LocalDate.now()))
-                .build()
-        );
         if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         Recipe recipe = searchRecipe.get();
         List<RecipeDetail> searchRecipeDetail = recipeDetailRepository.findRecipeDetailsByRecipeIdOrderByRecipeDetailStep(recipeId);
