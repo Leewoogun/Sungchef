@@ -118,20 +118,6 @@ public class IngredientController {
 //		}
 	}
 
-	// @GetMapping("/communication")
-	// public String communicationTest(){
-	// 	log.debug("comm test in ingredientService");
-	// 	return "ingredientService 입니다...";
-	// }
-
-
-	// ingredient - recipe 간 통신 테스트 (확인 완료)
-	@GetMapping("/communication")
-	public String communicationWithRecipe(HttpServletRequest request){
-		String token = request.getHeader("Authorization");
-		return recipeServiceClient.communication(token);
-	}
-
 
 	@GetMapping("/recipe/{recipeId}")
 	public ResponseEntity<?> getUsedIngredientsFromFridge(
@@ -147,6 +133,7 @@ public class IngredientController {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
+
 
 
 
