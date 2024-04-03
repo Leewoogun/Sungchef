@@ -15,6 +15,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import com.ssafy.ingredientservice.exception.error.ErrorResponse;
 import com.ssafy.ingredientservice.exception.exception.ConvertOCRException;
 import com.ssafy.ingredientservice.exception.exception.FeignException;
+import com.ssafy.ingredientservice.exception.exception.HaveAllIngredientInRecipeException;
 import com.ssafy.ingredientservice.exception.exception.JwtException;
 import com.ssafy.ingredientservice.exception.exception.JwtExpiredException;
 import com.ssafy.ingredientservice.exception.exception.NoContentException;
@@ -113,6 +114,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(NoContentException.class)
 	protected ResponseEntity<ErrorResponse> handleNoContentException(NoContentException e) {
 		return errorResponseService.getErrorResponse(HAVE_ALL_INGREDIENT, HttpStatus.NO_CONTENT, e);
+	}
+
+	@ExceptionHandler(HaveAllIngredientInRecipeException.class)
+	protected ResponseEntity<ErrorResponse> handleHaveAllIngredientInRecipeException(HaveAllIngredientInRecipeException e) {
+		return errorResponseService.getErrorResponse(USER_RECIPE_NOT_EXIST, HttpStatus.NO_CONTENT, e);
 	}
 
 
