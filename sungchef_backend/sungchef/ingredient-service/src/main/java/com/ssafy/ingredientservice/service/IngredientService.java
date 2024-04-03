@@ -25,6 +25,7 @@ import com.ssafy.ingredientservice.dto.response.IngredientRes;
 import com.ssafy.ingredientservice.dto.response.RecipeIngredientListRes;
 import com.ssafy.ingredientservice.dto.response.IngredientListRes;
 import com.ssafy.ingredientservice.exception.exception.BaseException;
+import com.ssafy.ingredientservice.exception.exception.HaveAllIngredientInRecipeException;
 import com.ssafy.ingredientservice.exception.exception.IngredientNotFoundException;
 import com.ssafy.ingredientservice.exception.exception.NoContentException;
 import com.ssafy.ingredientservice.exception.exception.RecipeNotFoundException;
@@ -461,9 +462,9 @@ public class IngredientService {
         ResponseEntity<ClientIngredientIdListRes> resFridge = null;
         try {
             resFridge = fridgeServiceClient.getFridgeIngredients(token, isExistReq);
-            if (resFridge == null) throw new NoContentException("냉장고에 모든 재료가 존재함");
+            if (resFridge == null) throw new HaveAllIngredientInRecipeException("냉장고에 모든 재료가 존재함");
         } catch (Exception e) {
-            throw new NoContentException("냉장고에 모든 재료가 존재함");
+            throw new HaveAllIngredientInRecipeException("냉장고에 모든 재료가 존재함");
         }
 
         List<IngredientId> reqIngredientIdList = resFridge.getBody()
@@ -479,6 +480,6 @@ public class IngredientService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(responseService.getSuccessMessageResult("부족한 재료 목록 조회 성공"));
     }
 }

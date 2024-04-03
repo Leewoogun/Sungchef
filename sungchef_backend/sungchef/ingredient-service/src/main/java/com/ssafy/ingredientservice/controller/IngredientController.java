@@ -104,12 +104,8 @@ public class IngredientController {
 			String token = request.getHeader("Authorization");
 			String userSnsId = jwtService.getUserSnsId(request);
 			log.info("/need/ : {}", req.recipeId());
-			return ResponseEntity.ok().body(
-				responseService.getSuccessSingleResult(
-					ingredientService.addIngredientIdToCook(userSnsId, token, req.recipeId())
-					, "부족한 재료 목록 조회 성공"
-				)
-			);
+			return	ingredientService.addIngredientIdToCook(userSnsId, token, req.recipeId());
+
 		} catch (HaveAllIngredientInRecipeException e) {
 			// exception은 아닌거같아서 추후 수정 필요
 			return responseService.NO_CONTENT();
