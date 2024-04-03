@@ -21,8 +21,8 @@ spring:
       password: ENC(1QNBSLXM2ScCKcUHq4fXEWSHIXqeMUCn5pXkDCQBV4Q=)
   servlet:
     multipart:
-      max-file-size: 50MB
-      max-request-size: 100MB
+      max-file-size: 100MB
+      max-request-size: 200MB
 
 logging:
   level:
