@@ -93,9 +93,9 @@ public class FridgeService {
 			newFridge.setIngredientId(ingredientIdInt);
 			newFridge.setFridgeCreateDate(todayFridge);
 			Fridge savedFridge = fridgeRepository.save(newFridge);
-			return true;
 		}
-		return false;
+		
+		return true;
 	}
 
 
