@@ -1,8 +1,6 @@
 package com.ssafy.ingredientservice.service;
 
 
-import static com.ssafy.ingredientservice.util.sungchefEnum.IngredientType.*;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.ingredientservice.db.entity.RecipeIngredient;
@@ -70,7 +68,7 @@ public class IngredientService {
 
 		for (RecipeIngredientInfo info : recipeIngredientInfoList) {
 
-			List<RecipeIngredientDTO> recipeIngredientList = info.getRecipeIngredientDTOList();
+			List<RecipeIngredientDTO> recipeIngredientList = info.getRecipeIngredientList();
 
             for (RecipeIngredient recipeIngredient : searchRecipeIngredients){
                 Optional<Ingredient> searchIngredient = ingredientRepository.findIngredientByIngredientId(recipeIngredient.getIngredientId());
@@ -423,7 +421,7 @@ public class IngredientService {
                             .recipeIngredientName(ingredientRes.getIngredientName())
                             .recipeIngredientVolume(volume)
                             .build();
-                        recipeIngredientInfo.getRecipeIngredientDTOList().add(recipeIngredientDTO);
+                        recipeIngredientInfo.getRecipeIngredientList().add(recipeIngredientDTO);
                     }
                     break; // 해당 타입에 대한 정보를 모두 추가했으므로 다음 타입으로 넘어갑니다.
                 }
