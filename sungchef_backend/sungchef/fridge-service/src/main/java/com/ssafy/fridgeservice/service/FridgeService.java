@@ -20,6 +20,7 @@ import com.ssafy.fridgeservice.dto.response.IngredientIdListRes;
 import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
 
 import jakarta.transaction.Transactional;
+import jdk.jfr.Frequency;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -86,17 +87,24 @@ public class FridgeService {
 		LocalDate today = LocalDate.now();
 		DateTimeFormatter todayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String todayFridge = today.format(todayFormatter);
+		log.info("addIngredients : {}", req);
 		for (IngredientId ingredientId : ingredientIdList) {
-			Optional<Fridge> checkIngredient = fridgeRepository.findByIngredientId(ingredientId.getIngredientId());
+			Optional<Fridge> checkIngredient = fridgeRepository.findByIngredientIdAndUserSnsId(ingredientId.getIngredientId(), userSnsId);
 			if (checkIngredient.isPresent()) continue;
-			Fridge newFridge = new Fridge();
-			int ingredientIdInt = ingredientId.getIngredientId();
-			newFridge.setUserSnsId(userSnsId);
-			newFridge.setIngredientId(ingredientIdInt);
-			newFridge.setFridgeCreateDate(todayFridge);
-			Fridge savedFridge = fridgeRepository.save(newFridge);
+			fridgeRepository.save(
+				Fridge.builder()
+					.userSnsId(userSnsId)
+					.ingredientId(ingredientId.getIngredientId())
+					.fridgeCreateDate(todayFridge)
+					.build()
+			);
+			// Fridge newFridge = new Fridge();
+			// int ingredientIdInt = ingredientId.getIngredientId();
+			// newFridge.setUserSnsId(userSnsId);
+			// newFridge.setIngredientId(ingredientIdInt);
+			// newFridge.setFridgeCreateDate(todayFridge);
+			// Fridge savedFridge = fridgeRepository.save(newFridge);
 		}
-
 		return true;
 	}
 
