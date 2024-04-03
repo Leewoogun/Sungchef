@@ -5,6 +5,7 @@ import com.ssafy.ingredientservice.dto.request.IngredientListReq;
 import com.ssafy.ingredientservice.dto.request.RecipeIdReq;
 import com.ssafy.ingredientservice.dto.response.*;
 import com.ssafy.ingredientservice.exception.exception.IngredientNotFoundException;
+import com.ssafy.ingredientservice.exception.exception.NoContentException;
 import com.ssafy.ingredientservice.service.IngredientService;
 import com.ssafy.ingredientservice.service.ResponseService;
 import com.ssafy.ingredientservice.exception.exception.HaveAllIngredientInRecipeException;
@@ -87,13 +88,20 @@ public class IngredientController {
 			String userSnsId = jwtService.getUserSnsId(request);
 			log.info("/need/ingredient/{recipeId} : {}", recipeId);
 			RecipeIngredientListRes res = ingredientService.getIngredientIdToCook(userSnsId, token, recipeId);
-			return ResponseEntity.ok().body(res);
+			return ResponseEntity.ok().body(
+				responseService.getSuccessSingleResult(
+					res
+					, "필요한 재료 목록 조회 완료"
+				)
+			);
 		} catch (HaveAllIngredientInRecipeException e) {
-			// exception은 아닌거같아서 추후 수정 필요
+			throw new HaveAllIngredientInRecipeException("냉장고에 모든 재료가 존재함");
+		} catch (NoContentException e) {
 			return responseService.NO_CONTENT();
 		} catch (RecipeNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
@@ -104,10 +112,8 @@ public class IngredientController {
 			String token = request.getHeader("Authorization");
 			String userSnsId = jwtService.getUserSnsId(request);
 			log.info("/need/ : {}", req.recipeId());
-			return	ingredientService.addIngredientIdToCook(userSnsId, token, req.recipeId());
-
+			return ingredientService.addIngredientIdToCook(userSnsId, token, req.recipeId());
 		} catch (HaveAllIngredientInRecipeException e) {
-			// exception은 아닌거같아서 추후 수정 필요
 			return responseService.NO_CONTENT();
 		} catch (RecipeNotFoundException e) {
 			return responseService.BAD_REQUEST();

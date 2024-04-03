@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.ingredientservice.db.entity.OCRResult;
 import com.ssafy.ingredientservice.exception.exception.ConvertOCRException;
@@ -75,7 +76,7 @@ public class OCRApiService {
 				response.append(inputLine);
 			}
 			br.close();
-			ObjectMapper mapper = new ObjectMapper();
+			ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			OCRResult result =  mapper.readValue(response.toString(), OCRResult.class);
 			return result;
 		} catch (Exception e) {

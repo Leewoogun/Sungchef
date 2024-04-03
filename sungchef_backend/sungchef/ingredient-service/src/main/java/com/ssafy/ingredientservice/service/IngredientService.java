@@ -25,6 +25,7 @@ import com.ssafy.ingredientservice.dto.response.IngredientRes;
 import com.ssafy.ingredientservice.dto.response.RecipeIngredientListRes;
 import com.ssafy.ingredientservice.dto.response.IngredientListRes;
 import com.ssafy.ingredientservice.exception.exception.BaseException;
+import com.ssafy.ingredientservice.exception.exception.FeignException;
 import com.ssafy.ingredientservice.exception.exception.HaveAllIngredientInRecipeException;
 import com.ssafy.ingredientservice.exception.exception.IngredientNotFoundException;
 import com.ssafy.ingredientservice.exception.exception.NoContentException;
@@ -40,6 +41,9 @@ import com.ssafy.ingredientservice.util.sungchefEnum.IngredientType;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,6 +52,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -303,7 +308,7 @@ public class IngredientService {
     @Transactional
     public String insertOCR(OCRResult ocrResult) {
         String uuid = UUID.randomUUID().toString();
-
+        System.out.println(ocrResult);
         List<IngredientOCR> convertIngredient = ocrResult
             .images()
             .get(0)
@@ -311,8 +316,10 @@ public class IngredientService {
             .result()
             .subResults()
             .get(0).items().stream()
+            .filter(item -> item.name() != null)
             .map(
-                item -> IngredientOCR.builder()
+                item ->
+                    IngredientOCR.builder()
                     .ingredientOCRId(-1)
                     .ingredientOCRUUID(uuid)
                     .ingredientOCRText(item.name().text())
@@ -386,10 +393,12 @@ public class IngredientService {
 
         // fridgeClient 통신해서 부족한 ingredientId 정보 가져오기
         ResponseEntity<ClientIngredientIdListRes> resFridge = null;
+        List<Integer> ingredientIdReqList = null;
         try {
             resFridge = fridgeServiceClient.getFridgeIngredients(token, isExistReq);
+            ingredientIdReqList = resFridge.getBody().ingredientIdList().stream().toList();
         } catch (Exception e) {
-            throw new NoContentException("냉장고에 모든 재료가 존재함");
+            throw new HaveAllIngredientInRecipeException("냉장고에 모든 재료가 존재함");
         }
         // ResponseEntity<ClientIngredientIdListRes> resFridge = fridgeServiceClient.getFridgeIngredients(token, isExistReq);
         // log.info("resFridge:{}",resFridge);
@@ -399,7 +408,7 @@ public class IngredientService {
         // ObjectMapper lackingIngredientIdListParser = new ObjectMapper();
         // IngredientListReq ingredientListReq = lackingIngredientIdListParser.readValue(ingredientIdListString,
         //     IngredientListReq.class);
-        List<Integer> ingredientIdReqList = resFridge.getBody().ingredientIdList().stream().toList();
+
         IngredientListReq ingredientListReq = new IngredientListReq();
         ingredientListReq.setIngredientIdList(ingredientIdReqList);
         // 2. 재료 id List 로 재료 상세 정보 얻어오기
@@ -460,15 +469,16 @@ public class IngredientService {
 
         // fridgeClient 통신해서 부족한 ingredientId 정보 가져오기
         ResponseEntity<ClientIngredientIdListRes> resFridge = null;
+        List<Integer> ingredientIdReqList = null;
+
         try {
             resFridge = fridgeServiceClient.getFridgeIngredients(token, isExistReq);
-            if (resFridge == null) throw new HaveAllIngredientInRecipeException("냉장고에 모든 재료가 존재함");
+            ingredientIdReqList = resFridge.getBody().ingredientIdList().stream().toList();
         } catch (Exception e) {
             throw new HaveAllIngredientInRecipeException("냉장고에 모든 재료가 존재함");
         }
 
-        List<IngredientId> reqIngredientIdList = resFridge.getBody()
-            .ingredientIdList()
+        List<IngredientId> reqIngredientIdList = ingredientIdReqList
             .stream().map(
                 integer -> IngredientId.builder()
                     .ingredientId(integer)
