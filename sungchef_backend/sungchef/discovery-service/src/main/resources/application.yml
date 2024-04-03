@@ -4,7 +4,10 @@ server:
 spring:
   application:
     name: discovery-service
-
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 eureka:
   client:
     register-with-eureka: false
