@@ -8,6 +8,7 @@ import com.ssafy.ingredientservice.db.entity.Ingredient;
 import com.ssafy.ingredientservice.db.entity.IngredientOCR;
 import com.ssafy.ingredientservice.db.entity.OCRResult;
 import com.ssafy.ingredientservice.db.entity.client.ClientIngredientIdListRes;
+import com.ssafy.ingredientservice.db.entity.client.ClientIngredientListReq;
 import com.ssafy.ingredientservice.db.repository.IngredientOCRRepository;
 import com.ssafy.ingredientservice.db.repository.IngredientRepository;
 import com.ssafy.ingredientservice.db.repository.RecipeIngredientRepository;
@@ -16,6 +17,7 @@ import com.ssafy.ingredientservice.dto.request.IngredientListReq;
 import com.ssafy.ingredientservice.dto.response.ConvertProduct;
 import com.ssafy.ingredientservice.dto.response.ConvertProductInfo;
 import com.ssafy.ingredientservice.dto.response.ConvertProductListRes;
+import com.ssafy.ingredientservice.dto.response.IngredientId;
 import com.ssafy.ingredientservice.dto.response.RecipeIngredientInfo;
 import com.ssafy.ingredientservice.dto.response.IngredientInfo;
 import com.ssafy.ingredientservice.dto.response.RecipeIngredientDTO;
@@ -367,8 +369,7 @@ public class IngredientService {
     * @param : String recipeId
     * @return : RecipeIngredientListRes (레시피id, 필요한 재료 정보 (재료 타입, (재료id, 재료이름, 재료양 )))
     * */
-    public RecipeIngredientListRes getIngredientIdToCook(String userSnsId, String token, String recipeIdStr) throws
-        JsonProcessingException {
+    public RecipeIngredientListRes getIngredientIdToCook(String userSnsId, String token, String recipeIdStr) {
 
         Integer recipeId = Integer.valueOf(recipeIdStr);
 
@@ -441,5 +442,43 @@ public class IngredientService {
         }
         // 최종적으로 구성된 RecipeIngredientListRes 객체를 반환합니다.
         return res;
+    }
+
+    public ResponseEntity<?> addIngredientIdToCook(String userSnsId, String token, String recipeIdStr) {
+        Integer recipeId = Integer.valueOf(recipeIdStr);
+
+        // DB에서 필요한 ingredientId 정보 가져오기
+        List<RecipeIngredient> totalRecipeIngredients = recipeIngredientRepository.findRecipeIngredientsByRecipeId(recipeId);
+        IngredientListReq isExistReq = new IngredientListReq();
+        List<Integer> ingredientIdList = new ArrayList<>();
+        for (RecipeIngredient totalRecipeIngredient : totalRecipeIngredients) {
+            Integer ingredientId = (Integer) totalRecipeIngredient.getIngredientId();
+            ingredientIdList.add(ingredientId);
+        }
+        isExistReq.setIngredientIdList(ingredientIdList);
+
+        // fridgeClient 통신해서 부족한 ingredientId 정보 가져오기
+        ResponseEntity<ClientIngredientIdListRes> resFridge = null;
+        try {
+            resFridge = fridgeServiceClient.getFridgeIngredients(token, isExistReq);
+            if (resFridge == null) throw new NoContentException("냉장고에 모든 재료가 존재함");
+        } catch (Exception e) {
+            throw new NoContentException("냉장고에 모든 재료가 존재함");
+        }
+
+        List<IngredientId> reqIngredientIdList = resFridge.getBody()
+            .ingredientIdList()
+            .stream().map(
+                integer -> IngredientId.builder()
+                    .ingredientId(integer)
+                    .build()
+            ).toList();
+        ClientIngredientListReq req = ClientIngredientListReq.builder().ingredientIdList(reqIngredientIdList).build();
+        try {
+            ResponseEntity<?> result = fridgeServiceClient.addIngredients(token, req);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok().build();
     }
 }

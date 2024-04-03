@@ -131,6 +131,7 @@ public class FridgeService {
 				}
 			}
 			ingredientIdListRes.setIngredientIdList(afterCheckIngredients);
+			log.info("ingredientIdListRes_existCase:{}",ingredientIdListRes);
 			return ingredientIdListRes;
 		}
 	}
