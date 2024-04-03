@@ -2,6 +2,7 @@ package com.ssafy.fridgeservice.controller;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
 import com.ssafy.fridgeservice.service.FridgeService;
 import com.ssafy.fridgeservice.service.ResponseService;
 import com.ssafy.fridgeservice.exception.exception.IngredientNotFoundException;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +37,8 @@ public class FridgeController {
 	private final IngredientServiceClient ingredientServiceClient;
 	private final FridgeService fridgeService;
 
-
+	@Value("${django.url}")
+	private String djangoUrl;
 	// @GetMapping("/communication")
 	// public String fridgeIngredientTest(HttpServletRequest request) {
 	// 	log.debug("fridgeController - fridgeIngredientTest");
@@ -76,6 +79,15 @@ public class FridgeController {
 			log.debug("userSnsId:{}",userSnsId);
 			log.debug("req:{}",req);
 			boolean isAllRemoved = fridgeService.removeIngredients(userSnsId, token, req);
+
+			// 비동기 분석 http 요청
+			WebClient webClient = WebClient.create(djangoUrl);
+			webClient.get()
+					.uri("/ingredient/"+userSnsId)
+					.retrieve()
+					.bodyToMono(Void.class)
+					.subscribe();
+
 			log.debug("isAllRemoved:{}",isAllRemoved);
 			if (isAllRemoved) {
 				return ResponseEntity.status(204).body(responseService.NO_CONTENT());
@@ -101,6 +113,15 @@ public class FridgeController {
 			log.debug("userSnsId:{}",userSnsId);
 			log.debug("req:{}",req);
 			boolean isAllAdded = fridgeService.addIngredients(userSnsId, token, req);
+
+			// 비동기 분석 http 요청
+			WebClient webClient = WebClient.create(djangoUrl);
+			webClient.get()
+					.uri("/ingredient/"+userSnsId)
+					.retrieve()
+					.bodyToMono(Void.class)
+					.subscribe();
+
 			return ResponseEntity.ok(
 				responseService.getSuccessMessageResult("재료 등록 성공")
 			);
