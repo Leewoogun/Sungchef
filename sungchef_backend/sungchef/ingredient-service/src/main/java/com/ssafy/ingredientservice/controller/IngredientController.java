@@ -87,7 +87,12 @@ public class IngredientController {
 			String userSnsId = jwtService.getUserSnsId(request);
 			log.info("/need/ingredient/{recipeId} : {}", recipeId);
 			RecipeIngredientListRes res = ingredientService.getIngredientIdToCook(userSnsId, token, recipeId);
-			return ResponseEntity.ok().body(res);
+			return ResponseEntity.ok().body(
+				responseService.getSuccessSingleResult(
+					res
+					, "필요한 재료 목록 조회 완료"
+				)
+			);
 		} catch (HaveAllIngredientInRecipeException e) {
 			// exception은 아닌거같아서 추후 수정 필요
 			return responseService.NO_CONTENT();
@@ -104,8 +109,7 @@ public class IngredientController {
 			String token = request.getHeader("Authorization");
 			String userSnsId = jwtService.getUserSnsId(request);
 			log.info("/need/ : {}", req.recipeId());
-			return	ingredientService.addIngredientIdToCook(userSnsId, token, req.recipeId());
-
+			return ingredientService.addIngredientIdToCook(userSnsId, token, req.recipeId());
 		} catch (HaveAllIngredientInRecipeException e) {
 			// exception은 아닌거같아서 추후 수정 필요
 			return responseService.NO_CONTENT();
