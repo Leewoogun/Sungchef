@@ -66,15 +66,11 @@ public class FridgeService {
 	@Transactional
 	public boolean removeIngredients (String userSnsId, String token, IngredientList req) {
 		List<IngredientId> removeIngredientIdList = req.getIngredientIdList();
-		int intendedRemovalSize = removeIngredientIdList.size();
 		for (IngredientId removeIngredientId : removeIngredientIdList) {
 			int ingredientId = removeIngredientId.getIngredientId();
 			int deletedIngredients = fridgeRepository.deleteByIngredientIdAndUserSnsId(ingredientId, userSnsId);
-			if (intendedRemovalSize == deletedIngredients) {
-				return true;
-			}
 		}
-		return false;
+		return true;
 	}
 
 

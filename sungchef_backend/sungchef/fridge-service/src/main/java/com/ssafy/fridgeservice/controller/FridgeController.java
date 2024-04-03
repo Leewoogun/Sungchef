@@ -90,12 +90,12 @@ public class FridgeController {
 
 			log.debug("isAllRemoved:{}",isAllRemoved);
 			if (isAllRemoved) {
-				return ResponseEntity.status(204).body(responseService.NO_CONTENT());
+				return responseService.NO_CONTENT();
 			}
-			return ResponseEntity.status(404).body(responseService.BAD_REQUEST());
+			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
 			log.info(e.getMessage());
-			return ResponseEntity.status(500).body(responseService.INTERNAL_SERVER_ERROR());
+			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
 
