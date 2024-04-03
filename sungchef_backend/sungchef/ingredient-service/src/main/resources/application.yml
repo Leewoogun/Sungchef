@@ -14,6 +14,10 @@ spring:
     url: ENC(PtEbLH18rwaX2zB8Qg07dchroQxyW9c+GCzOc6guqa/H0aMmugKb+ZCoiEJESkbQg2MYVI1pywUrdICd/arMxZNKr/u4cJGgOFkVLGXiGk/Rh9YOmIJOdLNV34J9vXXnXwMWRcV5QhhGNvep1tfqKdxbmSMogccA)
     username: ENC(TfuU1Hc9zWv8LfvfBAZZBw==)
     password: ENC(CdQdTRqvHnZXbLGLLzE2X54M10IfeRPDljctYBS3cRI=)
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 
 logging:
   level:

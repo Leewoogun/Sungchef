@@ -19,6 +19,8 @@ public enum ErrorCode {
 	INVALID_URL(404, "C003", "URL NOT FOUND"),
 	METHOD_NOT_ALLOWED(405, "C004", " Invalid Input Value"),
 
+	Empty_Fridge(204, "F001", "Empty Fridge"),
+
 	INTERNAL_SERVER_ERROR(500, "S001", "SERVER_ERROR"),
 	SECURITY_ERROR(500, "S002", "SECURITY ERROR"),
 
