@@ -87,6 +87,8 @@ public class FridgeService {
 		DateTimeFormatter todayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String todayFridge = today.format(todayFormatter);
 		for (IngredientId ingredientId : ingredientIdList) {
+			Optional<Fridge> checkIngredient = fridgeRepository.findByIngredientId(ingredientId.getIngredientId());
+			if (checkIngredient.isPresent()) continue;
 			Fridge newFridge = new Fridge();
 			int ingredientIdInt = ingredientId.getIngredientId();
 			newFridge.setUserSnsId(userSnsId);
@@ -94,7 +96,7 @@ public class FridgeService {
 			newFridge.setFridgeCreateDate(todayFridge);
 			Fridge savedFridge = fridgeRepository.save(newFridge);
 		}
-		
+
 		return true;
 	}
 
