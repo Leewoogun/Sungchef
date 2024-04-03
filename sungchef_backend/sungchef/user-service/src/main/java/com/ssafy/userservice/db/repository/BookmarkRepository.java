@@ -19,4 +19,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Integer> {
 	Page<BookmarkMapping> findAllByUserSnsId(String userSnsId, Pageable pageable);
 
 	int countAllByUserSnsId(String userSnsId);
+
+	List<Bookmark> findAllByUserSnsIdAndRecipeIdIn(String userSnsId, List<Integer> recipeIdList);
 }

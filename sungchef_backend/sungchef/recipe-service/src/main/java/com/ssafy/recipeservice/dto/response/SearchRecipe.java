@@ -12,5 +12,6 @@ public class SearchRecipe {
 	String recipeCookingTime;
 	String recipeVolume;
 	int recipeVisitCount;
+	int recipeBookmarkCount;
 	boolean isBookmark;
 }

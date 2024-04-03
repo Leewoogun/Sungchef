@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.ssafy.userservice.dto.request.FoodIdListReq;
+import com.ssafy.userservice.dto.response.fridge.Food;
+import com.ssafy.userservice.dto.response.fridge.FoodList;
+import com.ssafy.userservice.service.client.RecipeServiceClient;
+import com.ssafy.userservice.util.result.SingleResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,17 +38,25 @@ import lombok.extern.slf4j.Slf4j;
 public class SurveyController {
 	private final ResponseService responseService;
 	private final SurveyService surveyService;
+	private final RecipeServiceClient recipeServiceClient;
 	private final JwtService jwtService;
 	@GetMapping("")
-	public ResponseEntity<?> getSurvey() {
+	public ResponseEntity<?> getSurvey(HttpServletRequest request) {
+		String token = request.getHeader("Authorization");
+		List<Integer> foodIdList =  Arrays.asList(93,160,102,74,214,82,75,94,238,184,168,90,190,157,88,205,266,19,49,173);
 		// TODO
+		FoodIdListReq req = FoodIdListReq.builder()
+				.foodIdList(foodIdList)
+				.build();
+		ResponseEntity<SingleResult<FoodList>> res = recipeServiceClient.getFoodList(req, token);
+		List<Food> FoodListRes = res.getBody().getData().getFoodList();
+
 		List<FoodInfo> surveyList = new ArrayList<>();
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < foodIdList.size(); i++) {
 			surveyList.add(FoodInfo.builder()
-				.foodImage(
-					"https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG")
-				.foodId(i)
-				.foodName("고양이" + i)
+				.foodImage(FoodListRes.get(i).getFoodImage())
+				.foodId(foodIdList.get(i))
+				.foodName(FoodListRes.get(i).getFoodName())
 				.build());
 		}
 
@@ -62,11 +75,9 @@ public class SurveyController {
 	public ResponseEntity<?> submitSurvey(HttpServletRequest request, @RequestBody @Valid final SubmitSurveyReq req) {
 		log.debug("POST /submit -> foodIdList : {}", Arrays.toString(req.foodIdList().toArray()));
 		String userSnsId = jwtService.getUserSnsId(request);
+		surveyService.submitSurvey(userSnsId, req);
 		return ResponseEntity.ok(
-			responseService.getSuccessSingleResult(
-				surveyService.submitSurvey(userSnsId, req)
-				,"설문 제출 성공"
-			)
+			responseService.getSuccessMessageResult("설문 제출 성공")
 		);
 	}
 

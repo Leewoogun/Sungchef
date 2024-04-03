@@ -13,10 +13,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.ssafy.recipeservice.exception.error.ErrorResponse;
+import com.ssafy.recipeservice.exception.exception.FeignException;
 import com.ssafy.recipeservice.exception.exception.JwtException;
 import com.ssafy.recipeservice.exception.exception.JwtExpiredException;
 import com.ssafy.recipeservice.exception.exception.PageConvertException;
 import com.ssafy.recipeservice.service.ErrorResponseService;
+import com.ssafy.recipeservice.util.exception.FoodNotFoundException;
+import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -102,6 +105,21 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(PageConvertException.class)
 	protected ResponseEntity<ErrorResponse> handlePageConvertException(PageConvertException e) {
 		return errorResponseService.getErrorResponse(PAGE_NOT_INT, HttpStatus.BAD_REQUEST, e);
+	}
+
+	@ExceptionHandler(RecipeNotFoundException.class)
+	protected ResponseEntity<ErrorResponse> handleRecipeNotFoundException(RecipeNotFoundException e) {
+		return errorResponseService.getErrorResponse(END_OF_PAGE, HttpStatus.NO_CONTENT, e);
+	}
+
+	@ExceptionHandler(FoodNotFoundException.class)
+	protected ResponseEntity<ErrorResponse> handleFoodNotFoundException(FoodNotFoundException e) {
+		return errorResponseService.getErrorResponse(FOOD_NOT_FOUNT, HttpStatus.NOT_FOUND, e);
+	}
+
+	@ExceptionHandler(FeignException.class)
+	protected ResponseEntity<ErrorResponse> handleFeignException(FeignException e) {
+		return errorResponseService.getErrorResponse(FEIGN_CONNECT_ERROR, HttpStatus.INTERNAL_SERVER_ERROR, e);
 	}
 
 	/**

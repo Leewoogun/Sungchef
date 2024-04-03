@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @FeignClient("ingredient-service")
 public interface IngredientServiceClient {
 	@GetMapping("/ingredient/{recipeId}")
-	ResponseEntity<SingleResult<RecipeIngredientListRes>> getUsedIngredientsInRecipe(@PathVariable("recipeId") final String recipeId, @RequestHeader("Authorization") String token);
+	ResponseEntity<SingleResult<RecipeIngredientListRes>> getUsedIngredientsInRecipe(
+		@PathVariable("recipeId") final String recipeId
+		, @RequestHeader("Authorization") String token
+	);
 
 }
