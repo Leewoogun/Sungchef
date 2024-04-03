@@ -41,6 +41,9 @@ import com.ssafy.ingredientservice.util.sungchefEnum.IngredientType;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MultipartFile;
@@ -466,15 +469,16 @@ public class IngredientService {
 
         // fridgeClient 통신해서 부족한 ingredientId 정보 가져오기
         ResponseEntity<ClientIngredientIdListRes> resFridge = null;
+        List<Integer> ingredientIdReqList = null;
+
         try {
             resFridge = fridgeServiceClient.getFridgeIngredients(token, isExistReq);
-            if (resFridge == null) throw new HaveAllIngredientInRecipeException("냉장고에 모든 재료가 존재함");
+            ingredientIdReqList = resFridge.getBody().ingredientIdList().stream().toList();
         } catch (Exception e) {
             throw new HaveAllIngredientInRecipeException("냉장고에 모든 재료가 존재함");
         }
 
-        List<IngredientId> reqIngredientIdList = resFridge.getBody()
-            .ingredientIdList()
+        List<IngredientId> reqIngredientIdList = ingredientIdReqList
             .stream().map(
                 integer -> IngredientId.builder()
                     .ingredientId(integer)

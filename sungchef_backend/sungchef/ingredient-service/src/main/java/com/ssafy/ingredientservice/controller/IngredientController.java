@@ -97,7 +97,6 @@ public class IngredientController {
 		} catch (HaveAllIngredientInRecipeException e) {
 			throw new HaveAllIngredientInRecipeException("냉장고에 모든 재료가 존재함");
 		} catch (NoContentException e) {
-			// exception은 아닌거같아서 추후 수정 필요
 			return responseService.NO_CONTENT();
 		} catch (RecipeNotFoundException e) {
 			return responseService.BAD_REQUEST();
@@ -115,7 +114,6 @@ public class IngredientController {
 			log.info("/need/ : {}", req.recipeId());
 			return ingredientService.addIngredientIdToCook(userSnsId, token, req.recipeId());
 		} catch (HaveAllIngredientInRecipeException e) {
-			// exception은 아닌거같아서 추후 수정 필요
 			return responseService.NO_CONTENT();
 		} catch (RecipeNotFoundException e) {
 			return responseService.BAD_REQUEST();
