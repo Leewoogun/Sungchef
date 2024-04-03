@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -303,7 +304,7 @@ public class IngredientService {
     @Transactional
     public String insertOCR(OCRResult ocrResult) {
         String uuid = UUID.randomUUID().toString();
-
+        System.out.println(ocrResult);
         List<IngredientOCR> convertIngredient = ocrResult
             .images()
             .get(0)
@@ -311,8 +312,10 @@ public class IngredientService {
             .result()
             .subResults()
             .get(0).items().stream()
+            .filter(item -> item.name() != null)
             .map(
-                item -> IngredientOCR.builder()
+                item ->
+                    IngredientOCR.builder()
                     .ingredientOCRId(-1)
                     .ingredientOCRUUID(uuid)
                     .ingredientOCRText(item.name().text())
