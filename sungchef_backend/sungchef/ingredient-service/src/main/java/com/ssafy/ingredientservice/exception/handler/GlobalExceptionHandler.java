@@ -14,8 +14,11 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.ssafy.ingredientservice.exception.error.ErrorResponse;
 import com.ssafy.ingredientservice.exception.exception.ConvertOCRException;
+import com.ssafy.ingredientservice.exception.exception.FeignException;
+import com.ssafy.ingredientservice.exception.exception.HaveAllIngredientInRecipeException;
 import com.ssafy.ingredientservice.exception.exception.JwtException;
 import com.ssafy.ingredientservice.exception.exception.JwtExpiredException;
+import com.ssafy.ingredientservice.exception.exception.NoContentException;
 import com.ssafy.ingredientservice.service.ErrorResponseService;
 
 import lombok.RequiredArgsConstructor;
@@ -103,6 +106,22 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ErrorResponse> handleConvertOCRException(ConvertOCRException e) {
 		return errorResponseService.getErrorResponse(INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR, e);
 	}
+
+	@ExceptionHandler(FeignException.class)
+	protected ResponseEntity<ErrorResponse> handleFeignException(FeignException e) {
+		return errorResponseService.getErrorResponse(FEIGN_CONNECT_ERROR, HttpStatus.INTERNAL_SERVER_ERROR, e);
+	}
+	@ExceptionHandler(NoContentException.class)
+	protected ResponseEntity<ErrorResponse> handleNoContentException(NoContentException e) {
+		return errorResponseService.getErrorResponse(HAVE_ALL_INGREDIENT, HttpStatus.NO_CONTENT, e);
+	}
+
+	@ExceptionHandler(HaveAllIngredientInRecipeException.class)
+	protected ResponseEntity<ErrorResponse> handleHaveAllIngredientInRecipeException(HaveAllIngredientInRecipeException e) {
+		return errorResponseService.getErrorResponse(USER_RECIPE_NOT_EXIST, HttpStatus.NO_CONTENT, e);
+	}
+
+
 
 	/**
 	 * Authentication 객체가 필요한 권한을 보유하지 않은 경우 발생합

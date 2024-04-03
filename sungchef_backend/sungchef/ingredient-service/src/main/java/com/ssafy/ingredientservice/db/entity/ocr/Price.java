@@ -7,8 +7,6 @@ public record Price(
 	UnitPrice unitPrice,
 	String text,
 	Formatted formatted,
-	String keyText,
-	double confidenceScore,
 	ArrayList<BoundingPoly> boundingPolys
 )
 {

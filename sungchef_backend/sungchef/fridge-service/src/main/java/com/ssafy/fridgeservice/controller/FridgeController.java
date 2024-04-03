@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.fridgeservice.dto.request.IngredientList;
 import com.ssafy.fridgeservice.dto.request.IngredientListReq;
 import com.ssafy.fridgeservice.dto.response.IngredientIdListRes;
+import com.ssafy.fridgeservice.exception.exception.EmptyFridgeException;
 import com.ssafy.fridgeservice.service.JwtService;
 import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
 import com.ssafy.fridgeservice.service.FridgeService;
@@ -55,10 +56,12 @@ public class FridgeController {
 	public ResponseEntity<?> getIngredientInFridge(HttpServletRequest request) {
 		try {
 			String userSnsId = jwtService.getUserSnsId(request);
-			log.debug("userSnsId:{}",userSnsId);
+			log.debug("userSnsId:{}", userSnsId);
 			String token = request.getHeader("Authorization");
-			log.debug("token:{}",token);
+			log.debug("token:{}", token);
 			return fridgeService.getIngredientInFridge(userSnsId, token);
+		} catch (EmptyFridgeException e) {
+			throw new EmptyFridgeException("냉장고가 비었습니다");
 		} catch (Exception e) {
 			log.info(e.getMessage());
 			return ResponseEntity.status(404).body(responseService.BAD_REQUEST());

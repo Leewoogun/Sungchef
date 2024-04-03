@@ -13,6 +13,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.ssafy.fridgeservice.exception.error.ErrorResponse;
+import com.ssafy.fridgeservice.exception.exception.EmptyFridgeException;
 import com.ssafy.fridgeservice.exception.exception.JwtException;
 import com.ssafy.fridgeservice.exception.exception.JwtExpiredException;
 import com.ssafy.fridgeservice.service.ErrorResponseService;
@@ -96,6 +97,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(JwtExpiredException.class)
 	protected ResponseEntity<ErrorResponse> handleJwtExpiredException(JwtExpiredException e) {
 		return errorResponseService.getErrorResponse(JWT_TOKEN_EXPIRED, HttpStatus.UNAUTHORIZED, e);
+	}
+
+	@ExceptionHandler(EmptyFridgeException.class)
+	protected ResponseEntity<ErrorResponse> handelEmptyFridgeException(EmptyFridgeException e) {
+		return errorResponseService.getErrorResponse(Empty_Fridge, HttpStatus.NO_CONTENT, e);
 	}
 
 	/**
