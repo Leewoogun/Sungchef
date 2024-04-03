@@ -20,6 +20,7 @@ import com.ssafy.userservice.exception.exception.UserExistException;
 import com.ssafy.userservice.exception.exception.UserNeedSurveyException;
 import com.ssafy.userservice.exception.exception.UserNotCreatedException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -58,6 +59,9 @@ public class UserService {
 	private final BookmarkService bookmarkService;
 	private final RecipeServiceClient recipeServiceClient;
 
+	@Value("${user.default.image}")
+	String userDefaultImage;
+
 	public void userExist(String userSnsId) {
 		Optional<User> user = userRepository.findByUserSnsId(userSnsId);
 		if (user.isPresent()) throw new UserExistException("이미 존재하는 유저");
@@ -81,6 +85,7 @@ public class UserService {
 						.userGenderType(req.userGender())
 						.userSnsType(req.userSnsType())
 						.userNickname(req.userNickName())
+						.userImage(userDefaultImage)
 						.userBirthDate(req.userBirthdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
 				.build()
 		);
@@ -107,6 +112,15 @@ public class UserService {
 			.jwtToken(jwtTokenProvider.generateToken(authentication, req.userSnsId()))
 			.needSurvey(!user.isUserIsSurvey())
 			.build();
+	}
+
+	public boolean autoLoginUser(String userSnsId) {
+
+		Optional<User> selectUser = userRepository.findByUserSnsId(userSnsId);
+		if (selectUser.isEmpty()) throw new UserNotFoundException("유저가 존재하지 않음");
+		User user = selectUser.get();
+		if (!user.isUserIsSurvey()) throw new UserNeedSurveyException("설문이 필요한 유저");
+		return !user.isUserIsSurvey();
 	}
 
 	public JwtToken reissue(String refreshToken) {

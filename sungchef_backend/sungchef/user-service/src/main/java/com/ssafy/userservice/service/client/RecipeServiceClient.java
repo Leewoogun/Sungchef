@@ -31,8 +31,11 @@ public interface RecipeServiceClient {
 
 	@GetMapping("/recipe/feign/makerecipecount")
 	int getUserMakeRecipeCount(@RequestHeader("Authorization") String token);
-	// @GetMapping("/fridge/need/{recipeId}")
-	// ResponseEntity<?> getIngredientIdToCook(@PathVariable("recipeId") final String recipeId);
+
+	@GetMapping("/recipe/feign/updatebookmark/{recipeId}/{isBookmark}")
+	ResponseEntity<SingleResult<?>> updateBookmark(@RequestHeader("Authorization") String token
+			,@PathVariable("recipeId") final String recipeId
+			, @PathVariable("isBookmark") final boolean isBookmark);
 
 	@GetMapping("/recipe/feign/exist/{recipeId}")
 	boolean isRecipeExist(@RequestHeader("Authorization") String token, @PathVariable("recipeId") final String recipeId);

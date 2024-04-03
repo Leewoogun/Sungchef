@@ -57,3 +57,8 @@ cloud:
 jwt:
   secret:
     ENC(iKUwCClHj209CRLCkRSQ21/darPeFv9UjDUG0/+iX+o0cGedBcHKcvSdp5vO1Pza3UiY0S9WpCkNdQ9kr0V91X2DnwPBy6DaNTHE89Y9L9heGIr+LVJ89A==)
+
+user:
+  default:
+    image:
+      ENC(xhmKRuQ2vuA1H/LuRpsYjVPE4IWKVZR/26ZI80zRwXbifsDLJAt7Ep7LSC+IQkBCI+RQWqPN7w3AEroe/VxcuyYJYYEhAaB8zf8bwZy26dI=)

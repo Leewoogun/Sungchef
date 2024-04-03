@@ -59,6 +59,7 @@ public class UserController {
 	@PostMapping("/signup")
 	public ResponseEntity<?> signUp(@Valid @RequestBody final SignUpReq req) {
 		log.debug("/signup : {}", req);
+		
 		return  ResponseEntity.ok().body(
 			responseService.getSuccessSingleResult(
 				userService.createUser(req)
@@ -80,7 +81,8 @@ public class UserController {
 	@PostMapping("/autologin")
 	public ResponseEntity<?> autologin(HttpServletRequest request) {
 		log.debug("/autologin called");
-		jwtService.getUserSnsId(request);
+		String userSnsId = jwtService.getUserSnsId(request);
+		userService.autoLoginUser(userSnsId);
 		return ResponseEntity.ok(responseService.getSuccessMessageResult("자동 로그인 성공"));
 	}
 

@@ -10,7 +10,7 @@ public enum ErrorCode {
 	// USER
 	JWT_TOKEN_EXPIRED(401, "U001", "Jwt Expired"),
 	NICKNAME_EXIST(409, "U002", "Nickname Already Exist"),
-	USER_NEED_SURVEY(403, "U003", "User Need Survey"),
+	USER_NEED_SURVEY(204, "U003", "User Need Survey"),
 	USER_RECIPE_NOT_EXIST(204, "U004", "User Recipe Not Exist"),
 	USER_NOT_FOUND(400, "U005", "User Not Found"),
 
