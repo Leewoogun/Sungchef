@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.fridgeservice.dto.request.IngredientList;
 import com.ssafy.fridgeservice.dto.request.IngredientListReq;
 import com.ssafy.fridgeservice.dto.response.IngredientIdListRes;
+import com.ssafy.fridgeservice.exception.exception.EmptyFridgeException;
 import com.ssafy.fridgeservice.service.JwtService;
 import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
 import com.ssafy.fridgeservice.service.FridgeService;
@@ -55,10 +56,12 @@ public class FridgeController {
 	public ResponseEntity<?> getIngredientInFridge(HttpServletRequest request) {
 		try {
 			String userSnsId = jwtService.getUserSnsId(request);
-			log.debug("userSnsId:{}",userSnsId);
+			log.debug("userSnsId:{}", userSnsId);
 			String token = request.getHeader("Authorization");
-			log.debug("token:{}",token);
+			log.debug("token:{}", token);
 			return fridgeService.getIngredientInFridge(userSnsId, token);
+		} catch (EmptyFridgeException e) {
+			throw new EmptyFridgeException("냉장고가 비었습니다");
 		} catch (Exception e) {
 			log.info(e.getMessage());
 			return ResponseEntity.status(404).body(responseService.BAD_REQUEST());
@@ -70,7 +73,7 @@ public class FridgeController {
 	 * @param : 유저 정보 (userSnsId, token), 재료 정보 (재료 id 리스트)
 	 * @return : http status code 204 NO CONTENT or error
 	 * */
-	@DeleteMapping("")
+	@PostMapping("/delete")
 	public ResponseEntity<?> removeIngredients(HttpServletRequest request,
 		@RequestBody final IngredientList req) {
 		try {
@@ -90,12 +93,12 @@ public class FridgeController {
 
 			log.debug("isAllRemoved:{}",isAllRemoved);
 			if (isAllRemoved) {
-				return ResponseEntity.status(204).body(responseService.NO_CONTENT());
+				return responseService.NO_CONTENT();
 			}
-			return ResponseEntity.status(404).body(responseService.BAD_REQUEST());
+			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
 			log.info(e.getMessage());
-			return ResponseEntity.status(500).body(responseService.INTERNAL_SERVER_ERROR());
+			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
 
@@ -155,7 +158,4 @@ public class FridgeController {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
-
-
-
 }

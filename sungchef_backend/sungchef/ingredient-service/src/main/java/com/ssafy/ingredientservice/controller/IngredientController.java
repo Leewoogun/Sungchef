@@ -2,6 +2,7 @@ package com.ssafy.ingredientservice.controller;
 
 import com.ssafy.ingredientservice.dto.request.ConvertImageReq;
 import com.ssafy.ingredientservice.dto.request.IngredientListReq;
+import com.ssafy.ingredientservice.dto.request.RecipeIdReq;
 import com.ssafy.ingredientservice.dto.response.*;
 import com.ssafy.ingredientservice.exception.exception.IngredientNotFoundException;
 import com.ssafy.ingredientservice.service.IngredientService;
@@ -79,7 +80,7 @@ public class IngredientController {
 
 
 	// 부족한 재료 조회
-	@PostMapping("/need/{recipeId}")
+	@GetMapping("/need/{recipeId}")
 	public ResponseEntity<?> getIngredientIdToCook(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
 		try {
 			String token = request.getHeader("Authorization");
@@ -97,6 +98,24 @@ public class IngredientController {
 		}
 	}
 
+	@PostMapping("/need")
+	public ResponseEntity<?> addIngredientIdToCook(HttpServletRequest request, @RequestBody final RecipeIdReq req) {
+		try {
+			String token = request.getHeader("Authorization");
+			String userSnsId = jwtService.getUserSnsId(request);
+			log.info("/need/ : {}", req.recipeId());
+			return	ingredientService.addIngredientIdToCook(userSnsId, token, req.recipeId());
+
+		} catch (HaveAllIngredientInRecipeException e) {
+			// exception은 아닌거같아서 추후 수정 필요
+			return responseService.NO_CONTENT();
+		} catch (RecipeNotFoundException e) {
+			return responseService.BAD_REQUEST();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return responseService.INTERNAL_SERVER_ERROR();
+		}
+	}
 
 	@GetMapping("/{recipeId}")
 	public ResponseEntity<?> getUsedIngredientsInRecipe(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
@@ -127,15 +146,11 @@ public class IngredientController {
 			String userSnsId = jwtService.getUserSnsId(request);
 			String token = request.getHeader("Authorization");
 			RecipeIngredientListRes data = ingredientService.getIngredientIdToCook(userSnsId, token, recipeId);
-			return ResponseEntity.ok().body(responseService.getSingleResult(data, "레시피 재료 조회 성공", 200));
+			return ResponseEntity.ok().body(responseService.getSingleResult(data, "냉장고 부족한 재료 조회 성공", 200));
 		} catch (Exception e) {
 			log.debug(e.getMessage());
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
-
-
-
-
 
 }
