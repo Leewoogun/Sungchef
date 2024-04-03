@@ -51,6 +51,7 @@ public class RecipeService {
 //
 //    }
 
+
     public ResponseEntity<?> getFoodList(FoodIdListReq req) throws FoodNotFoundException {
         List<RecommendFood> recommendFoodList = new ArrayList<>();
         for (Integer foodId : req.getFoodIdList()) {
@@ -68,6 +69,7 @@ public class RecipeService {
                 .build();
         return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "음식 리스트 조회 성공"));
     }
+
 
     public ResponseEntity<?> getRecipeList(RecipeIdListReq req) throws FoodNotFoundException {
         List<RecommendRecipe> recommendRecipeList = new ArrayList<>();
@@ -124,6 +126,8 @@ public class RecipeService {
                 recipeDetailRes
                 , "레시피 조회 성공"));
     }
+
+
     public ResponseEntity<?> test() {
         ResponseEntity<SingleResult<RecipeIngredientListRes>> res = ingredientServiceClient.getUsedIngredientsInRecipe("6", "asd");
         RecipeIngredientListRes recipeIngredientListResTest = res.getBody().getData();
@@ -132,6 +136,7 @@ public class RecipeService {
                 recipeIngredientListResTest
                 , "레시피 조회 성공"));
     }
+
 
     public ResponseEntity<?> recipeDetailStep(Integer recipeId) {
         Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
@@ -151,6 +156,15 @@ public class RecipeService {
         }
         return ResponseEntity.ok(responseService.getSuccessSingleResult(recipeDetailStepRes, "레시피 조회 성공"));
     }
+
+
+    /* getIngredientInRecipe : 레시피에서 필요한 재료 조회
+    * @ param : String recipeId
+    * @ return : RecipeIngredientListRes (레시피에 포함된 재료 정보 전체 조회)
+    * */
+    // public RecipeIngredientListRes getIngredientInRecipe (String recipeId) {
+    //     recipe
+    // }
 
     public ResponseEntity<?> addLogUserMakeRecipe (Integer recipeId, String userSnsId) {
         RecipeMakeLog log = recipeMakeLogRepository.save(RecipeMakeLog.builder()
@@ -190,6 +204,9 @@ public class RecipeService {
                 responseService.getSuccessMessageResult("기록 업로드 완료")
         );
     }
+
+
+
 
 
 }

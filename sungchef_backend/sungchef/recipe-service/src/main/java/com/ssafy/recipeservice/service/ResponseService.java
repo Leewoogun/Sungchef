@@ -38,6 +38,7 @@ public class ResponseService {
 		return result;
 	}
 
+
 	// 다중건 결과를 처리하는 메소드
 	public <T> ListResult<T> getSuccessListResult(List<T> list) {
 		ListResult<T> result = new ListResult<>();

@@ -1,7 +1,6 @@
 package com.ssafy.fridgeservice.controller;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,19 +11,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.fridgeservice.dto.request.IngredientList;
+import com.ssafy.fridgeservice.dto.request.IngredientListReq;
+import com.ssafy.fridgeservice.dto.response.IngredientIdListRes;
+import com.ssafy.fridgeservice.service.JwtService;
 import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
-import com.ssafy.fridgeservice.service.client.UserServiceClient;
-import com.ssafy.fridgeservice.dto.request.FridgeIngredientListReq;
-import com.ssafy.fridgeservice.dto.request.user.SignUpReq;
-import com.ssafy.fridgeservice.dto.response.FridgeIngredientListRes;
-import com.ssafy.fridgeservice.dto.response.Ingredient;
-import com.ssafy.fridgeservice.dto.response.IngredientInfo;
-import com.ssafy.fridgeservice.messagequeue.KafkaProducer;
 import com.ssafy.fridgeservice.service.FridgeService;
 import com.ssafy.fridgeservice.service.ResponseService;
 import com.ssafy.fridgeservice.exception.exception.IngredientNotFoundException;
-import com.ssafy.fridgeservice.exception.exception.RecipeNotFoundException;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,37 +30,80 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/fridge")
 public class FridgeController {
 
-	// private final JwtService jwtService
-	// CheckController 참고
+	private final JwtService jwtService;
 	private final ResponseService responseService;
-	// private final KafkaProducer kafkaProducer;
-	private final UserServiceClient userServiceClient;
 	private final IngredientServiceClient ingredientServiceClient;
 	private final FridgeService fridgeService;
 
-	@GetMapping("/user/healthcheck")
-	ResponseEntity<?> getHealthcheck() {
-		return userServiceClient.getHealthcheck();
-	}
 
-	@PostMapping("/user/signup")
-	ResponseEntity<?> signup(@RequestBody final SignUpReq req) {
-		return userServiceClient.signup(req);
-	}
-
-	// @GetMapping("/produce")
-	// public ResponseEntity<?> produceTest() {
-	// 	kafkaProducer.send("example-catalog-topic", Ingredient.builder().ingredientId(100).ingredientName("잘 갈까?").build());
-	// 	return ResponseEntity.ok("갔냐?");
+	// @GetMapping("/communication")
+	// public String fridgeIngredientTest(HttpServletRequest request) {
+	// 	log.debug("fridgeController - fridgeIngredientTest");
+	// 	String token = request.getHeader("Authorization");
+	// 	return ingredientServiceClient.communicationTest(token);
 	// }
 
 
-	@DeleteMapping("")
-	public ResponseEntity<?> removeIngredients(@RequestBody final FridgeIngredientListReq req) {
-		// TODO
+	/* getIngredientInFridge : 냉장고 재료 목록 조회
+	 * @param : 유저 정보 (userSnsId, token)
+	 * @return : 재료 정보 (재료 type, 재료 id , 재료 이름)
+	 * */
+	@GetMapping("")
+	public ResponseEntity<?> getIngredientInFridge(HttpServletRequest request) {
 		try {
-			log.debug("/fridge: {}", Arrays.toString(req.getIngredientIdList().toArray()));
-			return responseService.NO_CONTENT();
+			String userSnsId = jwtService.getUserSnsId(request);
+			log.debug("userSnsId:{}",userSnsId);
+			String token = request.getHeader("Authorization");
+			log.debug("token:{}",token);
+			return fridgeService.getIngredientInFridge(userSnsId, token);
+		} catch (Exception e) {
+			log.info(e.getMessage());
+			return ResponseEntity.status(404).body(responseService.BAD_REQUEST());
+		}
+	}
+
+
+	/* removeIngredients : 냉장고 재료 삭제
+	 * @param : 유저 정보 (userSnsId, token), 재료 정보 (재료 id 리스트)
+	 * @return : http status code 204 NO CONTENT or error
+	 * */
+	@DeleteMapping("")
+	public ResponseEntity<?> removeIngredients(HttpServletRequest request,
+		@RequestBody final IngredientList req) {
+		try {
+			String userSnsId = jwtService.getUserSnsId(request);
+			String token = request.getHeader("Authorization");
+			log.debug("userSnsId:{}",userSnsId);
+			log.debug("req:{}",req);
+			boolean isAllRemoved = fridgeService.removeIngredients(userSnsId, token, req);
+			log.debug("isAllRemoved:{}",isAllRemoved);
+			if (isAllRemoved) {
+				return ResponseEntity.status(204).body(responseService.NO_CONTENT());
+			}
+			return ResponseEntity.status(404).body(responseService.BAD_REQUEST());
+		} catch (Exception e) {
+			log.info(e.getMessage());
+			return ResponseEntity.status(500).body(responseService.INTERNAL_SERVER_ERROR());
+		}
+	}
+
+
+	/* addIngredients : 냉장고 재료 등록
+	 * @param : 유저 정보 (userSnsId, token), 재료 정보 (재료 id 리스트)
+	 * @return : http status code 200 OK
+	 * */
+	@PostMapping("")
+	public ResponseEntity<?> addIngredients(HttpServletRequest request,
+		@RequestBody final IngredientList req) {
+		try {
+			String userSnsId = jwtService.getUserSnsId(request);
+			String token = request.getHeader("Authorization");
+			log.debug("userSnsId:{}",userSnsId);
+			log.debug("req:{}",req);
+			boolean isAllAdded = fridgeService.addIngredients(userSnsId, token, req);
+			return ResponseEntity.ok(
+				responseService.getSuccessMessageResult("재료 등록 성공")
+			);
 		} catch (IngredientNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
@@ -72,147 +111,26 @@ public class FridgeController {
 		}
 	}
 
-	// @PostMapping("")
-	// public ResponseEntity<?> addIngredients(@RequestBody final FridgeIngredientListReq req) {
-	// 	// TODO
-	// 	try {
-	// 		log.debug("/fridge: {}", Arrays.toString(req.getIngredientIdList().toArray()));
-	// 		return ResponseEntity.ok(
-	// 			responseService.getSuccessMessageResult("재료 등록 성공")
-	// 		);
-	// 	} catch (IngredientNotFoundException e) {
-	// 		return responseService.BAD_REQUEST();
-	// 	} catch (Exception e) {
-	// 		return responseService.INTERNAL_SERVER_ERROR();
-	// 	}
-	// }
 
-	@GetMapping("/need/{recipeId}")
-	public ResponseEntity<?> getIngredientIdToCook(@PathVariable("recipeId") final String recipeId) {
+	/* isExist : 레시피에 포함된 IngredientIdList 받아서 유저 냉장고에 있는지 없는지 반환
+	* @param : IngredientListReq
+	* @return : 부족한 재료 id 리스트 반환
+	* */
+	@PostMapping("/isExist")
+	public ResponseEntity<?> isExistIngredients(HttpServletRequest request,
+		@RequestBody IngredientListReq ingredientIdList) {
 		try {
-			log.debug("/need/{recipeId} : {}", recipeId);
-			FridgeIngredientListRes needIngredientListRes = new FridgeIngredientListRes();
-
-			List<IngredientInfo> ingredientInfoList = needIngredientListRes.getIngredientInfoList();
-
-			for (IngredientInfo info : ingredientInfoList) {
-
-				List<Ingredient> ingredientList = info.getIngredientList();
-
-				switch (info.getIngredientType()) {
-
-					case FRUIT -> {
-						log.debug("과일 : {}", info.getIngredientType().name());
-						ingredientList.add(
-							Ingredient.builder()
-								.ingredientId(10)
-								.ingredientName("사과")
-								.build()
-						);
-					}
-					case VEGETABLE -> {
-						log.debug("채소 : {}", info.getIngredientType().name());
-						ingredientList.add(
-							Ingredient.builder()
-								.ingredientId(11)
-								.ingredientName("대파")
-								.build()
-						);
-					}
-					case RICE_GRAIN -> {
-						log.debug("쌀/곡물 : {}", info.getIngredientType().name());
-						ingredientList.add(
-							Ingredient.builder()
-								.ingredientId(12)
-								.ingredientName("미숫가루")
-								.build()
-						);
-					}
-					case MEAT_EGG -> {
-						log.debug("정육/계란 : {}", info.getIngredientType().name());
-						ingredientList.add(
-							Ingredient.builder()
-								.ingredientId(13)
-								.ingredientName("삼겹살")
-								.build()
-						);
-					}
-					case FISH -> {
-						log.debug("수산 : {}", info.getIngredientType().name());
-						ingredientList.add(
-							Ingredient.builder()
-								.ingredientId(21)
-								.ingredientName("고등어")
-								.build()
-						);
-					}
-					case MILK -> {
-						log.debug("유제품 : {}", info.getIngredientType().name());
-						ingredientList.add(
-							Ingredient.builder()
-								.ingredientId(120)
-								.ingredientName("블루치즈")
-								.build()
-						);
-					}
-					case SAUCE -> {
-						log.debug("소스/양념/조미료 : {}", info.getIngredientType().name());
-						ingredientList.add(
-							Ingredient.builder()
-								.ingredientId(30)
-								.ingredientName("치킨스톡")
-								.build()
-						);
-					}
-					case ETC -> {
-						log.debug("기타 : {}", info.getIngredientType().name());
-						ingredientList.add(
-							Ingredient.builder()
-								.ingredientId(500)
-								.ingredientName("먹다 남은 치킨")
-								.build()
-						);
-					}
-
-					default -> {
-						return responseService.INTERNAL_SERVER_ERROR();
-					}
-
-				}
+			String userSnsId = jwtService.getUserSnsId(request);
+			// 서비스 호출
+			IngredientIdListRes ingredientIdListRes = fridgeService.isExistIngredients(userSnsId, ingredientIdList);
+			// ingredientIdListRes 가 비어 있는 경우 ( = 모든 재료를 가지고 있음 )
+			if (ingredientIdListRes.getIngredientIdList().size() == 0) {
+				return responseService.NO_CONTENT();
+			} else {
+				return ResponseEntity.ok().body(ingredientIdListRes);
 			}
-			return ResponseEntity.ok(
-				responseService.getSuccessSingleResult(
-					needIngredientListRes, "부족한 재료 목록 조회 성공"
-				)
-			);
-		} catch (RecipeNotFoundException e) {
-			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
-			return responseService.INTERNAL_SERVER_ERROR();
-		}
-	}
-
-	@GetMapping("/communication")
-	public String fridgeIngredientTest() {
-		log.debug("fridgeController - fridgeIngredientTest");
-		String res = ingredientServiceClient.communicationTest();
-		return res;
-	}
-
-	@GetMapping("/communication/{index}")
-	public String fridgeIngredientTest(@PathVariable("index") final String index) {
-		// log.debug("fridgeController - fridgeIngredientTest");
-		// String res = ingredientServiceClient.communicationTest();
-		return index;
-	}
-
-
-	@PostMapping("")
-	public ResponseEntity<?> getIngredientInFridge() {
-		try {
-		return fridgeService.getIngredientInFridge();
-		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error(Arrays.toString(e.getStackTrace()));
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}

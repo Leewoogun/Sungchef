@@ -3,18 +3,19 @@ package com.ssafy.fridgeservice.db.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.mapping.Array;
+import org.springframework.data.domain.Example;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.ssafy.fridgeservice.db.entity.Fridge;
 import com.ssafy.fridgeservice.dto.response.Ingredient;
+import com.ssafy.fridgeservice.dto.response.IngredientId;
 
-public interface FridgeRepository extends BaseRepository<Fridge, Integer> {
-
-	@Query("SELECT f.ingredientId FROM Fridge f WHERE f.suserId = :suserId")
-	Integer findSingleIngredientIdBySuserId(@Param("suserId") int suserId);
-
-	@Query("SELECT f.ingredientId FROM Fridge f WHERE f.suserId = :suserId")
-	List<Integer> findIngredientIdListBySuserId(@Param("suserId") int suserId);
-
+@Repository
+public interface FridgeRepository extends JpaRepository<Fridge, Integer> {
+	Optional<List<Fridge>> findAllByUserSnsId(String userSnsId);
+	int deleteByIngredientId(int ingredientId);
 }

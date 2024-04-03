@@ -1,21 +1,25 @@
 package com.ssafy.fridgeservice.service;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
-import org.springframework.data.repository.query.Param;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
+import com.ssafy.fridgeservice.db.entity.Fridge;
 import com.ssafy.fridgeservice.db.repository.FridgeRepository;
-import com.ssafy.fridgeservice.dto.response.FridgeIngredientListRes;
-import com.ssafy.fridgeservice.dto.response.Ingredient;
-import com.ssafy.fridgeservice.dto.response.IngredientInfo;
+import com.ssafy.fridgeservice.dto.request.IngredientList;
+import com.ssafy.fridgeservice.dto.request.IngredientListReq;
+import com.ssafy.fridgeservice.dto.response.IngredientId;
+import com.ssafy.fridgeservice.dto.response.IngredientIdListRes;
 import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
-import com.ssafy.fridgeservice.util.result.SingleResult;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,53 +32,106 @@ public class FridgeService {
 	private final FridgeRepository fridgeRepository;
 	private final IngredientServiceClient ingredientServiceClient;
 
-	// sUserId 를 받은 다음에 ingredient info 반환해주는 함수 (controller 에서 호출할 용도)
-	public ResponseEntity<?> getIngredientInFridge() {
-		// header token 까서 snsId String 형태로 받아오기
-		// DB에 유저 식별자 Integer 로 되어 있는데 varchar 로 바꾸기
-		// dummy 값으로 일단 Integer 7073 으로 진행하기
-		Integer sUserId = 7073;
-		// fridge 의 ingredientId 받아오기
-		List<Integer> ingredientIdList = getIngredientIdListFromFridge(sUserId);
-		// ingredientService 에서 getIngredientInfoList 의 .body.data 가져오기
-		return getIngredientInfoList(ingredientIdList);
+	
+	/* getIngredientInFridge : 유저 냉장고 재료 정보 조회
+	* @param : String userSnsId, String token
+	* @return : ResponseEntity
+	* */
+	// 재사용 가능하도록 코드 분리하기
+	@Transactional
+	public ResponseEntity<?> getIngredientInFridge(String userSnsId, String token) {
+		Optional<List<Fridge>> fridgeList = fridgeRepository.findAllByUserSnsId(userSnsId);
+		if (fridgeList.isPresent()) {
+			List<Integer> ingredientIdList = new ArrayList<>();
+			List<Fridge> fridgeListReal = fridgeList.get();
+			for (Fridge fridge : fridgeListReal) {
+				Integer ingredientIdInteger = fridge.getIngredientId();
+				ingredientIdList.add(ingredientIdInteger);
+			}
+			IngredientListReq req = new IngredientListReq();
+			req.setIngredientIdList(ingredientIdList);
+			return ingredientServiceClient.getIngredientInfoList(token, req);
+		} else {
+			// 냉장고에 아무것도 없는 유저라면 204 가 가도록 이렇게 return 문을 만들었는데
+			// 왜 200 이 나온다고 할까 .. ㅠㅠ
+			return responseService.NO_CONTENT();
+		}
 	}
 
 
-
-	// fridgeDB 가서 suserId 로 ingredientId 1개 GET
-	public Integer getSingleIngredientIdFromFridge(Integer sUserId) {
-		log.debug("냉장고 속 재료 1개 ID 받아오기");
-		return fridgeRepository.findSingleIngredientIdBySuserId(sUserId);
+	// 냉장고 속 재료 삭제
+	// 리팩토링 - 재사용 가능하도록 함수 분리하기
+	// 리팩토링 - 냉장고에 없는 재료를 삭제하고자 할 경우 명시적 Exception 반환 처리
+	@Transactional
+	public boolean removeIngredients (String userSnsId, String token, IngredientList req) {
+		List<IngredientId> removeIngredientIdList = req.getIngredientIdList();
+		int intendedRemovalSize = removeIngredientIdList.size();
+		for (IngredientId removeIngredientId : removeIngredientIdList) {
+			int ingredientId = removeIngredientId.getIngredientId();
+			int deletedIngredients = fridgeRepository.deleteByIngredientId(ingredientId);
+			if (intendedRemovalSize == deletedIngredients) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 
-	// fridgeDB 가서 suserId 로 ingredientId 리스트 GET
-	public List<Integer> getIngredientIdListFromFridge(Integer sUserId) {
-		log.debug("냉장고 속 재료 List<Integer> 받아오기");
-		return fridgeRepository.findIngredientIdListBySuserId(sUserId);
+	// 냉장고 속 재료 등록
+	// 리팩토링 - 재사용 가능하도록 함수 분리하기
+	// 리팩토링 - 냉장고에 기존에 있던 재료일 경우 추가 로직 구현할 필요 없음
+	@Transactional
+	public boolean addIngredients (String userSnsId, String token, IngredientList req) {
+		List<IngredientId> ingredientIdList = req.getIngredientIdList();
+		Fridge newFridge = new Fridge();
+		LocalDate today = LocalDate.now();
+		DateTimeFormatter todayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String todayFridge = today.format(todayFormatter);
+		for (IngredientId ingredientId : ingredientIdList) {
+			int ingredientIdInt = ingredientId.getIngredientId();
+			newFridge.setUserSnsId(userSnsId);
+			newFridge.setIngredientId(ingredientIdInt);
+			newFridge.setFridgeCreateDate(todayFridge);
+			Fridge savedFridge = fridgeRepository.save(newFridge);
+			return true;
+		}
+		return false;
 	}
 
 
-	// fridgeDB 가서 suserId 로 ingredientId 1개 DELETE
-	public Integer deleteSingleIngredientIdFromFridge(Integer sUserId) {
-		log.debug("재료 한 개 제거하기");
-		return fridgeRepository.findSingleIngredientIdBySuserId(sUserId);
+	// 유저 냉장고 속에 재료가 있는지 없는지 확인해보기
+	@Transactional
+	public IngredientIdListRes isExistIngredients(String userSnsId, IngredientListReq ingredientIdList) {
+		List<Integer> beforeCheckIngredients = ingredientIdList.getIngredientIdList();
+		log.info("beforeCheckIngredients:{}",beforeCheckIngredients);
+		IngredientIdListRes ingredientIdListRes = new IngredientIdListRes();
+		log.info("ingredientIdListRes:{}",ingredientIdListRes);
+		List<Integer> afterCheckIngredients = new ArrayList<>();
+		log.info("afterCheckIngredients:{}",afterCheckIngredients);
+		Optional<List<Fridge>> optionalFridgeList = fridgeRepository.findAllByUserSnsId(userSnsId);
+		log.info("optionalFridgeList:{}",optionalFridgeList.toString());
+		if (optionalFridgeList.isEmpty()) {
+			// 유저 냉장고에 아무것도 없음 -> 받아온 재료 전부를 부족한 재료로 반환
+			ingredientIdListRes.setIngredientIdList(beforeCheckIngredients);
+			log.info("ingredientIdListRes_emptyCase:{}",ingredientIdListRes);
+			return ingredientIdListRes;
+		} else {
+			// 유저 냉장고에 들어있는 게 있음
+			List<Fridge> fridgeList = optionalFridgeList.get();
+			ArrayList<Integer> fridgeIngredientList = new ArrayList<>();
+			// 냉장고 속 재료와 레시피 재료 id 비교하기
+			for (Fridge fridge : fridgeList) {
+				Integer ingredientId = (Integer) fridge.getIngredientId();
+				fridgeIngredientList.add(ingredientId);
+			}
+			// 냉장고에 없는 경우 afterCheckIngredients 에 담기
+			for (Integer beforeCheckIngredient : beforeCheckIngredients) {
+				if (!fridgeIngredientList.contains(beforeCheckIngredient)) {
+					afterCheckIngredients.add(beforeCheckIngredient);
+				}
+			}
+			ingredientIdListRes.setIngredientIdList(afterCheckIngredients);
+			return ingredientIdListRes;
+		}
 	}
-
-
-	// ingredientService 호출해서 ingredientId 넘겨주고 FridgeIngredientListRes 받아오기
-	public ResponseEntity<?> getSingleIngredientInfo(Integer ingredientId) {
-		log.debug("재료 1개 정보 받아오기");
-		return ingredientServiceClient.getSingleIngredientInfo(ingredientId);
-	}
-
-
-	// ingredientService 호출해서 ingredientIdList 넘겨주고 FridgeIngredientListRes 받아오기
-	public ResponseEntity<?> getIngredientInfoList(List<Integer> ingredientIdList) {
-		log.debug("재료 리스트 정보 받아오기..");
-		return ingredientServiceClient.getIngredientInfoList(ingredientIdList);
-	}
-
-
 }

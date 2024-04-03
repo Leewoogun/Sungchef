@@ -30,6 +30,7 @@ public class ResponseService {
 		return result;
 	}
 
+
 	public <T> SingleResult<T> getSingleResult(T data, String msg, int code) {
 		SingleResult<T> result = new SingleResult<>();
 		result.setCode(code);
