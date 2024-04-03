@@ -70,7 +70,7 @@ public class FridgeController {
 	 * @param : 유저 정보 (userSnsId, token), 재료 정보 (재료 id 리스트)
 	 * @return : http status code 204 NO CONTENT or error
 	 * */
-	@DeleteMapping("")
+	@PostMapping("/delete")
 	public ResponseEntity<?> removeIngredients(HttpServletRequest request,
 		@RequestBody final IngredientList req) {
 		try {
@@ -155,7 +155,4 @@ public class FridgeController {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
-
-
-
 }

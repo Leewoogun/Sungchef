@@ -69,7 +69,7 @@ public class FridgeService {
 		int intendedRemovalSize = removeIngredientIdList.size();
 		for (IngredientId removeIngredientId : removeIngredientIdList) {
 			int ingredientId = removeIngredientId.getIngredientId();
-			int deletedIngredients = fridgeRepository.deleteByIngredientId(ingredientId);
+			int deletedIngredients = fridgeRepository.deleteByIngredientIdAndUserSnsId(ingredientId, userSnsId);
 			if (intendedRemovalSize == deletedIngredients) {
 				return true;
 			}

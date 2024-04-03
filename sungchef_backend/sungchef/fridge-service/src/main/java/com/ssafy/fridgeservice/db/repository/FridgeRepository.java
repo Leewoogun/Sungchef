@@ -18,5 +18,5 @@ import com.ssafy.fridgeservice.dto.response.IngredientId;
 public interface FridgeRepository extends JpaRepository<Fridge, Integer> {
 	Optional<List<Fridge>> findAllByUserSnsId(String userSnsId);
 	Optional<Fridge> findByIngredientIdAndUserSnsId(Integer ingredient, String userSnsId);
-	int deleteByIngredientId(int ingredientId);
+	int deleteByIngredientIdAndUserSnsId(int ingredientId, String userSnsId);
 }
