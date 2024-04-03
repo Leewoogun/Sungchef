@@ -15,7 +15,10 @@ spring:
     url: ENC(8nFxIA38P6UrPdchnttu8TZH1GJuwkOS2aK+ARU/ieMJj/BZC+23nS+rAGHtJt3NuEgAcXch2iia/4F/8TWrQQo0NhailLwIb6nNSsDLorOIDTIDpeiugnwlmG39IO5KZtX2iyIwYTUQZF6BAsuFeQvoYg4ybUQG)
     username: ENC(TfuU1Hc9zWv8LfvfBAZZBw==)
     password: ENC(CdQdTRqvHnZXbLGLLzE2X54M10IfeRPDljctYBS3cRI=)
-
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 #logging:
 #  level:
 #    com.ssafy.userservice.client: DEBUG
