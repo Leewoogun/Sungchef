@@ -25,6 +25,7 @@ import com.ssafy.ingredientservice.dto.response.IngredientRes;
 import com.ssafy.ingredientservice.dto.response.RecipeIngredientListRes;
 import com.ssafy.ingredientservice.dto.response.IngredientListRes;
 import com.ssafy.ingredientservice.exception.exception.BaseException;
+import com.ssafy.ingredientservice.exception.exception.FeignException;
 import com.ssafy.ingredientservice.exception.exception.HaveAllIngredientInRecipeException;
 import com.ssafy.ingredientservice.exception.exception.IngredientNotFoundException;
 import com.ssafy.ingredientservice.exception.exception.NoContentException;
@@ -389,8 +390,10 @@ public class IngredientService {
 
         // fridgeClient 통신해서 부족한 ingredientId 정보 가져오기
         ResponseEntity<ClientIngredientIdListRes> resFridge = null;
+        List<Integer> ingredientIdReqList = null;
         try {
             resFridge = fridgeServiceClient.getFridgeIngredients(token, isExistReq);
+            ingredientIdReqList = resFridge.getBody().ingredientIdList().stream().toList();
         } catch (Exception e) {
             throw new HaveAllIngredientInRecipeException("냉장고에 모든 재료가 존재함");
         }
@@ -402,7 +405,7 @@ public class IngredientService {
         // ObjectMapper lackingIngredientIdListParser = new ObjectMapper();
         // IngredientListReq ingredientListReq = lackingIngredientIdListParser.readValue(ingredientIdListString,
         //     IngredientListReq.class);
-        List<Integer> ingredientIdReqList = resFridge.getBody().ingredientIdList().stream().toList();
+
         IngredientListReq ingredientListReq = new IngredientListReq();
         ingredientListReq.setIngredientIdList(ingredientIdReqList);
         // 2. 재료 id List 로 재료 상세 정보 얻어오기

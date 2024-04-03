@@ -102,6 +102,7 @@ public class IngredientController {
 		} catch (RecipeNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
