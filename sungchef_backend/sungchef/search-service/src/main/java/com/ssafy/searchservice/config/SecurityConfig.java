@@ -25,7 +25,7 @@ public class SecurityConfig {
 
 		return http.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests((authz) -> authz
-				.requestMatchers(new AntPathRequestMatcher("/search/healthcehck", "GET")).permitAll()
+				.requestMatchers(new AntPathRequestMatcher("/search/healthcheck", "GET")).permitAll()
 				.anyRequest().authenticated()
 			)
 			.sessionManagement((session)

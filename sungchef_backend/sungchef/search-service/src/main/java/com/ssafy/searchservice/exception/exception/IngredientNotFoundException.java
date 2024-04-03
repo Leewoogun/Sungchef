@@ -1,4 +1,4 @@
-package com.ssafy.searchservice.util.exception;
+package com.ssafy.searchservice.exception.exception;
 
 public class IngredientNotFoundException extends RuntimeException {
 	public IngredientNotFoundException(String message) {
