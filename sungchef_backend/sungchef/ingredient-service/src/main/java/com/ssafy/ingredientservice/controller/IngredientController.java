@@ -5,6 +5,7 @@ import com.ssafy.ingredientservice.dto.request.IngredientListReq;
 import com.ssafy.ingredientservice.dto.request.RecipeIdReq;
 import com.ssafy.ingredientservice.dto.response.*;
 import com.ssafy.ingredientservice.exception.exception.IngredientNotFoundException;
+import com.ssafy.ingredientservice.exception.exception.NoContentException;
 import com.ssafy.ingredientservice.service.IngredientService;
 import com.ssafy.ingredientservice.service.ResponseService;
 import com.ssafy.ingredientservice.exception.exception.HaveAllIngredientInRecipeException;
@@ -94,6 +95,8 @@ public class IngredientController {
 				)
 			);
 		} catch (HaveAllIngredientInRecipeException e) {
+			throw new HaveAllIngredientInRecipeException("냉장고에 모든 재료가 존재함");
+		} catch (NoContentException e) {
 			// exception은 아닌거같아서 추후 수정 필요
 			return responseService.NO_CONTENT();
 		} catch (RecipeNotFoundException e) {

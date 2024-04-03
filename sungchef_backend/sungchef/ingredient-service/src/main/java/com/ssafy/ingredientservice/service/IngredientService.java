@@ -389,7 +389,7 @@ public class IngredientService {
         try {
             resFridge = fridgeServiceClient.getFridgeIngredients(token, isExistReq);
         } catch (Exception e) {
-            throw new NoContentException("냉장고에 모든 재료가 존재함");
+            throw new HaveAllIngredientInRecipeException("냉장고에 모든 재료가 존재함");
         }
         // ResponseEntity<ClientIngredientIdListRes> resFridge = fridgeServiceClient.getFridgeIngredients(token, isExistReq);
         // log.info("resFridge:{}",resFridge);
