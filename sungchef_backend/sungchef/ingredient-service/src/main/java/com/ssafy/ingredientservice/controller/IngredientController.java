@@ -150,7 +150,7 @@ public class IngredientController {
 			String userSnsId = jwtService.getUserSnsId(request);
 			String token = request.getHeader("Authorization");
 			RecipeIngredientListRes data = ingredientService.getIngredientIdToCook(userSnsId, token, recipeId);
-			return ResponseEntity.ok().body(responseService.getSingleResult(data, "레시피 재료 조회 성공", 200));
+			return ResponseEntity.ok().body(responseService.getSingleResult(data, "냉장고 부족한 재료 조회 성공", 200));
 		} catch (Exception e) {
 			log.debug(e.getMessage());
 			return responseService.INTERNAL_SERVER_ERROR();
