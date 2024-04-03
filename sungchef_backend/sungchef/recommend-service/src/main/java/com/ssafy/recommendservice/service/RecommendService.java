@@ -27,7 +27,7 @@ public class RecommendService {
 	private final ResponseService responseService;
 	private final RecipeServiceClient recipeServiceClient;
 	public ResponseEntity<?> test2() {
-				RecommendList response = WebClient.create("http://localhost:8001")
+		RecommendList response = WebClient.create("http://localhost:8001")
 				.get()
 				.uri("/similar/6")
 				.retrieve()
@@ -46,7 +46,7 @@ public class RecommendService {
 				, "레시피 조회 성공"));
 	}
 
-	public ResponseEntity<?> test(String token, String userSnsId) {
+	public ResponseEntity<?> getRecommend(String token, String userSnsId) {
 
 		Integer recentRecipeId =  recipeServiceClient.getRecentRecipe(userSnsId, token);
 
@@ -73,7 +73,6 @@ public class RecommendService {
 		ResponseEntity<SingleResult<RecommendFoodTest>> foodRes = recipeServiceClient.getFoodList(foodIdListReq, token);
 		ResponseEntity<SingleResult<RecommendRecipeTest>> recipeRes = recipeServiceClient.getRecipeList(recipeIdListReq, token);
 
-
 		RecommendRecipe fridgeRecommendList = RecommendRecipe.builder()
 				.recommendRecipeType("FRIDGE")
 				.recipeList(recipeRes.getBody().getData().getRecipeList())
@@ -81,12 +80,12 @@ public class RecommendService {
 
 		RecommendFood sungRecommendList = RecommendFood.builder()
 				.recommendFoodType("SUNG")
-				.foodList(foodRes.getBody().getData().getFoodList().subList(10,20))
+				.foodList(foodRes.getBody().getData().getFoodList().subList(0,10))
 				.build();
 
 		RecommendFood userRecommendList = RecommendFood.builder()
 				.recommendFoodType("SIMILAR_USER")
-				.foodList(foodRes.getBody().getData().getFoodList().subList(0,10))
+				.foodList(foodRes.getBody().getData().getFoodList().subList(10,20))
 				.build();
 
 		RecommendFood genderRecommendList = RecommendFood.builder()
@@ -111,8 +110,7 @@ public class RecommendService {
 				.recommendRecipeList(recommendRecipeList)
 				.recommendFoodList(recommendFoodList)
 				.build();
-
-
+		
 		RecommendFoodTest recommendFoodListRes = foodRes.getBody().getData();
 		return ResponseEntity.ok(responseService.getSuccessSingleResult(
 				res
