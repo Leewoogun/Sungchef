@@ -83,11 +83,11 @@ public class FridgeService {
 	@Transactional
 	public boolean addIngredients (String userSnsId, String token, IngredientList req) {
 		List<IngredientId> ingredientIdList = req.getIngredientIdList();
-		Fridge newFridge = new Fridge();
 		LocalDate today = LocalDate.now();
 		DateTimeFormatter todayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String todayFridge = today.format(todayFormatter);
 		for (IngredientId ingredientId : ingredientIdList) {
+			Fridge newFridge = new Fridge();
 			int ingredientIdInt = ingredientId.getIngredientId();
 			newFridge.setUserSnsId(userSnsId);
 			newFridge.setIngredientId(ingredientIdInt);
