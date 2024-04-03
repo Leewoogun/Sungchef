@@ -79,7 +79,7 @@ public class IngredientController {
 
 
 	// 부족한 재료 조회
-	@PostMapping("/need/{recipeId}")
+	@GetMapping("/need/{recipeId}")
 	public ResponseEntity<?> getIngredientIdToCook(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
 		try {
 			String token = request.getHeader("Authorization");
@@ -133,9 +133,5 @@ public class IngredientController {
 			return responseService.INTERNAL_SERVER_ERROR();
 		}
 	}
-
-
-
-
 
 }

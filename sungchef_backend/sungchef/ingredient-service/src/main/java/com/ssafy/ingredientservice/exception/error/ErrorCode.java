@@ -22,10 +22,12 @@ public enum ErrorCode {
 	INTERNAL_SERVER_ERROR(500, "S001", "SERVER_ERROR"),
 	SECURITY_ERROR(500, "S002", "SECURITY ERROR"),
 
+	HAVE_ALL_INGREDIENT(204, "I006", "Have All Ingredient"),
 	// JWT
 	UNAUTHORIZED(401, "U004", "TOKEN UNAUTHORIZED"),
 	JWT_ERROR(500, "S003", "JWT ERROR"),
 
+	FEIGN_CONNECT_ERROR(500, "S004", "Feign Connect Error"),
 		;
 	private int status;
 	private final String code;
