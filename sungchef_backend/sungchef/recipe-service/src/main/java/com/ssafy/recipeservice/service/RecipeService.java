@@ -57,7 +57,6 @@ public class RecipeService {
 //
 //    }
 
-
     public ResponseEntity<?> getFoodList(FoodIdListReq req) throws FoodNotFoundException {
         List<RecommendFood> recommendFoodList = new ArrayList<>();
         for (Integer foodId : req.getFoodIdList()) {
@@ -75,7 +74,6 @@ public class RecipeService {
                 .build();
         return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "음식 리스트 조회 성공"));
     }
-
 
     public ResponseEntity<?> getRecipeList(RecipeIdListReq req) throws FoodNotFoundException {
         List<RecommendRecipe> recommendRecipeList = new ArrayList<>();
@@ -96,11 +94,19 @@ public class RecipeService {
         return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "레시피 리스트 조회 성공"));
     }
 
-    public ResponseEntity<?> getRecipeDetail(Integer recipeId, String token) throws RecipeNotFoundException {
+    public ResponseEntity<?> getRecipeDetail(Integer recipeId, String token, String userSnsId) throws RecipeNotFoundException {
+        recipeMakeLogRepository.save(RecipeMakeLog.builder()
+                .recipeMakeLogId(-1)
+                .userSnsId(userSnsId)
+                .recipeId(recipeId)
+                .recipeMakeLogCreateDate(Date.valueOf(LocalDate.now()))
+                .build()
+        );
         Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
         if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         Recipe recipe = searchRecipe.get();
-
+        recipe.setRecipeVisitCount(recipe.getRecipeVisitCount()+1);
+        recipeRepository.save(recipe);
         List<RecipeDetail> searchRecipeDetail = recipeDetailRepository.findRecipeDetailsByRecipeIdOrderByRecipeDetailStep(recipeId);
         if(searchRecipeDetail.size() == 0) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         List<RecipeStep> recipeSteps = new ArrayList<>();
@@ -132,8 +138,6 @@ public class RecipeService {
                 recipeDetailRes
                 , "레시피 조회 성공"));
     }
-
-
     public ResponseEntity<?> test() {
         ResponseEntity<SingleResult<RecipeIngredientListRes>> res = ingredientServiceClient.getUsedIngredientsInRecipe("6", "asd");
         RecipeIngredientListRes recipeIngredientListResTest = res.getBody().getData();
@@ -143,8 +147,7 @@ public class RecipeService {
                 , "레시피 조회 성공"));
     }
 
-
-    public ResponseEntity<?> recipeDetailStep(Integer recipeId) {
+    public ResponseEntity<?> recipeDetailStep(Integer recipeId, String userSnsId) {
         Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(recipeId);
         if (!searchRecipe.isPresent()) throw new FoodNotFoundException("recipeId="+recipeId+"인 음식이 없습니다.");
         Recipe recipe = searchRecipe.get();

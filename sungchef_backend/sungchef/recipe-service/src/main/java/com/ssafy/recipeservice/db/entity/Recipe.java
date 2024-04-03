@@ -2,15 +2,13 @@ package com.ssafy.recipeservice.db.entity;;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Entity
 @Table(name = "recipe")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -59,4 +57,12 @@ public class Recipe {
 
   @Column(name = "food_id")
   private int foodId;
+
+  public void setBookmarkCount(boolean isBookmark) {
+    if (isBookmark) {
+      recipeBookmarkCount++;
+    } else {
+      recipeBookmarkCount--;
+    }
+  }
 }

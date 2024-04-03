@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import com.ssafy.recipeservice.db.entity.RecipeMakeLog;
+import com.ssafy.recipeservice.db.repository.RecipeMakeLogRepository;
+import com.ssafy.recipeservice.exception.exception.FeignException;
+import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class RecipeFeignService {
 	private final RecipeMakeRepository recipeMakeRepository;
+	private final RecipeMakeLogRepository recipeMakeLogRepository;
 	private final RecipeRepository recipeRepository;
 
 	public boolean isRecipeExist(String recipeId) {
@@ -97,4 +102,25 @@ public class RecipeFeignService {
 	public List<Recipe> getUserBookmarkRecipe(List<Integer> recipeIdList) {
 		return recipeRepository.findRecipeByRecipeIdIn(recipeIdList);
 	}
+
+	@Transactional
+	public void updateBookmarkCount(String recipeId, boolean isBookmark){
+		try {
+			int recipeIdNum = Integer.parseInt(recipeId);
+		} catch (NumberFormatException e) {
+			throw new FeignException("updateBookmarkCount Exception");
+		}
+		Optional<Recipe> searchRecipe = recipeRepository.findRecipeByRecipeId(Integer.parseInt(recipeId));
+		if (searchRecipe.isEmpty()) throw new FeignException("updateBookmarkCount recipe not found");
+
+		Recipe recipe = searchRecipe.get();
+		recipe.setBookmarkCount(isBookmark);
+	}
+
+	public Integer getRecentRecipe(String userSnsId){
+		Optional<RecipeMakeLog> recentRecipeLog = recipeMakeLogRepository.findFirstByUserSnsIdOrderByRecipeMakeLogIdDesc(userSnsId);
+		if (!recentRecipeLog.isPresent()) return 1;
+		return recentRecipeLog.get().getRecipeId();
+	}
+
 }

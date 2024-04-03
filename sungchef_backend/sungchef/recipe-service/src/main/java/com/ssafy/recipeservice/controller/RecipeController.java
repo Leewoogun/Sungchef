@@ -14,18 +14,11 @@ import com.ssafy.recipeservice.util.exception.RecipeNotFoundException;
 import com.ssafy.recipeservice.util.result.SingleResult;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -48,6 +41,20 @@ public class RecipeController {
 		UserMakeRecipeRes res = recipeFeignService.getUserMakeRecipeDetail(userSnsId, page);
 		return ResponseEntity.ok(responseService.getSuccessSingleResult(res, "조회 완료"));
 	}
+
+	@GetMapping("/feign/updatebookmark/{recipeId}/{isBookmark}")
+	public ResponseEntity<?> updateBookmark(@PathVariable("recipeId") final String recipeId
+			, @PathVariable("isBookmark") final boolean isBookmark
+	) {
+		recipeFeignService.updateBookmarkCount(recipeId, isBookmark);
+		return responseService.OK();
+	}
+
+	@GetMapping("/feign/getrecent/{userSnsId}")
+	public Integer getRecentRecipe(@PathVariable("userSnsId") String userSnsId) {
+		return recipeFeignService.getRecentRecipe(userSnsId);
+	}
+
 	@GetMapping("/feign/exist/{recipeId}")
 	public boolean isRecipeExist(@PathVariable("recipeId") final String recipeId) {
 		return recipeFeignService.isRecipeExist(recipeId);
@@ -57,7 +64,6 @@ public class RecipeController {
 		String userSnsId = jwtService.getUserSnsId(request);
 		return recipeFeignService.getUserMakeRecipeCount(userSnsId);
 	}
-
 	@PostMapping("/feign/user/bookmark")
 	List<Recipe> getUserBookmarkRecipe(@RequestBody List<Integer> recipeIdList) {
 		return recipeFeignService.getUserBookmarkRecipe(recipeIdList);
@@ -69,9 +75,10 @@ public class RecipeController {
 	// }
 
 	@GetMapping("/{recipeId}")
-	public ResponseEntity<?> recipeDetail(@RequestHeader("Authorization") String token, @PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> recipeDetail(HttpServletRequest request, @RequestHeader("Authorization") String token, @PathVariable("recipeId") final String recipeId) {
+		String userSnsId = jwtService.getUserSnsId(request);
 		try {
-			return recipeService.getRecipeDetail(Integer.parseInt(recipeId), token);
+			return recipeService.getRecipeDetail(Integer.parseInt(recipeId), token, userSnsId);
 		} catch (FoodNotFoundException | NumberFormatException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
@@ -84,9 +91,10 @@ public class RecipeController {
 	 * 하나의 레시피의 모든 단계 정보를 반환 (안드로이드 요청)
 	 */
 	@GetMapping("/detail/{recipeId}")
-	public ResponseEntity<?> recipeDetailStep(@PathVariable("recipeId") final String recipeId) {
+	public ResponseEntity<?> recipeDetailStep(HttpServletRequest request, @PathVariable("recipeId") final String recipeId) {
+		String userSnsId = jwtService.getUserSnsId(request);
 		try {
-			return recipeService.recipeDetailStep(Integer.parseInt(recipeId));
+			return recipeService.recipeDetailStep(Integer.parseInt(recipeId),userSnsId);
 		} catch (FoodNotFoundException e) {
 			return responseService.BAD_REQUEST();
 		} catch (Exception e) {
@@ -154,7 +162,6 @@ public class RecipeController {
 
 	@PostMapping(value ="/makerecipe", consumes = {"multipart/form-data"})
 	public ResponseEntity<?> uploadUserMakeRecipe(@ModelAttribute("makeRecipeImage") final MakeRecipeReq req, HttpServletRequest request) {
-		// TODO
 		try {
 			String userSnsId = jwtService.getUserSnsId(request);
 			log.debug("/makerecipe : {}", req);
