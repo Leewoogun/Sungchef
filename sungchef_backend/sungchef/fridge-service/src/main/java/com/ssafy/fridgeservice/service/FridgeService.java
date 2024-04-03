@@ -17,6 +17,7 @@ import com.ssafy.fridgeservice.dto.request.IngredientList;
 import com.ssafy.fridgeservice.dto.request.IngredientListReq;
 import com.ssafy.fridgeservice.dto.response.IngredientId;
 import com.ssafy.fridgeservice.dto.response.IngredientIdListRes;
+import com.ssafy.fridgeservice.exception.exception.EmptyFridgeException;
 import com.ssafy.fridgeservice.service.client.IngredientServiceClient;
 
 import jakarta.transaction.Transactional;
@@ -53,9 +54,7 @@ public class FridgeService {
 			req.setIngredientIdList(ingredientIdList);
 			return ingredientServiceClient.getIngredientInfoList(token, req);
 		} else {
-			// 냉장고에 아무것도 없는 유저라면 204 가 가도록 이렇게 return 문을 만들었는데
-			// 왜 200 이 나온다고 할까 .. ㅠㅠ
-			return responseService.NO_CONTENT();
+			throw new EmptyFridgeException("냉장고가 비었습니다");
 		}
 	}
 
@@ -69,7 +68,7 @@ public class FridgeService {
 		int intendedRemovalSize = removeIngredientIdList.size();
 		for (IngredientId removeIngredientId : removeIngredientIdList) {
 			int ingredientId = removeIngredientId.getIngredientId();
-			int deletedIngredients = fridgeRepository.deleteByIngredientId(ingredientId);
+			int deletedIngredients = fridgeRepository.deleteByIngredientIdAndUserSnsId(ingredientId, userSnsId);
 			if (intendedRemovalSize == deletedIngredients) {
 				return true;
 			}
