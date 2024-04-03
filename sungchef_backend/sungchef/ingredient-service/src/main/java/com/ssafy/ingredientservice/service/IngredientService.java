@@ -92,7 +92,7 @@ public class IngredientService {
                         if (ingredient.getIngredientTypeId()==0) {
                             recipeIngredientList.add(
                                 RecipeIngredientDTO.builder()
-                                            .recipeIngredientId(recipeIngredient.getRecipeId())
+                                            .recipeIngredientId(recipeIngredient.getIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
                                             .build()
@@ -103,7 +103,7 @@ public class IngredientService {
                         if (ingredient.getIngredientTypeId()==1) {
                             recipeIngredientList.add(
                                 RecipeIngredientDTO.builder()
-                                            .recipeIngredientId(recipeIngredient.getRecipeId())
+                                            .recipeIngredientId(recipeIngredient.getIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
                                             .build()
@@ -114,7 +114,7 @@ public class IngredientService {
                         if (ingredient.getIngredientTypeId()==2) {
                             recipeIngredientList.add(
                                 RecipeIngredientDTO.builder()
-                                            .recipeIngredientId(recipeIngredient.getRecipeId())
+                                            .recipeIngredientId(recipeIngredient.getIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
                                             .build()
@@ -125,7 +125,7 @@ public class IngredientService {
                         if (ingredient.getIngredientTypeId()==3) {
                             recipeIngredientList.add(
                                 RecipeIngredientDTO.builder()
-                                            .recipeIngredientId(recipeIngredient.getRecipeId())
+                                            .recipeIngredientId(recipeIngredient.getIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
                                             .build()
@@ -136,7 +136,7 @@ public class IngredientService {
                         if (ingredient.getIngredientTypeId()==4) {
                             recipeIngredientList.add(
                                 RecipeIngredientDTO.builder()
-                                            .recipeIngredientId(recipeIngredient.getRecipeId())
+                                            .recipeIngredientId(recipeIngredient.getIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
                                             .build()
@@ -147,7 +147,7 @@ public class IngredientService {
                         if (ingredient.getIngredientTypeId()==5) {
                             recipeIngredientList.add(
                                 RecipeIngredientDTO.builder()
-                                            .recipeIngredientId(recipeIngredient.getRecipeId())
+                                            .recipeIngredientId(recipeIngredient.getIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
                                             .build()
@@ -158,7 +158,7 @@ public class IngredientService {
                         if (ingredient.getIngredientTypeId()==6) {
                             recipeIngredientList.add(
                                 RecipeIngredientDTO.builder()
-                                            .recipeIngredientId(recipeIngredient.getRecipeId())
+                                            .recipeIngredientId(recipeIngredient.getIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
                                             .build()
@@ -169,7 +169,7 @@ public class IngredientService {
                         if (ingredient.getIngredientTypeId()==7) {
                             recipeIngredientList.add(
                                 RecipeIngredientDTO.builder()
-                                            .recipeIngredientId(recipeIngredient.getRecipeId())
+                                            .recipeIngredientId(recipeIngredient.getIngredientId())
                                             .recipeIngredientName(recipeIngredient.getRecipeIngredientName())
                                             .recipeIngredientVolume(recipeIngredient.getRecipeIngredientVolume())
                                             .build()
