@@ -119,7 +119,7 @@
 ### 포맷
 
 ```git
-type: subject
+type: subject 
 
 body (optional)
 ```
