@@ -1,0 +1,116 @@
+server:
+  port: ${GATEWAY_PORT}
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+
+spring:
+  application:
+    name: apigateway-service
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - 'https://xxxxxxxxxx'
+            allow-credentials: true
+            allowedHeaders: '*'
+            exposedHeaders: '*'
+            allowedMethods:
+              - POST
+              - GET
+              - PUT
+              - PATCH
+              - DELETE
+              - OPTIONS
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: false
+
+      routes:
+        # USER-SERVICE
+#        - id: user-service
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/user/signup
+#            - Method=POST
+#          filters:
+#            - RemoveRequestHeader=Cookie
+#            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user/**
+          filters:
+            - RemoveRequestHeader=Cookie
+#            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user/survey/**
+          filters:
+            - RemoveRequestHeader=Cookie
+        #            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+        # FRIDGE-SERVICE
+        - id: fridge-service
+          uri: lb://FRIDGE-SERVICE
+          predicates:
+            - Path=/fridge/**
+          filters:
+            - RemoveRequestHeader=Cookie
+#            - RewritePath=/fridge-service/(?<segment>.*), /$\{segment}
+
+        #RECIPE-SERVICE
+        - id: recipe-service
+          uri: lb://RECIPE-SERVICE
+          predicates:
+            - Path=/recipe/**
+          filters:
+            - RemoveRequestHeader=Cookie
+#            - RewritePath=/recipe-service/(?<segment>.*), /$\{segment}
+
+        #SEARCH-SERVICE
+        - id: search-service
+          uri: lb://SEARCH-SERVICE
+          predicates:
+            - Path=/search/**
+          filters:
+            - RemoveRequestHeader=Cookie
+#            - RewritePath=/search-service/(?<segment>.*), /$\{segment}
+
+        #INGREDIENT-SERVICE
+        - id: ingredient-service
+          uri: lb://INGREDIENT-SERVICE
+          predicates:
+            - Path=/ingredient/**
+          filters:
+            - RemoveRequestHeader=Cookie
+#            - RewritePath=/ingredient-service/(?<segment>.*), /$\{segment}
+
+        #RECOMMEND-SERVICE
+        - id: recommend-service
+          uri: lb://RECOMMEND-SERVICE
+          predicates:
+            - Path=/recommend/**
+          filters:
+            - RemoveRequestHeader=Cookie
+#            - RewritePath=/recommend-service/(?<segment>.*), /$\{segment}
+#            - name: CustomFilter
+#            - name: LoggingFilter
+#              args:
+#                baseMessage: Hi, there.
+#                preLogger: true
+#                postLogger: true

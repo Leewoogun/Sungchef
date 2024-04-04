@@ -1,0 +1,27 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: dummy
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
+
+logging:
+  level:
+    root: debug
+
+cloud:
+  aws:
+    s3:
+      bucket: sungchef
+      base-url: https://sungchef.s3.ap-northeast-2.amazonaws.com/
+    credentials:
+      access-key: AKIA6GBMAUAKX3RPLUKC
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false

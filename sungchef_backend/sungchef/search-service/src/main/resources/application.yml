@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: search-service
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true #To beautify or pretty print the SQL
+        show_sql: true #show sql
+        dialect: org.hibernate.dialect.MySQLDialect
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: ENC(UyZOr8rnrnMzARMXBICmt/4rb/LDhB9vDxcFHJg5GKdjLnZSTr1fvI8qND1OpuZlrHDau48lNDm+pzAK45Q+ySDOqfeo/ZlhV6fvdN1SLrTq+A8RXmV+hi4zf5VGqHWQIgkioaUJSe7unKGsAhhpJYS/rPM5I++M)
+    username: ENC(TfuU1Hc9zWv8LfvfBAZZBw==)
+    password: ENC(CdQdTRqvHnZXbLGLLzE2X54M10IfeRPDljctYBS3cRI=)
+
+logging:
+  level:
+    com.ssafy.userservice.client: DEBUG
+    org.hibernate:
+      type.descriptor.sql: trace #show parameter binding
+      SQL: DEBUG
+
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+
+jwt:
+  secret:
+    ENC(iKUwCClHj209CRLCkRSQ21/darPeFv9UjDUG0/+iX+o0cGedBcHKcvSdp5vO1Pza3UiY0S9WpCkNdQ9kr0V91X2DnwPBy6DaNTHE89Y9L9heGIr+LVJ89A==)

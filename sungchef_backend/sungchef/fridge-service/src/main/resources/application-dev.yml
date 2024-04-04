@@ -1,0 +1,6 @@
+server:
+  port: 9094
+eureka:
+  client:
+    service-url:
+      defaultZone: ENC(tmocr2UnE5YoMNNESJAb0LmyjBW4OQu6Qhxzi6bcWQiKpWUEA5VzFA==)

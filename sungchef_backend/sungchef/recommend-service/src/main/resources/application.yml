@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: recommend-service
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true #To beautify or pretty print the SQL
+        show_sql: true #show sql
+        dialect: org.hibernate.dialect.MySQLDialect
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: ENC(0GKc2zNGxgWZ9v7p0pYx8m3vD30wjOewa3BtVohU8kastiodWjqTVn7U49Oewdd8qjLVsnIFqrwuePTenSPFb90efAcpzWQdRxBNAc8UeEBoxHGtkkYVikG0zUiAnYte5gQ6bvyjdw1GhnHfsqTqEq/R+o3kaA/q)
+    username: ENC(TfuU1Hc9zWv8LfvfBAZZBw==)
+    password: ENC(CdQdTRqvHnZXbLGLLzE2X54M10IfeRPDljctYBS3cRI=)
+
+logging:
+  level:
+    com.ssafy.userservice.client: DEBUG
+    org.hibernate:
+      type.descriptor.sql: trace #show parameter binding
+      SQL: DEBUG
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+
+jwt:
+  secret:
+    ENC(iKUwCClHj209CRLCkRSQ21/darPeFv9UjDUG0/+iX+o0cGedBcHKcvSdp5vO1Pza3UiY0S9WpCkNdQ9kr0V91X2DnwPBy6DaNTHE89Y9L9heGIr+LVJ89A==)
+
+django:
+  url:
+    ENC(8pP+kLdrHKUAGzmajX4HGhYMFwpTL7ZfPIvuQ2ubgl/L8guVmqHAmC/TCkGVjV/V)

@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: user-service
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true #To beautify or pretty print the SQL
+        show_sql: true #show sql
+        dialect: org.hibernate.dialect.MySQLDialect
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: ENC(F9MI+TS8Rbeyo0yivwNvJCiMbEFE+UVBVUg6mYVg2USt2YsYgqRJM4ux9pkYEmKnJeTtSRjKikrdlvCUOcDivms0yPLfKEKsSezBGQG/nIRl9vSFgdlP2InAIJn+VQCnIT2uc0/06gCUQjHbq6UWNg==)
+    username: ENC(TfuU1Hc9zWv8LfvfBAZZBw==)
+    password: ENC(CdQdTRqvHnZXbLGLLzE2X54M10IfeRPDljctYBS3cRI=)
+  data:
+    redis:
+      host: ENC(VReo0ZMhK67BosMCZ5sropcsf3C8Xg5hAPGVMUMH4I8=)
+      port: ${REDIS_PORT}
+      password: ENC(1QNBSLXM2ScCKcUHq4fXEWSHIXqeMUCn5pXkDCQBV4Q=)
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 200MB
+
+logging:
+  level:
+    com.ssafy.userservice.controller: DEBUG
+    feign: DEBUG
+
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+
+cloud:
+  aws:
+    s3:
+      bucket: ENC(IGvX0mQjeL6VPtabLU/B3kXnXHsHP9PH)
+      base-url: ENC(+kQveyb+VuBLX/CiN6H50l0XtLAHSJv1OzzgTxXJepojkzHq3O3iZRVkEBczjMJeeUb2ddrNxPSh/g+OHoKy2w==)
+    credentials:
+      access-key: ENC(gcdGAqZv8WsDcz1N6Jo8gdyUVPKcj/tjuKDkDd81CJc=)
+      secret-key:  ENC(mzMqMH1luvmBderKnGu4xLA4CNU41hcCMyNZJFsHQIdeATLp5NmC5L5DI4VYbQAAV3h/uEOvulk=)
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
+jwt:
+  secret:
+    ENC(iKUwCClHj209CRLCkRSQ21/darPeFv9UjDUG0/+iX+o0cGedBcHKcvSdp5vO1Pza3UiY0S9WpCkNdQ9kr0V91X2DnwPBy6DaNTHE89Y9L9heGIr+LVJ89A==)
+
+user:
+  default:
+    image:
+      ENC(xhmKRuQ2vuA1H/LuRpsYjVPE4IWKVZR/26ZI80zRwXbifsDLJAt7Ep7LSC+IQkBCI+RQWqPN7w3AEroe/VxcuyYJYYEhAaB8zf8bwZy26dI=)
