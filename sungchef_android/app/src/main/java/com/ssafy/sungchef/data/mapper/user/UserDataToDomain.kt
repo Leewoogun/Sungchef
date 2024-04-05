@@ -1,5 +1,6 @@
 package com.ssafy.sungchef.data.mapper.user
 
+import com.ssafy.sungchef.commons.NEED_SURVEY
 import com.ssafy.sungchef.data.model.APIError
 import com.ssafy.sungchef.data.model.responsedto.ResponseDto
 import com.ssafy.sungchef.data.model.responsedto.token.TokenResponse
@@ -41,11 +42,19 @@ fun LoginResponse.toJwtToken() : JwtToken {
 }
 
 fun<T> ResponseDto<T>.toLoginState(needSurvey : Boolean) : LoginState {
-    return LoginState(
-        code = this.code,
-        message = this.message,
-        needSurvey = needSurvey
-    )
+    return if (this.code == 200 && needSurvey) {
+        LoginState(
+            code = this.code,
+            message = NEED_SURVEY,
+            needSurvey = needSurvey
+        )
+    } else {
+        LoginState(
+            code = this.code,
+            message = this.message,
+            needSurvey = needSurvey
+        )
+    }
 }
 
 

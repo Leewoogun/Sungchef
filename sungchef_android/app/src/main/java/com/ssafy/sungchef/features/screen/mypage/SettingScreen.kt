@@ -452,13 +452,15 @@ fun Inquire(
 
 @Composable
 fun Logout(viewModel: SettingViewModel, onMoveLoginPage: () -> Unit) {
+    val context = LocalContext.current
+
     Column(modifier = Modifier
         .padding(end = 20.dp)
         .fillMaxWidth(),
         horizontalAlignment = Alignment.End) {
         SmallTextButtonComponent(text = "로그아웃", color = Color.Gray,
             modifier = Modifier.padding(bottom = 10.dp)){
-            SocialLoginManager().kakaoLogout()
+            SocialLoginManager(context).kakaoLogout()
             viewModel.logout()
             onMoveLoginPage()
         }

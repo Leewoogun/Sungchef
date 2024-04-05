@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -50,8 +53,10 @@ import com.ssafy.sungchef.features.component.AlertDialogComponent
 import com.ssafy.sungchef.features.component.FilledButtonComponent
 import com.ssafy.sungchef.features.component.ImageComponent
 import com.ssafy.sungchef.features.component.LoginImageComponent
+import com.ssafy.sungchef.features.component.TextComponent
 import com.ssafy.sungchef.features.screen.survey.SurveyScreen
 import com.ssafy.sungchef.features.ui.theme.primaryContainer80
+import com.ssafy.sungchef.util.SocialLoginManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.toCollection
 
@@ -64,47 +69,39 @@ fun LoginScreen(
     onMoveSurveyPage : () -> Unit,
     onMoveHomePage : () -> Unit
 ) {
-    val context = LocalContext.current
-    val loginState : LoginState by viewModel.loginState.collectAsState()
-    val needSurvey : Boolean by viewModel.needSurvey.collectAsState()
 
-    var isNextPage by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val socialLoginManager = SocialLoginManager(context) // 소셜 로그인의 이벤트를 관리하는 객체
+
+    val loginState : LoginState by viewModel.loginState.collectAsState()
+
+    val movePageState : Int by viewModel.movePageState.collectAsState()
+    val dialogState : Boolean by viewModel.dialogState.collectAsState()
+    val isNextPageState : Boolean by viewModel.isNextPageState.collectAsState()
 
     Log.d(TAG, "LoginScreen: $loginState")
+    Log.d(TAG, "isNextPageState: $isNextPageState")
 
 
     ShowLoadingDialog(isLoading = loginState.isLoading)
 
-    movePage(
-        loginState,
-        onMoveSignupPage,
-        onMoveSurveyPage,
-        onMoveHomePage,
-        showDialog = {
-            showDialog = it
-        },
-        isNextPage = isNextPage,
-        initLoginState = {
-            viewModel.initLoginStateCode()
-        },
-        needSurvey = needSurvey
+    viewModel.movePage(
+        loginState = loginState,
+        isNextPage = isNextPageState
     )
 
-    showMovePageDialog(
-        showDialog = showDialog,
-        onCancel = {
-           // 다이얼로그 닫기
-           showDialog = false
-        },
+    movePage(
+        movePageState = movePageState,
+        viewModel = viewModel,
+        onMoveSignupPage = onMoveSignupPage,
+        onMoveHomePage = onMoveHomePage,
+        onMoveSurveyPage = onMoveSurveyPage,
+    )
+
+    ShowMovePageDialog(
+        viewModel = viewModel,
+        dialogState = dialogState,
         loginState = loginState,
-        isNextPage = {
-            isNextPage = it
-        },
-        initLoginState = {
-            viewModel.initLoginStateCode()
-        },
-        needSurvey = needSurvey
     )
 
     Column(
@@ -132,7 +129,7 @@ fun LoginScreen(
                 .width(300.dp)
                 .height(60.dp)
                 .clickable {
-                    kakaoLogin(context, viewModel)
+                    socialLoginManager.kakaoLogin(viewModel = viewModel)
                 },
             imageResource = R.drawable.kakao_login,
         )
@@ -147,7 +144,7 @@ fun LoginScreen(
                 .width(300.dp)
                 .height(60.dp)
                 .clickable {
-                    naverLogin(context, viewModel)
+                    socialLoginManager.naverLogin(viewModel = viewModel)
                 },
             imageResource = R.drawable.naver_login
         )
@@ -183,184 +180,70 @@ fun ShowLoadingDialog(
     }
 }
 
-fun kakaoLogin(
-    context : Context,
-    viewModel : LoginViewModel
-){
-
-    // 카카오계정으로 로그인 공통 callback 구성
-    // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
-    val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
-        if (error != null) {
-            Log.e(TAG, "카카오계정으로 로그인 실패", error)
-        } else if (token != null) {
-            Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-            getKakaoUserInfo(viewModel)
-        }
-    }
-
-    // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
-    if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
-        UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
-            if (error != null) {
-                Log.e(TAG, "카카오톡으로 로그인 실패", error)
-
-                // 사용자가 카카오톡 설치 후 디바이스 권한 요청 화면에서 로그인을 취소한 경우,
-                // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
-                if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
-                    return@loginWithKakaoTalk
-                }
-
-                // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인 시도
-                UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
-            } else if (token != null) {
-                Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
-                getKakaoUserInfo(viewModel)
-            }
-        }
-    } else {
-        UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
-    }
-}
-
-// 카카오 로그인에 성공한 유저의 정보 받기
-fun getKakaoUserInfo(viewModel : LoginViewModel) {
-    // 사용자 정보 요청 (기본)
-    UserApiClient.instance.me { user, error ->
-        if (error != null) {
-            Log.e(TAG, "사용자 정보 요청 실패", error)
-        }
-        else if (user != null) {
-            Log.i(TAG, "사용자 정보 요청 성공" +
-                    "\n회원번호: ${user.id}" +
-                    "\n이메일: ${user.kakaoAccount?.email}" +
-                    "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
-                    "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
-            val userSnsIdRequestDto =  UserSnsIdRequestDTO(user.id.toString())
-            Log.d(TAG, "getKakaoUserInfo: 정보를 받습니다.")
-            viewModel.login(userSnsIdRequestDto, KAKAO)
-        }
-    }
-}
-
 fun movePage(
-    loginState : LoginState,
-    onMoveSignupPage : () -> Unit,
-    onMoveSurveyPage : () -> Unit,
-    onMoveHomePage : () -> Unit,
-    showDialog : (Boolean) -> Unit,
-    isNextPage: Boolean,
-    initLoginState : () -> Unit,
-    needSurvey : Boolean
+    movePageState : Int,
+    viewModel : LoginViewModel,
+    onMoveSignupPage: () -> Unit,
+    onMoveHomePage: () -> Unit,
+    onMoveSurveyPage: () -> Unit
 ) {
-    when (loginState.code) {
-        200 -> {
-            if (!needSurvey) {
-                onMoveHomePage()
-            } else {
-                showDialog(true)
-
-                if (isNextPage){
-                    onMoveSurveyPage()
-                    initLoginState()
-                    showDialog(false)
-                }
-            }
-        }
-        400 -> {
-            showDialog(true)
+    when (movePageState) {
+        LoginViewModel.MOVE_SIGNUP_PAGE_CODE -> {
+            onMoveSignupPage()
+            viewModel.initLoginStateCode()
         }
 
-        404 -> {
-            showDialog(true)
-            if (isNextPage) {
-                onMoveSignupPage()
-                showDialog(false)
-                initLoginState()
-            }
+        LoginViewModel.MOVE_HOME_PAGE_CODE -> {
+            onMoveHomePage()
+            viewModel.initLoginStateCode()
         }
-        500 -> {
-            showDialog(true)
 
-            if (isNextPage) {
-                showDialog(false)
-            }
+        LoginViewModel.MOVE_SURVEY_PAGE_CODE -> {
+            onMoveSurveyPage()
+            viewModel.initLoginStateCode()
         }
     }
+
 }
 
 @Composable
-fun showMovePageDialog(
-    showDialog : Boolean,
-    onCancel : (Boolean) -> Unit,
+fun ShowMovePageDialog(
+    viewModel : LoginViewModel,
+    dialogState : Boolean,
     loginState : LoginState,
-    isNextPage : (Boolean) -> Unit,
-    initLoginState: () -> Unit,
-    needSurvey: Boolean
-) {
-    if (showDialog){
-        AlertDialogComponent(
-            dialogText = if (needSurvey) "설문조사가 필요합니다." else loginState.message,
+){
+    if (dialogState) {
+        AlertDialog(
+            text = {
+                TextComponent(
+                    text = loginState.message,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            },
             onDismissRequest = {
-                onCancel(false)
+                viewModel.changeDialogState(false)
             },
-            showDialog = {
-                onCancel(false)
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.changeIsNextPageState(true)
+                        viewModel.changeDialogState(false)
+                    }
+                ) {
+                    TextComponent(text = "확인")
+                }
             },
-            isNextPage = isNextPage,
-            initUiState = initLoginState
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.changeDialogState(false)
+                    }
+                ) {
+                    TextComponent(text = "취소")
+                }
+            }
         )
     }
-
-}
-
-// authenticate() 를 이용한 로그인
-private fun naverLogin(
-    context : Context,
-    viewModel : LoginViewModel
-){
-    /**
-     * OAuthLoginCallback을 authenticate() 메서드 호출 시 파라미터로 전달하거나 NidOAuthLoginButton 객체에 등록하면 인증이 종료되는 것을 확인할 수 있습니다.
-     */
-    val oauthLoginCallback = object : OAuthLoginCallback {
-        override fun onSuccess() {
-            // 네이버 로그인 인증이 성공했을 때 수행할 코드 추가
-            getNaverUserInfo(context, viewModel)
-        }
-        override fun onFailure(httpStatus: Int, message: String) {
-            val errorCode = NaverIdLoginSDK.getLastErrorCode().code
-            val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
-
-            Toast.makeText(context, errorDescription, Toast.LENGTH_SHORT).show()
-        }
-        override fun onError(errorCode: Int, message: String) {
-            onFailure(errorCode, message)
-        }
-    }
-    NaverIdLoginSDK.authenticate(context, oauthLoginCallback)
-}
-
-private fun getNaverUserInfo(context : Context, viewModel : LoginViewModel) {
-    // 네이버 로그인 API 호출 성공 시 유저 정보를 가져온다
-    NidOAuthLogin().callProfileApi(object : NidProfileCallback<NidProfileResponse> {
-        override fun onSuccess(result: NidProfileResponse) {
-            val naverId = result.profile?.id.toString()
-            val userSnsIdRequestDto =  UserSnsIdRequestDTO(naverId)
-            viewModel.login(userSnsIdRequestDto, NAVER)
-            Log.i(TAG, "사용자 정보 요청 성공" +
-                    "\n회원번호: ${result.profile?.id}" +
-                    "\n이메일: ${result.profile?.email}" +
-                    "\n닉네임: ${result.profile?.nickname}")
-        }
-
-        override fun onError(errorCode: Int, message: String) {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        }
-
-        override fun onFailure(httpStatus: Int, message: String) {
-
-        }
-    })
 }
 
 @Preview(showBackground = true)
