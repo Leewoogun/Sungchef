@@ -15,11 +15,11 @@ logging:
 cloud:
   aws:
     s3:
-      bucket: sungchef
-      base-url: https://sungchef.s3.ap-northeast-2.amazonaws.com/
+      bucket: ${bucket}
+      base-url: ${url}
     credentials:
-      access-key: AKIA6GBMAUAKX3RPLUKC
-      secret-key: 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
+      access-key: ${accessKey}
+      secret-key: ${secretKey}
     region:
       static: ap-northeast-2
       auto: false
