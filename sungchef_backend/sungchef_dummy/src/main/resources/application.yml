@@ -15,11 +15,11 @@ logging:
 cloud:
   aws:
     s3:
-      bucket: ${bucket}
-      base-url: ${url}
+      bucket: ENC(bucket)
+      base-url: ENC(url)
     credentials:
-      access-key: ${accessKey}
-      secret-key: ${secretKey}
+      access-key: ENC(accessKey)
+      secret-key: ENC(secretKey)
     region:
       static: ap-northeast-2
       auto: false
