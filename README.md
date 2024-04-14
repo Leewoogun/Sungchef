@@ -1,5 +1,5 @@
 # 성식당
-![성식당_로고_github](/uploads/13685f7d0b381bc668ee1268f67e50f2/성식당_로고_github.jpg)
+![image.png](./README_image/성식당_로고_github__1___1_.png)
 
 ## 프로젝트명 (서비스명) : 성식당 (sungchef)
 
@@ -70,14 +70,13 @@ Version
 - Django 4.2.11
 
 ## 아키텍처
-![아키텍처](/uploads/52a7c1681d58c759272b907ddd314e4c/아키텍처.JPG)
+![image.png](./README_image/아키텍처.PNG)
 
 ## ERD 다이어그램
-![ERD_다이어그램](/uploads/e20c4bb61cf3eb7f53a9b259469ef4b3/ERD_다이어그램.JPG)
+![image.png](./README_image/ERD.PNG)
 
 ## 기술 스택
-![기술_스택](/uploads/8c37e64fa77e5b2fde28fba494265cb0/기술_스택.JPG)
-
+![image.png](./README_image/기술스택.PNG)
 
 
 ## 추천 시스템 
@@ -109,49 +108,49 @@ Version
 ## 주요 기능
 
 ### 회원 가입
-![로그인_회원가입](/uploads/9ebfe1b09a8b8f38a45bb38519de9e0f/로그인_회원가입.PNG)
-![회원가입2](/uploads/884707dba51a406eb10c8458f9ab6a26/회원가입2.PNG)
+![image.png](./README_image/로그인_회원가입.PNG)
+![image.png](./README_image/회원가입2.png)
 
 > 로그인, 회원가입 페이지 입니다. 카카오, 네이버 소셜 로그인으로 구현하였으며<br>Jwt Token 유무로 서버에서 Http 404 code를 받을 시 회원가입 페이지로 이동합니다.<br>회원가입에서 받는 정보는 닉네임, 생년월일, 성별 입니다.
 
 ### 설문하기 & 마이페이지
-![설문하기_마이페이지](/uploads/2a031f72ecf4ad2e1520c228533d8cd1/설문하기_마이페이지.PNG)
+![image.png](./README_image/설문하기_마이페이지.PNG)
 
 > 설문하기, 마이페이지 입니다. 설문조사 데이터는 음식 추천 로직에 사용됩니다.<br>마이페이지는 사용자가 음식을 업로드하거나 즐겨찾기한 목록을 볼 수 있습니다.
 
 ### 메인 화면
-![메인_화면](/uploads/9d978bf8cb5196ba1851d3f2c3fec3aa/메인_화면.png)
+![image.png](./README_image/메인_화면.png)
 
 > 메인 화면 입니다. 사용자의 로그 기반, 설문 조사 기반, 냉장고 재료 기반으로 음식을 추천합니다.
 
 ### 검색 기능 / 메뉴 화면
-![검색기능](/uploads/1b9a6d9327d3de7bb096bf0a59b64350/검색기능.PNG)
-![검색기능_필터링](/uploads/62f6ea4431ccde2f377f577d1bb0e5c0/검색기능_필터링.png)
+![image.png](./README_image/검색기능.PNG)
+![image.png](./README_image/검색기능_필터링.png)
 
 > 메뉴 페이지 및 검색 기능 입니다. 사용자는 음식을 검색 할 수 있고 즐겨찾기 등록을 할 수 있습니다.<br>기본 메뉴 페이지는 모든 음식을 보여주며 이를 위해 Paging을 사용하여 무한스크롤을 구현하였습니다.
 
 ### 메뉴 상세화면
-![메뉴_상세화면](/uploads/d3ea9ee7a3ac4b7ed404cbafbb3b1f45/메뉴_상세화면.PNG)
+![image.png](./README_image/메뉴_상세화면.PNG)
 
 > 메뉴 상세화면 페이지 입니다. 메뉴 화면에서 음식을 클릭할 시 이동합니다.<br>사용자는 음식의 재료와 레시피를 볼 수 있고 요리를 시작 할 수 있습니다.
 
 ### 요리하기 
-![요리하기](/uploads/ffec7cfdb9b87d4e5e1b23f63435940c/요리하기.png)
+![image.png](./README_image/요리하기.png)
 
 > 요리하기 페이지 입니다. 메뉴 상세화면에서 요리 시작하기 버튼을 클릭 시 이동할 수 있습니다.<br>사용자의 편의성을 위해 레시피를 TTS로 읽어줍니다.
 
 ### 요리 등록하기 / 재료 관리하기
-![요리_등록하기](/uploads/ea26c91f1d7e3e0e3e9468098c1e1c50/요리_등록하기.png)
+![image.png](./README_image/요리_등록하기.png)
 
 > 요리 등록하기 페이지 입니다. 요리하기 페이지가 끝나면 사용자는 본인의 요리를 등록하고 재료를 관리 할 수 있습니다.
 
 ### 냉장고 관리 페이지
-![냉장고_관리_기능](/uploads/10950d9d5bf675c695d06529228171f5/냉장고_관리_기능.PNG)
+![image.png](./README_image/냉장고_관리_기능.PNG)
 > 냉장고 관리 페이지 입니다. 사용자는 본인의 냉장고 재료를 확인 할 수 있고 요리에 필요한 재료를 등록 할 수 있습니다.
 
 ### 냉장고 등록 페이지 (OCR)
-![재료_등록_기능](/uploads/a22ff278747d1f3426534e8269bebb1d/재료_등록_기능.PNG)
+![image.png](./README_image/재료_등록_기능.PNG)
 > 냉장고 등록 페이지 입니다. 사용자는 영수증을 촬영하면 OCR 기술로 영수증 내의 재료를 Json으로 변환합니다.<br>변환된 Json에서 재료를 추출하여 성식당에서 관리하는 재료 DB 테이블과 매핑하여 변환된 값을 나타냅니다.<br>사용자는 재료를 직접 등록 할 수도 있습니다.
 
 ## 팀원 소개
-![팀원소개](/uploads/f03d70fac66c36042b8f140308b34349/팀원소개.png)
+![image.png](./README_image/팀원소개__1_.png)
