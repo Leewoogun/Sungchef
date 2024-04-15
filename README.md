@@ -148,7 +148,6 @@ Version
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ConvertIngredientType.java
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜IngredientType.java
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserSnsType.java
- ┃ ┃ ┃ ┃ ┃ ┗ 📜FridgeServiceApplication.java
 ```
 </details>
 
@@ -209,7 +208,6 @@ Version
  ┃ ┃ ┃ ┣ 📜IngredientService.java
  ┃ ┃ ┃ ┣ 📜JwtService.java
  ┃ ┃ ┃ ┣ 📜ResponseService.java
- ┃ ┃ ┃ ┗ 📜SampleService1.java
  ┃ ┃ ┣ 📂util
  ┃ ┃ ┃ ┣ 📂result
  ┃ ┃ ┃ ┃ ┣ 📜CommonResult.java
