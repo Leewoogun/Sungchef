@@ -70,10 +70,8 @@ Version
 - Django 4.2.11
 
 
-### 전체 디렉토리 구조
-<details>
-<summary>전체 구조</summary>
-  
+### 디렉토리 구조
+
 ```bash
 📦sungchef
  ┣ 📂apigateway-service
@@ -85,6 +83,8 @@ Version
  ┣ 📂search-service
  ┗ 📂user-service
 ```
+
+### 디렉토리 상세 구조
 
 <details>
 <summary>냉장고</summary>
@@ -347,7 +347,7 @@ Version
 </details>
 
 <details>
-<summary>검색 - 주요 담당자</summary>
+<summary>검색 - 주요 담당</summary>
   
 ```bash
  📂search-service
@@ -406,7 +406,7 @@ Version
 </details>
 
 <details>
-<summary>유저 - 주요 담당자</summary>
+<summary>유저 - 주요 담당</summary>
   
 ```bash
  📂user-service
@@ -522,8 +522,6 @@ Version
  ┃ ┃ ┃ ┃ ┣ 📜EnumPatternValidator.java
  ┃ ┃ ┃ ┃ ┗ 📜EnumValueValidator.java
 ```
-</details>
-
 </details>
 
 ## 아키텍처
