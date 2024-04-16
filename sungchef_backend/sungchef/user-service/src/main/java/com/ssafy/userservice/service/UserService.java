@@ -151,7 +151,6 @@ public class UserService {
 			&& !req.userImage().isEmpty())
 		{
 			try {
-				log.info("in");
 				String url = fileUploadService.uploadFile(req.userImage());
 				user.updateUserImage(url);
 			} catch (Exception e) {
@@ -164,7 +163,6 @@ public class UserService {
 			, req.userBirthdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 			, req.userGender()
 		);
-		log.info("update");
 	}
 
 	@Transactional
@@ -194,7 +192,6 @@ public class UserService {
 
 		try {
 			ResponseEntity<SingleResult<UserMakeRecipeRes>> res = recipeServiceClient.getUserMakeRecipe(token, page);
-			log.info("{}", res);
 			if (res.getBody().getData().getMakeRecipeList().size() == 0)
 				throw new NoContentException("");
 			return res;
