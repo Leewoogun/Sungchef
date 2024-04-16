@@ -191,12 +191,13 @@ public class UserService {
 		}
 
 		try {
-			ResponseEntity<SingleResult<UserMakeRecipeRes>> res = recipeServiceClient.getUserMakeRecipe(token, page);
-			if (res.getBody().getData().getMakeRecipeList().size() == 0)
-				throw new NoContentException("");
+			ResponseEntity<SingleResult<UserMakeRecipeRes>> res = recipeServiceClient.getUserMakeRecipe(token, page); 
+			if (res.getBody().getData().getMakeRecipeList().size() == 0) {
+				throw new NoContentException("유저가 만든 레시피가 존재하지 않음");
+			}
 			return res;
 		} catch (NoContentException e) {
-			throw new NoContentException("");
+			throw new NoContentException("유저가 만든 레시피가 존재하지 않음");
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new FeignException("recipeServiceClient.getUserMakeRecipe ERROR");
