@@ -1,13 +1,11 @@
 package com.ssafy.sungchef.features.screen.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.sungchef.commons.DataState
 import com.ssafy.sungchef.data.model.requestdto.UserSnsIdRequestDTO
-import com.ssafy.sungchef.domain.model.base.BaseModel
 import com.ssafy.sungchef.domain.model.user.LoginState
-import com.ssafy.sungchef.domain.usecase.user.GetLoginState
+import com.ssafy.sungchef.domain.usecase.user.GetLoginStateUseCase
 import com.ssafy.sungchef.domain.usecase.user.SetLoginType
 import com.ssafy.sungchef.domain.usecase.user.SetUserSnsIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +20,7 @@ import javax.inject.Inject
 private const val TAG = "LoginViewModel_성식당"
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val getLoginState: GetLoginState,
+    private val getLoginStateUseCase: GetLoginStateUseCase,
     private val setLoginType : SetLoginType,
     private val setUserSnsIdUseCase: SetUserSnsIdUseCase
 ) : ViewModel(){
@@ -46,7 +44,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             setLoginType.setLoginType(loginType)   // 로그인 타입 저장
             setUserSnsIdUseCase.setUserSnsId(userSnsIdRequestDTO.userSnsId) // uid 저장
-            getLoginState.getLoginStateCode(userSnsIdRequestDTO).collect {
+            getLoginStateUseCase.getLoginStateCode(userSnsIdRequestDTO).collect {
                 when (it) {
                     is DataState.Success -> {
                         _loginState.emit(it.data)
