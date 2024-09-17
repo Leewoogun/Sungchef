@@ -151,7 +151,6 @@ public class UserService {
 			&& !req.userImage().isEmpty())
 		{
 			try {
-				log.info("in");
 				String url = fileUploadService.uploadFile(req.userImage());
 				user.updateUserImage(url);
 			} catch (Exception e) {
@@ -164,7 +163,6 @@ public class UserService {
 			, req.userBirthdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 			, req.userGender()
 		);
-		log.info("update");
 	}
 
 	@Transactional
@@ -193,13 +191,13 @@ public class UserService {
 		}
 
 		try {
-			ResponseEntity<SingleResult<UserMakeRecipeRes>> res = recipeServiceClient.getUserMakeRecipe(token, page);
-			log.info("{}", res);
-			if (res.getBody().getData().getMakeRecipeList().size() == 0)
-				throw new NoContentException("");
+			ResponseEntity<SingleResult<UserMakeRecipeRes>> res = recipeServiceClient.getUserMakeRecipe(token, page); 
+			if (res.getBody().getData().getMakeRecipeList().size() == 0) {
+				throw new NoContentException("유저가 만든 레시피가 존재하지 않음");
+			}
 			return res;
 		} catch (NoContentException e) {
-			throw new NoContentException("");
+			throw new NoContentException("유저가 만든 레시피가 존재하지 않음");
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new FeignException("recipeServiceClient.getUserMakeRecipe ERROR");

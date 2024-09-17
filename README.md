@@ -56,7 +56,7 @@ Version
 - AWS
 - Jasypt
 
-### Data analysis
+### 데이터 분석 & 추천
 
 IDE
 - Visual Studio Code 1.85.1
@@ -68,6 +68,461 @@ Version
 - zeppelin 0.10.1
 - zookeeper 3.8.4
 - Django 4.2.11
+
+
+### 디렉토리 구조
+
+```bash
+📦sungchef
+ ┣ 📂apigateway-service
+ ┣ 📂discovery-service
+ ┣ 📂fridge-service
+ ┣ 📂ingredient-service
+ ┣ 📂recipe-service
+ ┣ 📂recommend-service
+ ┣ 📂search-service
+ ┗ 📂user-service
+```
+
+### 디렉토리 상세 구조
+
+<details>
+<summary>냉장고</summary>
+  
+```bash
+ 📂fridge-service
+ ┗ 📂main
+ ┃ ┣ 📂fridgeservice
+ ┃ ┃ ┣ 📂config
+ ┃ ┃ ┃ ┣ 📜JasyptConfig.java
+ ┃ ┃ ┃ ┣ 📜JwtAuthenticationFilter.java
+ ┃ ┃ ┃ ┗ 📜SecurityConfig.java
+ ┃ ┃ ┣ 📂controller
+ ┃ ┃ ┃ ┣ 📜CheckController.java
+ ┃ ┃ ┃ ┗ 📜FridgeController.java
+ ┃ ┃ ┃ ┣ 📂db
+ ┃ ┃ ┃ ┃ ┣ 📂entity
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜Fridge.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜FridgeLog.java
+ ┃ ┃ ┃ ┃ ┗ 📂repository
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜BaseRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜FridgeRepository.java
+ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂request
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂user
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜SignUpReq.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜FridgeIngredientListReq.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂user
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserTokenRes.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜FridgeIngredientListRes.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜Ingredient.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜IngredientId.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜IngredientInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂error
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ErrorCode.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜ErrorResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜IngredientNotFoundException.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜JwtException.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜JwtExpiredException.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜RecipeNotFoundException.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📂handler
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜GlobalExceptionHandler.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂service
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂client
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜IngredientServiceClient.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserServiceClient.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ErrorResponseService.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜FridgeService.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜JwtService.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜ResponseService.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂util
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂result
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜CommonResult.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ListResult.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜SingleResult.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📂sungchefEnum
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜CommonResponseCode.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ConvertIngredientType.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜IngredientType.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserSnsType.java
+```
+</details>
+
+<details>
+<summary>재료</summary>
+
+```bash
+ 📂ingredient-service
+ ┣ 📂main
+ ┃ ┗ 📂ingredientservice
+ ┃ ┃ ┣ 📂config
+ ┃ ┃ ┃ ┣ 📜JasyptConfig.java
+ ┃ ┃ ┃ ┣ 📜JwtAuthenticationFilter.java
+ ┃ ┃ ┃ ┗ 📜SecurityConfig.java
+ ┃ ┃ ┣ 📂controller
+ ┃ ┃ ┃ ┣ 📜CheckController.java
+ ┃ ┃ ┃ ┗ 📜IngredientController.java
+ ┃ ┃ ┣ 📂db
+ ┃ ┃ ┃ ┣ 📂entity
+ ┃ ┃ ┃ ┃ ┣ 📜Ingredient.java
+ ┃ ┃ ┃ ┃ ┣ 📜IngredientSample.java
+ ┃ ┃ ┃ ┃ ┣ 📜IngredientType.java
+ ┃ ┃ ┃ ┃ ┣ 📜RecipeIngredient.java
+ ┃ ┃ ┃ ┃ ┗ 📜RecipeShowName.java
+ ┃ ┃ ┃ ┗ 📂repository
+ ┃ ┃ ┃ ┃ ┣ 📜IngredientRepository.java
+ ┃ ┃ ┃ ┃ ┣ 📜RecipeIngredientRepository.java
+ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┣ 📂request
+ ┃ ┃ ┃ ┃ ┣ 📜ConvertImageReq.java
+ ┃ ┃ ┃ ┃ ┗ 📜IngredientListReq.java
+ ┃ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┃ ┣ 📜ConvertProduct.java
+ ┃ ┃ ┃ ┃ ┣ 📜ConvertProductInfo.java
+ ┃ ┃ ┃ ┃ ┣ 📜ConvertProductListRes.java
+ ┃ ┃ ┃ ┃ ┣ 📜IngredientId.java
+ ┃ ┃ ┃ ┃ ┣ 📜IngredientInfo.java
+ ┃ ┃ ┃ ┃ ┣ 📜IngredientListRes.java
+ ┃ ┃ ┃ ┃ ┣ 📜IngredientRes.java
+ ┃ ┃ ┃ ┃ ┣ 📜RecipeIngredient.java
+ ┃ ┃ ┃ ┃ ┣ 📜RecipeIngredientInfo.java
+ ┃ ┃ ┃ ┃ ┗ 📜RecipeIngredientListRes.java
+ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┣ 📂error
+ ┃ ┃ ┃ ┃ ┣ 📜ErrorCode.java
+ ┃ ┃ ┃ ┃ ┗ 📜ErrorResponse.java
+ ┃ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┃ ┣ 📜ConvertOCRException.java
+ ┃ ┃ ┃ ┃ ┣ 📜HaveAllIngredientInRecipeException.java
+ ┃ ┃ ┃ ┃ ┣ 📜IngredientNotFoundException.java
+ ┃ ┃ ┃ ┃ ┣ 📜JwtException.java
+ ┃ ┃ ┃ ┃ ┣ 📜JwtExpiredException.java
+ ┃ ┃ ┃ ┃ ┗ 📜RecipeNotFoundException.java
+ ┃ ┃ ┃ ┗ 📂handler
+ ┃ ┃ ┃ ┃ ┗ 📜GlobalExceptionHandler.java
+ ┃ ┃ ┣ 📂service
+ ┃ ┃ ┃ ┣ 📜ErrorResponseService.java
+ ┃ ┃ ┃ ┣ 📜IngredientService.java
+ ┃ ┃ ┃ ┣ 📜JwtService.java
+ ┃ ┃ ┃ ┣ 📜ResponseService.java
+ ┃ ┃ ┣ 📂util
+ ┃ ┃ ┃ ┣ 📂result
+ ┃ ┃ ┃ ┃ ┣ 📜CommonResult.java
+ ┃ ┃ ┃ ┃ ┣ 📜ListResult.java
+ ┃ ┃ ┃ ┃ ┗ 📜SingleResult.java
+ ┃ ┃ ┃ ┗ 📂sungchefEnum
+ ┃ ┃ ┃ ┃ ┣ 📜CommonResponseCode.java
+ ┃ ┃ ┃ ┃ ┣ 📜ConvertIngredientType.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜IngredientType.java
+```
+</details>
+
+<details>
+<summary>레시피</summary>
+  
+```bash
+ 📂recipe-service
+ ┣ 📂main
+ ┃ ┗ 📂recipeservice
+ ┃ ┃ ┣ 📂config
+ ┃ ┃ ┃ ┣ 📜JasyptConfig.java
+ ┃ ┃ ┃ ┣ 📜JwtAuthenticationFilter.java
+ ┃ ┃ ┃ ┗ 📜SecurityConfig.java
+ ┃ ┣ 📂controller
+ ┃ ┃ ┣ 📜CheckController.java
+ ┃ ┃ ┗ 📜RecipeController.java
+ ┃ ┣ 📂db
+ ┃ ┃ ┣ 📂entity
+ ┃ ┃ ┃ ┣ 📜Food.java
+ ┃ ┃ ┃ ┣ 📜Recipe.java
+ ┃ ┃ ┃ ┣ 📜RecipeDetail.java
+ ┃ ┃ ┃ ┣ 📜RecipeMake.java
+ ┃ ┃ ┃ ┗ 📜RecipeMakeLog.java
+ ┃ ┃ ┗ 📂repository
+ ┃ ┃ ┃ ┣ 📜FoodRepository.java
+ ┃ ┃ ┃ ┣ 📜RecipeDetailRepository.java
+ ┃ ┃ ┃ ┣ 📜RecipeMakeRepository.java
+ ┃ ┃ ┃ ┗ 📜RecipeRepository.java
+ ┃ ┣ 📂dto
+ ┃ ┃ ┣ 📂request
+ ┃ ┃ ┃ ┣ 📜FoodIdListReq.java
+ ┃ ┃ ┃ ┣ 📜MakeRecipeReq.java
+ ┃ ┃ ┃ ┗ 📜RecipeIdListReq.java
+ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┣ 📜RecipeDetailRes.java
+ ┃ ┃ ┃ ┣ 📜RecipeDetailStepRes.java
+ ┃ ┃ ┃ ┣ 📜RecipeIngredient.java
+ ┃ ┃ ┃ ┣ 📜RecipeIngredientInfo.java
+ ┃ ┃ ┃ ┣ 📜RecipeIngredientListRes.java
+ ┃ ┃ ┃ ┣ 📜RecipeStep.java
+ ┃ ┃ ┃ ┣ 📜RecommendFood.java
+ ┃ ┃ ┃ ┣ 📜RecommendFoodListRes.java
+ ┃ ┃ ┃ ┣ 📜RecommendRecipe.java
+ ┃ ┃ ┃ ┣ 📜RecommendRecipeListRes.java
+ ┃ ┃ ┃ ┣ 📜SearchRecipe.java
+ ┃ ┃ ┃ ┣ 📜SearchRecipeListRes.java
+ ┃ ┃ ┃ ┣ 📜UserMakeRecipe.java
+ ┃ ┃ ┃ ┗ 📜UserMakeRecipeRes.java
+ ┃ ┣ 📂exception
+ ┃ ┃ ┣ 📂error
+ ┃ ┃ ┃ ┣ 📜ErrorCode.java
+ ┃ ┃ ┃ ┗ 📜ErrorResponse.java
+ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┣ 📜JwtException.java
+ ┃ ┃ ┃ ┣ 📜JwtExpiredException.java
+ ┃ ┃ ┃ ┗ 📜PageConvertException.java
+ ┃ ┃ ┗ 📂handler
+ ┃ ┃ ┃ ┗ 📜GlobalExceptionHandler.java
+ ┃ ┣ 📂service
+ ┃ ┃ ┣ 📂client
+ ┃ ┃ ┃ ┗ 📜IngredientServiceClient.java
+ ┃ ┃ ┣ 📜ErrorResponseService.java
+ ┃ ┣ 📜JwtService.java
+ ┃ ┃ ┣ 📜RecipeFeignService.java
+ ┃ ┃ ┣ 📜RecipeService.java
+ ┃ ┃ ┣ 📜ResponseService.java
+ ┃ ┣ 📂util
+ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┣ 📜FoodNotFoundException.java
+ ┃ ┃ ┃ ┗ 📜RecipeNotFoundException.java
+ ┃ ┃ ┣ 📂result
+ ┃ ┃ ┃ ┣ 📜CommonResult.java
+ ┃ ┃ ┃ ┣ 📜ListResult.java
+ ┃ ┃ ┃ ┗ 📜SingleResult.java
+ ┃ ┃ ┗ 📂sungchefEnum
+ ┃ ┃ ┃ ┣ 📜CommonResponseCode.java
+ ┃ ┃ ┃ ┗ 📜IngredientType.java
+```
+</details>
+
+<details>
+<summary>추천</summary>
+  
+```bash
+ 📂recommend-service
+ ┃ ┣ 📂main
+ ┃ ┃ ┗ 📂recommendservice
+ ┃ ┃ ┃ ┣ 📂config
+ ┃ ┃ ┃ ┃ ┣ 📜JasyptConfig.java
+ ┃ ┃ ┃ ┃ ┣ 📜JwtAuthenticationFilter.java
+ ┃ ┃ ┃ ┃ ┗ 📜SecurityConfig.java
+ ┃ ┃ ┃ ┣ 📂controller
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜CheckController.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜RecommendController.java
+ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜Food.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜Recipe.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜RecommendFood.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜RecommendList.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜RecommendRecipe.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜RecommendRes.java
+ ┃ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┃ ┣ 📂error
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜ErrorCode.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜ErrorResponse.java
+ ┃ ┃ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜JwtException.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜JwtExpiredException.java
+ ┃ ┃ ┃ ┃ ┗ 📂handler
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜GlobalExceptionHandler.java
+ ┃ ┃ ┃ ┣ 📂service
+ ┃ ┃ ┃ ┃ ┣ 📜ErrorResponseService.java
+ ┃ ┃ ┃ ┃ ┣ 📜JwtService.java
+ ┃ ┃ ┃ ┃ ┣ 📜ResponseService.java
+ ┃ ┃ ┃ ┣ 📂util
+ ┃ ┃ ┃ ┃ ┣ 📂result
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜CommonResult.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜ListResult.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜SingleResult.java
+ ┃ ┃ ┃ ┃ ┗ 📂sungchefEnum
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜CommonResponseCode.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜RecommendFoodType.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜RecommendRecipeType.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜RecommendType.java
+```
+</details>
+
+<details>
+<summary>검색 - 주요 담당</summary>
+  
+```bash
+ 📂search-service
+ ┣ 📂main
+ ┃ ┗ 📂searchservice
+ ┃ ┃ ┣ 📂config
+ ┃ ┃ ┃ ┣ 📜JasyptConfig.java
+ ┃ ┃ ┃ ┣ 📜JwtAuthenticationFilter.java
+ ┃ ┃ ┃ ┗ 📜SecurityConfig.java
+ ┃ ┃ ┣ 📂controller
+ ┃ ┃ ┃ ┣ 📜CheckController.java
+ ┃ ┃ ┃ ┗ 📜SearchController.java
+ ┃ ┃ ┣ 📂db
+ ┃ ┃ ┃ ┣ 📂entity
+ ┃ ┃ ┃ ┃ ┣ 📜Food.java
+ ┃ ┃ ┃ ┃ ┣ 📜Ingredient.java
+ ┃ ┃ ┃ ┃ ┗ 📜User.java
+ ┃ ┃ ┃ ┗ 📂repository
+ ┃ ┃ ┃ ┃ ┣ 📜SearchFoodRepository.java
+ ┃ ┃ ┃ ┃ ┣ 📜SearchIngredientRepository.java
+ ┃ ┃ ┃ ┃ ┗ 📜UserSearchRepository.java
+ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┃ ┣ 📜SearchFood.java
+ ┃ ┃ ┃ ┃ ┣ 📜SearchFoodListRes.java
+ ┃ ┃ ┃ ┃ ┣ 📜SearchIngredient.java
+ ┃ ┃ ┃ ┃ ┗ 📜SearchIngredientListRes.java
+ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┣ 📂error
+ ┃ ┃ ┃ ┃ ┣ 📜ErrorCode.java
+ ┃ ┃ ┃ ┃ ┗ 📜ErrorResponse.java
+ ┃ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┃ ┣ 📜FoodNotFoundException.java
+ ┃ ┃ ┃ ┃ ┣ 📜IngredientNotFoundException.java
+ ┃ ┃ ┃ ┃ ┣ 📜JwtException.java
+ ┃ ┃ ┃ ┃ ┣ 📜JwtExpiredException.java
+ ┃ ┃ ┃ ┃ ┗ 📜NoContentException.java
+ ┃ ┃ ┃ ┗ 📂handler
+ ┃ ┃ ┃ ┃ ┗ 📜GlobalExceptionHandler.java
+ ┃ ┃ ┣ 📂service
+ ┃ ┃ ┃ ┣ 📜ErrorResponseService.java
+ ┃ ┃ ┃ ┣ 📜JwtService.java
+ ┃ ┃ ┃ ┣ 📜ResponseService.java
+ ┃ ┃ ┃ ┣ 📜SearchService.java
+ ┃ ┃ ┃ ┗ 📜UserService.java
+ ┃ ┃ ┣ 📂util
+ ┃ ┃ ┃ ┣ 📂result
+ ┃ ┃ ┃ ┃ ┣ 📜CommonResult.java
+ ┃ ┃ ┃ ┃ ┣ 📜ListResult.java
+ ┃ ┃ ┃ ┃ ┗ 📜SingleResult.java
+ ┃ ┃ ┃ ┗ 📂sungchefEnum
+ ┃ ┃ ┃ ┃ ┣ 📜CommonResponseCode.java
+ ┃ ┃ ┃ ┃ ┣ 📜IngredientType.java
+ ┃ ┃ ┃ ┃ ┗ 📜RecommendType.java
+```
+</details>
+
+<details>
+<summary>유저 - 주요 담당</summary>
+  
+```bash
+ 📂user-service
+ ┣ 📂main
+ ┃ ┗ 📂userservice
+ ┃ ┃ ┣ 📂config
+ ┃ ┃ ┃ ┣ 📂jwt
+ ┃ ┃ ┃ ┃ ┣ 📜JwtAuthenticationFilter.java
+ ┃ ┃ ┃ ┃ ┣ 📜JwtToken.java
+ ┃ ┃ ┃ ┃ ┗ 📜JwtTokenInterceptor.java
+ ┃ ┃ ┃ ┣ 📜AWSS3Config.java
+ ┃ ┃ ┃ ┣ 📜JasyptConfig.java
+ ┃ ┃ ┃ ┣ 📜JwtTokenProvider.java
+ ┃ ┃ ┗ 📜SecurityConfig.java
+ ┃ ┃ ┣ 📂controller
+ ┃ ┃ ┃ ┣ 📜CheckController.java
+ ┃ ┃ ┃ ┣ 📜SurveyController.java
+ ┃ ┃ ┃ ┣ 📜UploadController.java
+ ┃ ┃ ┃ ┗ 📜UserController.java
+ ┃ ┃ ┣ 📂db
+ ┃ ┃ ┃ ┣ 📂client
+ ┃ ┃ ┃ ┃ ┣ 📜Recipe.java
+ ┃ ┃ ┃ ┃ ┗ 📜RecipeMake.java
+ ┃ ┃ ┃ ┣ 📂entity
+ ┃ ┃ ┃ ┃ ┣ 📜Bookmark.java
+ ┃ ┃ ┃ ┃ ┣ 📜Survey.java
+ ┃ ┃ ┃ ┃ ┗ 📜User.java
+ ┃ ┃ ┃ ┗ 📂repository
+ ┃ ┃ ┃ ┃ ┣ 📂mapping
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜BookmarkMapping.java
+ ┃ ┃ ┃ ┃ ┣ 📜BookmarkRepository.java
+ ┃ ┃ ┃ ┃ ┣ 📜SurveyRepository.java
+ ┃ ┃ ┃ ┃ ┗ 📜UserRepository.java
+ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┣ 📂request
+ ┃ ┃ ┃ ┃ ┣ 📜BookmarkReq.java
+ ┃ ┃ ┃ ┃ ┣ 📜ContactReq.java
+ ┃ ┃ ┃ ┃ ┣ 📜FoodId.java
+ ┃ ┃ ┃ ┃ ┣ 📜LoginReq.java
+ ┃ ┃ ┃ ┃ ┣ 📜ReissueReq.java
+ ┃ ┃ ┃ ┃ ┣ 📜SignUpReq.java
+ ┃ ┃ ┃ ┃ ┣ 📜SubmitSurveyReq.java
+ ┃ ┃ ┃ ┃ ┗ 📜UserInfoReq.java
+ ┃ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┃ ┣ 📂fridge
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜FridgeIngredientListRes.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜Ingredient.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜IngredientId.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜IngredientInfo.java
+ ┃ ┃ ┃ ┃ ┣ 📜FoodInfo.java
+ ┃ ┃ ┃ ┃ ┣ 📜SurveyRes.java
+ ┃ ┃ ┃ ┃ ┣ 📜UserBookmarkRecipe.java
+ ┃ ┃ ┃ ┃ ┣ 📜UserBookmarkRecipeRes.java
+ ┃ ┃ ┃ ┃ ┣ 📜UserInfoRes.java
+ ┃ ┃ ┃ ┃ ┣ 📜UserMakeRecipe.java
+ ┃ ┃ ┃ ┃ ┣ 📜UserMakeRecipeRes.java
+ ┃ ┃ ┃ ┃ ┣ 📜UserSimpleInfoRes.java
+ ┃ ┃ ┃ ┃ ┗ 📜UserTokenRes.java
+ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┣ 📂error
+ ┃ ┃ ┃ ┃ ┣ 📜ErrorCode.java
+ ┃ ┃ ┃ ┃ ┣ 📜ErrorResponse.java
+ ┃ ┃ ┃ ┃ ┗ 📜FeignErrorDecoder.java
+ ┃ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┃ ┣ 📜BaseException.java
+ ┃ ┃ ┃ ┃ ┣ 📜BookmarkNotFoundException.java
+ ┃ ┃ ┃ ┃ ┣ 📜FeignException.java
+ ┃ ┃ ┃ ┃ ┣ 📜FileNotSupportException.java
+ ┃ ┃ ┃ ┃ ┣ 📜FileSizeException.java
+ ┃ ┃ ┃ ┃ ┣ 📜FileUploadException.java
+ ┃ ┃ ┃ ┃ ┣ 📜JwtException.java
+ ┃ ┃ ┃ ┃ ┣ 📜JwtExpiredException.java
+ ┃ ┃ ┃ ┃ ┣ 📜NicknameExistException.java
+ ┃ ┃ ┃ ┃ ┣ 📜NoContentException.java
+ ┃ ┃ ┃ ┃ ┣ 📜PageConvertException.java
+ ┃ ┃ ┃ ┃ ┣ 📜RecipeNotFoundException.java
+ ┃ ┃ ┃ ┃ ┣ 📜SurveyCountException.java
+ ┃ ┃ ┃ ┃ ┣ 📜UserExistException.java
+ ┃ ┃ ┃ ┃ ┣ 📜UserNeedSurveyException.java
+ ┃ ┃ ┃ ┃ ┣ 📜UserNotCreatedException.java
+ ┃ ┃ ┃ ┃ ┣ 📜UserNotFoundException.java
+ ┃ ┃ ┃ ┃ ┗ 📜UserRecipeNotExistException.java
+ ┃ ┃ ┃ ┗ 📂handler
+ ┃ ┃ ┃ ┃ ┗ 📜GlobalExceptionHandler.java
+ ┃ ┃ ┣ 📂service
+ ┃ ┃ ┃ ┣ 📂client
+ ┃ ┃ ┃ ┃ ┣ 📜FridgeServiceClient.java
+ ┃ ┃ ┃ ┃ ┗ 📜RecipeServiceClient.java
+ ┃ ┃ ┃ ┣ 📜BookmarkService.java
+ ┃ ┃ ┃ ┣ 📜ErrorResponseService.java
+ ┃ ┃ ┃ ┣ 📜FileUploadService.java
+ ┃ ┃ ┃ ┣ 📜JwtService.java
+ ┃ ┃ ┃ ┣ 📜RedisService.java
+ ┃ ┃ ┃ ┣ 📜ResponseService.java
+ ┃ ┃ ┃ ┣ 📜SurveyService.java
+ ┃ ┃ ┃ ┣ 📜UserDetailServiceImpl.java
+ ┃ ┃ ┃ ┗ 📜UserService.java
+ ┃ ┃ ┣ 📂util
+ ┃ ┃ ┃ ┣ 📂result
+ ┃ ┃ ┃ ┃ ┣ 📜CommonResult.java
+ ┃ ┃ ┃ ┃ ┣ 📜ListResult.java
+ ┃ ┃ ┃ ┃ ┗ 📜SingleResult.java
+ ┃ ┃ ┃ ┗ 📂sungchefEnum
+ ┃ ┃ ┃ ┃ ┣ 📜CommonResponseCode.java
+ ┃ ┃ ┃ ┃ ┣ 📜IngredientType.java
+ ┃ ┃ ┃ ┃ ┣ 📜UserGenderType.java
+ ┃ ┃ ┃ ┃ ┗ 📜UserSnsType.java
+ ┃ ┃ ┣ 📂vaild
+ ┃ ┃ ┃ ┣ 📂annotation
+ ┃ ┃ ┃ ┃ ┣ 📜EnumPattern.java
+ ┃ ┃ ┃ ┃ ┗ 📜EnumValue.java
+ ┃ ┃ ┃ ┗ 📂vaildator
+ ┃ ┃ ┃ ┃ ┣ 📜EnumPatternValidator.java
+ ┃ ┃ ┃ ┃ ┗ 📜EnumValueValidator.java
+```
+</details>
 
 ## 아키텍처
 ![image.png](./README_image/아키텍처.PNG)
